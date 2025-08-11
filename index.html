@@ -1,0 +1,450 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>ASCII Art — MidJourney-style (SVG rows)</title>
+<style>
+  :root{
+    --bg:#051018;
+    --fg:#e8fbff;
+    --accent:#9be7ff;
+  }
+  html,body{height:100%;margin:0;background:var(--bg);color:var(--fg);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial;}
+  header{padding:14px 20px}
+  header .brand{color:var(--accent);font-weight:700}
+  .hero{height:64vh;min-height:420px;max-height:760px;position:relative;overflow:hidden;background:
+    linear-gradient(180deg, rgba(4,8,12,0.9), rgba(1,2,6,0.98)); display:flex;align-items:center;justify-content:center;}
+  svg#asciiSVG{width:100%;height:100%;display:block;}
+  .logo-overlay{position:absolute;left:0;right:0;top:0;bottom:0;pointer-events:none;display:flex;align-items:center;justify-content:center;}
+  main{max-width:1000px;margin:28px auto;padding:18px;}
+  .spacer{height:28vh}
+  .media{display:flex;gap:20px;flex-wrap:wrap;margin-top:18px}
+  .videoBox{flex:1 1 640px;min-height:360px;background:#000;border-radius:8px;overflow:hidden}
+  .downloadPane{flex:0 0 220px;display:flex;align-items:center;justify-content:center}
+  .downloadBtn{display:inline-block;padding:12px 16px;border-radius:10px;background:var(--accent);color:#021617;text-decoration:none;font-weight:700}
+  footer{padding:28px;text-align:center}
+  @media (prefers-reduced-motion: reduce) {
+    svg#asciiSVG { opacity: 0.95; }
+  }
+  /* Retro tiny glow */
+  .retrowrap { filter: drop-shadow(0 6px 16px rgba(0,0,0,0.6)); }
+</style>
+</head>
+<body>
+  <header><div class="brand">MY BRAND</div></header>
+
+  <section class="hero" aria-label="ASCII hero">
+    <!-- SVG where each <text> row will be a text element (T[n]) -->
+    <svg id="asciiSVG" class="retrowrap" aria-hidden="false" role="img"></svg>
+    <!-- overlay for accessibility (keeps DOM readable) -->
+    <div class="logo-overlay" aria-hidden="true"></div>
+  </section>
+
+  <main>
+    <h1 id="projectTitle">PROJECT NAME</h1>
+    <p id="projectDesc">Replace this description with a short summary of your project.</p>
+
+    <div class="spacer" aria-hidden="true"></div>
+
+    <section class="media">
+      <div class="videoBox" id="videoBox" aria-label="Project video (lazy)"><div id="videoPlaceholder" style="display:flex;align-items:center;justify-content:center;color:#9bbcd6">Scroll to load video</div></div>
+      <div class="downloadPane"><a id="downloadTop" class="downloadBtn" href="project.zip" download rel="noopener">Download ZIP</a></div>
+    </section>
+
+    <section style="height:420px;margin-top:28px">
+      <h2>Details & Screenshots</h2>
+      <p>Use this area for project media and explanations.</p>
+    </section>
+  </main>
+
+  <footer><a id="downloadBottom" class="downloadBtn" href="project.zip" download rel="noopener">Download project (ZIP)</a></footer>
+
+<script>
+/*
+ MidJourney-style ASCII implementation (SVG rows)
+ - T: array of row <text> elements (rows)
+ - A: array of source strings (text patterns used to generate scrambled background)
+ - I: logo text grid (array of strings)
+ - O: logo element <text> lines overlayed (we will also write directly into T for logo area)
+ - V(e,a,t) : linear interpolation of char code
+ - uses easing and geometry similar to the reddit snippet
+*/
+
+/* =================== CONFIG - edit these =================== */
+const PROJECT_NAME = "PROJECT NAME";        // center text (single-line recommended)
+const PROJECT_DESC = "Short project summary - replace this text.";
+const VIDEO_SRC = "https://www.youtube.com/embed/dQw4w9WgXcQ";
+const DOWNLOAD_HREF = "project.zip";
+
+/* visual density / size */
+const MAX_COLUMNS = 160;   // maximum columns for very wide screens
+const MAX_ROWS = 64;       // maximum rows
+const TARGET_CHAR = 'M';   // character used to estimate font sizing
+const FONT_FALLBACK = "Courier, monospace";
+
+/* character palette for background source A */
+const CHARSET = " .,:;i1tfLCG08@#&%$ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+/* frequency tuning options */
+const FRAME_THROTTLE_MS = 42; // minimum ms between updates (approx 24 FPS) - helps perf
+const RESPECT_REDUCED_MOTION = true; // honors prefers-reduced-motion
+/* ========================================================== */
+
+/* DOM references */
+const svg = document.getElementById('asciiSVG');
+const videoBox = document.getElementById('videoBox');
+const videoPlaceholder = document.getElementById('videoPlaceholder');
+document.getElementById('downloadTop').href = DOWNLOAD_HREF;
+document.getElementById('downloadBottom').href = DOWNLOAD_HREF;
+document.getElementById('projectTitle').textContent = PROJECT_NAME;
+document.getElementById('projectDesc').textContent = PROJECT_DESC;
+
+let rows = 0, cols = 0, charW = 10, charH = 14, fontSize = 12;
+let T = []; // array of <text> nodes (length rows)
+let O = []; // overlay nodes for logo lines (optional; we'll set fill-opacity)
+let A = []; // array of source strings (length = some H)
+let I = []; // logo array (lines)
+let z = 0, P = 0; // timing variables like reddit snippet
+let lastFrame = 0;
+let lastPaint = 0;
+
+/* helper small functions, mirror naming in reddit code */
+const F = Math.sqrt, D = Math.cos, q = Math.sin, W = Math.max, Hfunc = Math.round;
+function V(a,b,t){ return a*(1-t) + b*t; } // linear interpolation (char code)
+function clamp(v, a,b){ return Math.max(a, Math.min(b, v)); }
+
+/* detect reduced-motion preference */
+const reducedMotion = RESPECT_REDUCED_MOTION && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* measure char size using temporary canvas (accurate) */
+function measureCharSize() {
+  const ctx = document.createElement('canvas').getContext('2d');
+  const testFont = `${fontSize}px ${FONT_FALLBACK}`;
+  ctx.font = testFont;
+  const metrics = ctx.measureText(TARGET_CHAR);
+  charW = Math.max(6, Math.round(metrics.width));
+  charH = Math.max(12, Math.round(fontSize * 1.15));
+}
+
+/* compute rows/cols to fill hero while capping */
+function computeGridSize() {
+  const rect = svg.getBoundingClientRect();
+  if (rect.width ===0 || rect.height === 0) return;
+  // choose fontSize relative to viewport height to keep hero dense and responsive
+  // desired rows ~ rect.height / charH; adjust font size to fit a reasonable rows count
+  fontSize = Math.max(10, Math.round(Math.min(18, rect.height / 28)));
+  measureCharSize();
+  cols = Math.min(MAX_COLUMNS, Math.floor(rect.width / charW));
+  rows = Math.min(MAX_ROWS, Math.floor(rect.height / charH));
+  cols = Math.max(24, cols);
+  rows = Math.max(12, rows);
+}
+
+/* create SVG row <text> elements */
+function createRows() {
+  // clear SVG
+  while (svg.firstChild) svg.removeChild(svg.firstChild);
+  T = [];
+  // create an outer <g> to hold text rows
+  const g = document.createElementNS('http://www.w3.org/2000/svg','g');
+  g.setAttribute('font-family', FONT_FALLBACK);
+  g.setAttribute('font-size', fontSize);
+  g.setAttribute('fill', '#dffaff');
+  g.setAttribute('text-anchor', 'start');
+  svg.appendChild(g);
+
+  const rect = svg.getBoundingClientRect();
+  const left = Math.max(2, Math.round(rect.width * 0.02));
+  const top = Math.max(12, Math.round(rect.height * 0.08));
+  for (let r = 0; r < rows; r++) {
+    const t = document.createElementNS('http://www.w3.org/2000/svg','text');
+    const y = top + r * charH;
+    t.setAttribute('x', left);
+    t.setAttribute('y', y);
+    t.setAttribute('font-family', FONT_FALLBACK);
+    t.setAttribute('font-size', fontSize);
+    t.textContent = ' '.repeat(cols);
+    g.appendChild(t);
+    T.push(t);
+  }
+  // create overlay text elements O for logo rows (we will place them later)
+  // overlay O will be positioned exactly over the T rows and we will set fill-opacity for the logo fade
+  O = []; // initially empty; populate when I is known
+}
+
+/* build A: an array of source strings used to sample background characters
+   We'll create multiple shifted copies of CHARSET repeated to at least cols length.
+*/
+function buildA(hCount = Math.max(8, Math.floor(rows/2))) {
+  A = [];
+  const base = CHARSET.repeat(Math.ceil(cols / CHARSET.length + 2));
+  for (let i = 0; i < hCount; i++) {
+    // shift by i to get different rows
+    const shift = (i * 7) % CHARSET.length;
+    const s = base.slice(shift, shift + cols);
+    A.push(s);
+  }
+}
+
+/* Build logo array I from PROJECT_NAME (can be multiple lines if you pass \n) */
+function buildLogo() {
+  // central multiline: split on newline if present, otherwise single line centered
+  const lines = String(PROJECT_NAME).split('\n');
+  I = lines.map(line => {
+    // pad to avoid undefined on edges; we will handle bounds
+    return line;
+  });
+  // create overlay O text elements that will display the logo rows inside the box.
+  // Number of logo rows = I.length
+  // Determine logo top-left grid coordinates B (x) and R (y)
+  // We'll compute these each frame; here ensure O elements are created if needed.
+  const existing = O.length;
+  if (existing < I.length) {
+    // create missing O nodes
+    const overlayG = document.createElementNS('http://www.w3.org/2000/svg','g');
+    overlayG.setAttribute('font-family', FONT_FALLBACK);
+    overlayG.setAttribute('font-size', fontSize);
+    overlayG.setAttribute('fill', '#9be7ff');
+    overlayG.setAttribute('text-anchor', 'start');
+    // Keep overlay as separate descendant so we can set fill-opacity per row
+    svg.appendChild(overlayG);
+    for (let i = existing; i < I.length; i++) {
+      const t = document.createElementNS('http://www.w3.org/2000/svg','text');
+      t.setAttribute('font-family', FONT_FALLBACK);
+      t.setAttribute('font-size', fontSize);
+      t.setAttribute('fill', '#9be7ff');
+      t.setAttribute('fill-opacity', '0');
+      overlayG.appendChild(t);
+      O.push(t);
+    }
+  }
+}
+
+/* Utility: clamp index helper */
+function inLogoBounds(n, c, B, R, I) {
+  return n > R && n < R + I.length + 1 && c > B && c < B + (I[0] ? I[0].length : 0) + 1;
+}
+
+/* Core animation function inspired by reddit snippet.
+   It updates row textContent for each T[n] using arrays A and I, and updates overlay O rows' text + opacity.
+*/
+let rafId = null;
+let zStart = 0;
+function runFrame(e) {
+  if (!zStart) zStart = 0.001 * e;
+  if (P === 0) P = e;
+  // throttle visible updates: only update if visible & not too frequent
+  if (document.visibilityState === 'hidden') {
+    rafId = requestAnimationFrame(runFrame); return;
+  }
+  const now = e;
+  // enforce minimum frame interval to reduce CPU
+  if (now - lastPaint < FRAME_THROTTLE_MS) { rafId = requestAnimationFrame(runFrame); return; }
+  lastPaint = now;
+
+  // compute master time parameter a (seconds-like)
+  const a = 0.001 * e - zStart;
+
+  // compute easing param t (0..1) using the same easing used in reddit snippet
+  // here J(.5*(a-1), 0, 1) equivalent approximate
+  const raw = ((0.5 * (a - 1)));
+  const jt = clamp(raw, 0, 1);
+  const t = (jt < 0.5) ? (1 - Math.sqrt(1 - Math.pow(2 * jt, 2))) / 2 : (Math.sqrt(1 - Math.pow(-2 * jt + 2, 2)) + 1) / 2;
+
+  // Precompute frequently used lengths
+  const Tlen = T.length;
+  const M = cols;
+  const A_len = A.length;
+
+  // compute logo box B and R (x,y) so it's centered in grid
+  const logoW = I[0] ? I[0].length : 0;
+  const logoH = I.length;
+  const B = Math.floor((M - logoW) / 2); // left column index for logo
+  const R = Math.floor((Tlen - logoH) / 2); // top row index for logo
+
+  // Update each row
+  for (let n = 0; n < Tlen; n++) {
+    // build row string i
+    let rowStr = '';
+    // s corresponds to 1 - 2*n/T.length (same as reddit)
+    const s = 1 - 2 * n / Tlen;
+    for (let c = 0; c < M; c++) {
+      // compute geometry used to choose which char to use from A
+      const o = 2 * c / M - 1;
+      const d = F(o * o + s * s);
+      const l = 0.1 * a / W(0.1, d);
+      const f = q(l), b = D(l);
+      const u = o * f - s * b;
+      // compute m and h indices like reddit
+      const m = Hfunc((o * b + s * f + 1) / 2 * M);
+      const h = Hfunc((u + 1) / 2 * A_len) % A_len;
+      let g = ' ';
+      if (m >= 0 && m < M && h >= 0 && h < A_len) {
+        g = (A[h] && A[h].charAt(m)) || ' ';
+      }
+
+      // if current cell lies inside the logo rectangle -> we must interpolate toward logo char
+      if (n > R && n < R + logoH + 1 && c > B && c < B + logoW + 1) {
+        // compute local logo coords (p,x) similar to reddit
+        const p = c - B - 1;
+        const x = n - R - 1;
+        const vChar = (I[x] && I[x][p]) ? I[x][p] : g;
+        const leftNeighbor = (I[x] && I[x][p - 1]) ? I[x][p - 1] : ' ';
+        const rightNeighbor = (I[x] && I[x][p + 1]) ? I[x][p + 1] : ' ';
+        const neighborLeftNonSpace = leftNeighbor !== ' ';
+        const neighborRightNonSpace = rightNeighbor !== ' ';
+
+        if (vChar !== ' ' || neighborLeftNonSpace || neighborRightNonSpace) {
+          // perform character interpolation by character code between g and vChar using t
+          const wCode = g.charCodeAt(0);
+          const vCode = vChar.charCodeAt(0);
+          const interpCode = Math.round(V(wCode, vCode, t));
+          let displayed = String.fromCharCode(interpCode);
+          // At t == 1, set g to space to let the overlay O render the true logo line with opacity
+          if (Math.abs(t - 1) < 1e-6) displayed = ' ';
+          rowStr += displayed;
+        } else {
+          rowStr += ' ';
+        }
+        // when we finish reading the logo row width, we'll later set O[x].textContent = r (see below)
+      } else {
+        // outside logo rectangle: place g normally
+        rowStr += g;
+      }
+    } // end for c
+
+    // Set the row textContent only if changed (reduce DOM thrash)
+    if (T[n].textContent !== rowStr) T[n].textContent = rowStr;
+  } // end for n
+
+  // Now update overlay logo lines O: compute strings r for each logo row and set fill-opacity to t
+  // This mirrors the reddit snippet where they set O[x].textContent and O[x].setAttribute("fill-opacity", t)
+  for (let x = 0; x < logoH; x++) {
+    // build r string (logo area characters with fallback to scrambled g)
+    let r = '';
+    const n = R + 1 + x; // svg text row index corresponding to this logo line
+    if (n < 0 || n >= T.length) continue;
+    const s = 1 - 2 * n / T.length;
+    for (let p = 0; p < logoW; p++) {
+      const c = B + 1 + p;
+      const o = 2 * c / M - 1;
+      const d = F(o * o + s * s);
+      const l = 0.1 * (0.001 * performance.now() - zStart) / W(0.1, d);
+      const f = q(l), b = D(l);
+      const u = o * f - s * b;
+      const m = Hfunc((o * b + s * f + 1) / 2 * M);
+      const h = Hfunc((u + 1) / 2 * A.length) % A.length;
+      let g = ' ';
+      if (m >= 0 && m < M && h >= 0 && h < A.length) g = (A[h] && A[h].charAt(m)) || ' ';
+
+      // desired logo character at (x,p)
+      const v = (I[x] && I[x][p]) || ' ';
+      const leftNeighbor = (I[x] && I[x][p - 1]) ? I[x][p - 1] : ' ';
+      const rightNeighbor = (I[x] && I[x][p + 1]) ? I[x][p + 1] : ' ';
+      const neighborLeftNonSpace = leftNeighbor !== ' ';
+      const neighborRightNonSpace = rightNeighbor !== ' ';
+
+      if (v !== ' ' || neighborLeftNonSpace || neighborRightNonSpace) {
+        const wCode = g.charCodeAt(0);
+        const vCode = v.charCodeAt(0);
+        const interpCode = Math.round(V(wCode, vCode, t));
+        r += String.fromCharCode(interpCode);
+      } else {
+        r += ' ';
+      }
+    }
+    // place or update O[x] overlay: position it exactly where the row is
+    if (O[x]) {
+      // compute coordinates for overlay text: match T[R + 1 + x].x/y
+      const ref = T[R + 1 + x];
+      if (ref) {
+        O[x].setAttribute('x', ref.getAttribute('x'));
+        O[x].setAttribute('y', ref.getAttribute('y'));
+        // set content only when changed
+        if (O[x].textContent !== r) O[x].textContent = r;
+        // set fill-opacity to t (easing), clamp small values to 0 for performance/readability
+        O[x].setAttribute('fill-opacity', String(clamp(t, 0, 1)));
+      }
+    }
+  }
+
+  // schedule next frame
+  rafId = requestAnimationFrame(runFrame);
+}
+
+/* Setup pipeline: compute grid, create rows, create A and I */
+function setupAndStart() {
+  // compute grid size
+  computeGridSize();
+  createRows();
+  buildA(Math.max(8, Math.floor(rows / 2)));
+  buildLogo();
+
+  // Fill A with slight dynamics: rotate every few frames via small offset when needed
+  // Also prepopulate rows with random strings so initial visual is lively
+  for (let n = 0; n < T.length; n++) {
+    // choose an A row and use it as starting row text
+    const srow = A[n % A.length];
+    T[n].textContent = srow.slice(0, cols);
+  }
+
+  // create O overlay if not present (buildLogo did ensure O nodes)
+  // Make sure O elements are appended to top group in order
+  // set initial fill-opacity 0
+  for (let i = 0; i < O.length; i++) {
+    O[i].setAttribute('fill-opacity', '0');
+  }
+
+  // timing bootstrap
+  z = 0.001 * performance.now();
+  P = performance.now();
+  lastPaint = 0;
+
+  // respect prefers-reduced-motion: if user prefers reduced motion, render one frame and stop
+  if (reducedMotion) {
+    runFrame(performance.now());
+  } else {
+    rafId = requestAnimationFrame(runFrame);
+  }
+}
+
+/* window resize handling */
+let resizeTimer = null;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => {
+    // rebuild layout and restart RAF loop
+    if (rafId) cancelAnimationFrame(rafId);
+    setupAndStart();
+  }, 120);
+});
+
+/* lazy-load video when scrolled near */
+let videoLoaded = false;
+function tryLoadVideo() {
+  if (videoLoaded) return;
+  const rect = videoBox.getBoundingClientRect();
+  const vh = window.innerHeight || document.documentElement.clientHeight;
+  if (rect.top < vh * 1.05) {
+    videoBox.innerHTML = '';
+    const iframe = document.createElement('iframe');
+    iframe.src = VIDEO_SRC;
+    iframe.width = '100%'; iframe.height = '100%';
+    iframe.frameBorder = '0';
+    iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+    iframe.allowFullscreen = true;
+    videoBox.appendChild(iframe);
+    videoLoaded = true;
+  }
+}
+window.addEventListener('scroll', tryLoadVideo, { passive: true });
+
+/* start on load */
+window.addEventListener('load', () => {
+  // small timeout to allow layout to settle
+  setTimeout(setupAndStart, 80);
+  tryLoadVideo();
+});
+</script>
+</body>
+</html>
