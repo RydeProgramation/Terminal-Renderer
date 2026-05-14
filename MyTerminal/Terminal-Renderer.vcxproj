@@ -117,12 +117,15 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)$(IntDir)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)$(IntDir);</AdditionalLibraryDirectories>
       <AdditionalDependencies>Terminal Engine.lib;%(AdditionalDependencies);Terminal Core.lib;Terminal Tool.lib;Terminal InputModule.lib;Terminal Components.lib;Terminal AudioModule.lib;Terminal World.lib;Terminal Render.lib;Terminal LoadModule.lib</AdditionalDependencies>
     </Link>
     <Manifest>
       <EnableSegmentHeap>true</EnableSegmentHeap>
     </Manifest>
+    <PreBuildEvent>
+      <Command>call "$(ProjectDir)run_prebuild.bat" "$(SolutionDir)" "$(IntDir)"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -143,18 +146,6 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="MyTerminal\Diffusion.widg" />
-    <None Include="MyTerminal\Hello.widg" />
-    <None Include="MyTerminal\HelloWorld.widg" />
-    <None Include="MyTerminal\HelloWorldComplete.widg" />
-    <None Include="MyTerminal\MonteCarlo.widg" />
-    <None Include="MyTerminal\Parag.widg" />
-    <None Include="MyTerminal\PlusTard.page" />
-    <None Include="MyTerminal\Pre_Build.py" />
-    <None Include="MyTerminal\Salut Test.widg" />
-    <None Include="MyTerminal\Simulation.widg" />
-  </ItemGroup>
-  <ItemGroup>
     <Image Include="MyTerminal\icon.ico" />
   </ItemGroup>
   <ItemGroup>
@@ -166,6 +157,10 @@
     <ClInclude Include="Header.h" />
     <ClInclude Include="MyUI.h" />
     <ClInclude Include="resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Pre_Build.py" />
+    <None Include="run_prebuild.bat" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -19,10 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="trLoadFile.cpp" />
-    <ClCompile Include="trSaveFile.cpp" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="trLoadFile.h" />
     <ClInclude Include="trSaveFile.h" />
   </ItemGroup>

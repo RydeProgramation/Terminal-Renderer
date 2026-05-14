@@ -19,9 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="trAudio.cpp" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="trAudio.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

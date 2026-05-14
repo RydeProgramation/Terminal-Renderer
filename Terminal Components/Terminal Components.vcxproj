@@ -24,11 +24,6 @@
     <ClInclude Include="trWidget.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="trSelector.cpp" />
-    <ClCompile Include="trText.cpp" />
-    <ClCompile Include="trWidget.cpp" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Pre_Build.py" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

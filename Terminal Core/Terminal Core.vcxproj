@@ -33,19 +33,6 @@
     <ClInclude Include="trUIToolsCore.h" />
     <ClInclude Include="trWeakPointer.h" />
   </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\Terminal Components\trActor.cpp" />
-    <ClCompile Include="trCoordinate.cpp" />
-    <ClCompile Include="trData.cpp" />
-    <ClCompile Include="trMap.cpp" />
-    <ClCompile Include="trObjectFactory.cpp" />
-    <ClCompile Include="trPair.cpp" />
-    <ClCompile Include="trPawn.cpp" />
-    <ClCompile Include="trRect.cpp" />
-    <ClCompile Include="trSize.cpp" />
-    <ClCompile Include="trUIToolsCore.cpp" />
-    <ClCompile Include="trWeakPointer.cpp" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>

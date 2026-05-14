@@ -22,10 +22,6 @@
     <ClInclude Include="trBTN_Key.h" />
     <ClInclude Include="trKeyBoardManagement.h" />
   </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="trBTN_Key.cpp" />
-    <ClCompile Include="trKeyBoardManagement.cpp" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>

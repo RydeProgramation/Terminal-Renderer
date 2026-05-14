@@ -21,9 +21,6 @@
   <ItemGroup>
     <ClInclude Include="trUITools.h" />
   </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="trUITools.cpp" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>

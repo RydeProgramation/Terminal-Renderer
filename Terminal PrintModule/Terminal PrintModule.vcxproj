@@ -19,9 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="trPrint.cpp" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="trPrint.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

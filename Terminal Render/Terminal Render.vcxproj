@@ -19,9 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="trRender.cpp" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="trRender.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

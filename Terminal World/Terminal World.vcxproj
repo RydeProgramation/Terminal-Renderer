@@ -19,9 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="trWorld.cpp" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="trWorld.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

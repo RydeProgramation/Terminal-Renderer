@@ -2,7 +2,34 @@
 import re
 import sys
 
+import shutil
+
 print("-------------------------- PYTHON PREBUILD LANCEE -------------------------")
+
+if len(sys.argv) < 3:
+    print("ERREUR : arguments manquants")
+    print(sys.argv)
+    exit(1)
+
+solution_dir = sys.argv[1]
+int_dir = sys.argv[2]
+src_dll = os.path.join(solution_dir, "Dependencies DLL")
+dst_dll = os.path.join(solution_dir, int_dir)
+
+print(f"[COPY] {src_dll} -> {dst_dll}")
+
+if os.path.exists(src_dll):
+    os.makedirs(dst_dll, exist_ok=True)
+
+    for file in os.listdir(src_dll):
+        src_file = os.path.join(src_dll, file)
+        dst_file = os.path.join(dst_dll, file)
+
+        if os.path.isfile(src_file):
+            shutil.copy2(src_file, dst_file)
+            print(f"Copié : {file}")
+else:
+    print("ERREUR : dossier Dependencies DLL introuvable")
 
 SOURCE_DIR = os.getcwd()
 

@@ -18,38 +18,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="MyTerminal\Pre_Build.py">
-      <Filter>Tool</Filter>
-    </None>
-    <None Include="MyTerminal\Diffusion.widg">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="MyTerminal\Hello.widg">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="MyTerminal\HelloWorldComplete.widg">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="MyTerminal\HelloWorld.widg">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="MyTerminal\MonteCarlo.widg">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="MyTerminal\Parag.widg">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="MyTerminal\PlusTard.page">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="MyTerminal\Salut Test.widg">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="MyTerminal\Simulation.widg">
-      <Filter>Resource Files</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <Image Include="MyTerminal\icon.ico">
       <Filter>Resource Files</Filter>
     </Image>
@@ -75,5 +43,13 @@
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Pre_Build.py">
+      <Filter>Tool</Filter>
+    </None>
+    <None Include="run_prebuild.bat">
+      <Filter>Tool</Filter>
+    </None>
   </ItemGroup>
 </Project>
