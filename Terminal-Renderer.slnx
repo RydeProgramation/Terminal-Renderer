@@ -1,0 +1,57 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="MyTerminal/Terminal-Renderer.vcxproj" Id="9de90605-4c59-422d-b2c6-7532d620471e" />
+  <Project Path="Terminal AudioModule/Terminal AudioModule.vcxproj" Id="bc3a6860-404e-43d6-b502-2a1dbf97a0ca">
+    <BuildDependency Project="Terminal Core/Terminal Core.vcxproj" />
+    <BuildDependency Project="Terminal Tool/Terminal Tool.vcxproj" />
+  </Project>
+  <Project Path="Terminal Components/Terminal Components.vcxproj" Id="591c2995-8716-4de6-a1b8-c1cd3cfbb40d">
+    <BuildDependency Project="Terminal Core/Terminal Core.vcxproj" />
+  </Project>
+  <Project Path="Terminal Core/Terminal Core.vcxproj" Id="67271c97-8720-4808-adf6-4fb928bec6d9" />
+  <Project Path="Terminal Engine/Terminal Engine.vcxproj" Id="a43a3f20-dc24-4309-b970-5bd229f85340">
+    <BuildDependency Project="Terminal AudioModule/Terminal AudioModule.vcxproj" />
+    <BuildDependency Project="Terminal Components/Terminal Components.vcxproj" />
+    <BuildDependency Project="Terminal Core/Terminal Core.vcxproj" />
+    <BuildDependency Project="Terminal InputModule/Terminal InputModule.vcxproj" />
+    <BuildDependency Project="Terminal PrintModule/Terminal PrintModule.vcxproj" />
+    <BuildDependency Project="Terminal Render/Terminal Render.vcxproj" />
+    <BuildDependency Project="Terminal Tool/Terminal Tool.vcxproj" />
+    <BuildDependency Project="Terminal World/Terminal World.vcxproj" />
+  </Project>
+  <Project Path="Terminal InputModule/Terminal InputModule.vcxproj" Id="b241c119-2ee8-4424-b4c2-bc7bc94e47c0">
+    <BuildDependency Project="Terminal Core/Terminal Core.vcxproj" />
+    <BuildDependency Project="Terminal Tool/Terminal Tool.vcxproj" />
+  </Project>
+  <Project Path="Terminal LoadModule/Terminal LoadModule.vcxproj" Id="c740a887-c018-477a-9839-d70915328304">
+    <BuildDependency Project="Terminal AudioModule/Terminal AudioModule.vcxproj" />
+    <BuildDependency Project="Terminal Components/Terminal Components.vcxproj" />
+    <BuildDependency Project="Terminal Core/Terminal Core.vcxproj" />
+    <BuildDependency Project="Terminal InputModule/Terminal InputModule.vcxproj" />
+    <BuildDependency Project="Terminal PrintModule/Terminal PrintModule.vcxproj" />
+  </Project>
+  <Project Path="Terminal PrintModule/Terminal PrintModule.vcxproj" Id="030caecd-562a-48d4-8529-562de916b4a5">
+    <BuildDependency Project="Terminal Core/Terminal Core.vcxproj" />
+    <BuildDependency Project="Terminal Tool/Terminal Tool.vcxproj" />
+  </Project>
+  <Project Path="Terminal Render/Terminal Render.vcxproj" Id="b1573cb2-e6d4-465b-a985-08aede8c1f3e">
+    <BuildDependency Project="Terminal AudioModule/Terminal AudioModule.vcxproj" />
+    <BuildDependency Project="Terminal Components/Terminal Components.vcxproj" />
+    <BuildDependency Project="Terminal Core/Terminal Core.vcxproj" />
+    <BuildDependency Project="Terminal PrintModule/Terminal PrintModule.vcxproj" />
+    <BuildDependency Project="Terminal Tool/Terminal Tool.vcxproj" />
+    <BuildDependency Project="Terminal World/Terminal World.vcxproj" />
+  </Project>
+  <Project Path="Terminal Tool/Terminal Tool.vcxproj" Id="84da0ec2-a384-4585-8976-fbaecacf0170">
+    <BuildDependency Project="Terminal Components/Terminal Components.vcxproj" />
+    <BuildDependency Project="Terminal Core/Terminal Core.vcxproj" />
+  </Project>
+  <Project Path="Terminal World/Terminal World.vcxproj" Id="27417ca8-c888-4aaa-94b0-a02115f0e723">
+    <BuildDependency Project="Terminal Components/Terminal Components.vcxproj" />
+    <BuildDependency Project="Terminal Core/Terminal Core.vcxproj" />
+    <BuildDependency Project="Terminal Tool/Terminal Tool.vcxproj" />
+  </Project>
+</Solution>

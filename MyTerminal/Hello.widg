@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<trObject type="trWidget" name="Hello1">
+	<Properties>
+		<Property name="Activate" type="bool">true</Property>
+		<Property name="Protected" type="bool">false</Property>
+		<Property name="ToChange" type="bool">true</Property>
+	</Properties>
+
+	<trActor>
+		<APPLY_Implementation Code="" />  # a enlever
+	</trActor>
+
+	<trPawn>
+		<Position x="100" y="-1" />
+		<RelativePositionType RpType="MiddleCenter" />
+	</trPawn>
+
+	<trWidget>
+		<Size width="22" height="5" />
+		<Content>
+			<Line Content=" _   _      _ _" />
+			<Line Content="| | | | ___| | | ___" />
+			<Line Content="| |_| |/ _ \ | |/ _ \" />
+			<Line Content="|  _  |  __/ | | (_) |" />
+			<Line Content="|_| |_|\___|_|_|\___/" />
+		</Content>
+		<Color foreground="#9cf493ff" background="#052d0aff" />
+	</trWidget>
+</trObject>

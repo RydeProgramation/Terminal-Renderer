@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<trObject type="trSelector" name="SimCarlo">
+	<Properties>
+		<Property name="Activate" type="bool">true</Property>
+		<Property name="Protected" type="bool">false</Property>
+		<Property name="ToChange" type="bool">true</Property>
+	</Properties>
+
+	<trActor>
+		<APPLY_Implementation Code="" /> # a enlever
+	</trActor>
+
+	<trPawn>
+		<Position x="-40" y="5" />
+		<RelativePositionType RpType="MiddleCenter" />
+	</trPawn>
+
+	<trWidget>
+		<Size width="76" height="5" />
+		<Color _foreground="#fbfbfbff" _background="#110100" />
+		<Content>
+			<Line Content="  __  __                   _                ____                  _         "/>
+			<Line Content=" |  \/  |   ___    _ __   | |_    ___      / ___|   __ _   _ __  | |   ___  "/>
+			<Line Content=" | |\/| |  / _ \  | '_ \  | __|  / _ \    | |      / _` | | '__| | |  / _ \ "/>
+			<Line Content=" | |  | | | (_) | | | | | | |_  |  __/    | |___  | (_| | | |    | | | (_) |"/>
+			<Line Content=" |_|  |_|  \___/  |_| |_|  \__|  \___|     \____|  \__,_| |_|    |_|  \___/ "/>
+		</Content>
+		<CaseColor>
+		
+		</CaseColor>
+	</trWidget>
+
+	<trSelector>
+		<SlectedColor foreground="#ff00d9ff" background="#b3ff00ff"/>
+	</trSelector>
+
+</trObject>

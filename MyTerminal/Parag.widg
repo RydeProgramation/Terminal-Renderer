@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<trObject type="trText" name="Paragraphe">
+	<Properties>
+		<Property name="Activate" type="bool">false</Property>
+		<Property name="Protected" type="bool">false</Property>
+		<Property name="ToChange" type="bool">true</Property>
+	</Properties>
+
+	<trActor>
+		<APPLY_Implementation Code="" /> # a enlever
+	</trActor>
+
+	<trPawn>
+		<Position x="0" y="0" />
+		<RelativePositionType RpType="MiddleCenter" />
+	</trPawn>
+
+	<trWidget>
+		<Size width="135" height="6" />
+		<Color foreground="#bdf6ffff" _background="#ff0000ff" />
+		<Content>
+			<Line Content="Salutations, brave lâche ! Mon projet est une application maléfique\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\bapplication magique qui ouvre les portes des marchés financiérs.\nÀ l'aide de la puissante technique de DiCaprio\b\b\b\b\b\b\b\bMonte-Carlo, je simule des trajectoires aléatoires pour les options (calls et putain\b\b\bs).\nImagine-toi chevauchant un dragon volant au-dessus des courbes de prix, scrutant les volatilités et les risques.\nLes prix d'options se révèlent tels des trésors cachés dans les profondeurs du marché. Tu attends quoi pour jouer avec les courbes !\nJe te propose donc cette application pour que tu fasses tes propres simulations et découvre les secrets enfouis dans\fles volutes des courbes financières. 🎉🎉🎉" />
+		</Content>
+		<CaseColor>
+			<Case Start="0" End="26" foreground="#ffb6c1ff" _background="#ffffffff"/>
+			<Case Start="26" End="45" foreground="#91e6f1ff" _background="#ffffffff"/>
+			<Case Start="45" End="175" foreground="#98fb98ff" _background="#ffffffff"/>
+			<Case Start="237" End="248" foreground="#d8bfd8ff" background="#09598eff"/>
+			<Case Start="250" End="287" foreground="#f0e68cff" _background="#ffffffff"/>
+			<Case Start="315" End="328" foreground="#faebd7ff" _background="#ffffffff"/>
+			<Case Start="332" End="444" foreground="#ffdeadff" _background="#ffffffff"/>
+			<Case Start="457" End="464" foreground="#ffe4c4ff" _background="#ffffffff"/>
+			<Case Start="533" End="578" foreground="#f0ffffff" _background="#ffffffff"/>
+			<Case Start="580" End="691" foreground="#f5deb3ff" _background="#ffffffff"/>
+			<Case Start="698" End="734" foreground="#d8bfd8ff" _background="#ffffffff"/>
+		</CaseColor>
+	</trWidget>
+
+	<trText>
+		<Animation>
+			<RawFrame number="0" time="1400">
+				<Content>
+					<Line Content="Salutations, brave lâche ! Mon projet est une application maléfique\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\bapplication magique qui ouvre les portes des marchés financiérs.\nÀ l'aide de la puissante technique de DiCaprio\b\b\b\b\b\b\b\bMonte-Carlo, je simule des trajectoires aléatoires pour les options (calls et putain\b\b\bs).\nImagine-toi chevauchant un dragon volant au-dessus des courbes de prix, scrutant les volatilités et les risques.\nLes prix d'options se révèlent tels des trésors cachés dans les profondeurs du marché. Tu attends quoi pour jouer avec les courbes !\nJe te propose donc cette application pour que tu fasses tes propres simulations et découvre les secrets enfouis dans\fles volutes des courbes financières. 🎉🎉🎉" />
+				</Content>
+				<CaseColor>
+					<Case Start="0" End="26" foreground="#ffb6c1ff" _background="#ffffffff"/>
+					<Case Start="26" End="45" foreground="#91e6f1ff" _background="#ffffffff"/>
+					<Case Start="45" End="175" foreground="#98fb98ff" _background="#ffffffff"/>
+					<Case Start="237" End="248" foreground="#d8bfd8ff" background="#09598eff"/>
+					<Case Start="250" End="287" foreground="#f0e68cff" _background="#ffffffff"/>
+					<Case Start="315" End="328" foreground="#faebd7ff" _background="#ffffffff"/>
+					<Case Start="332" End="444" foreground="#ffdeadff" _background="#ffffffff"/>
+					<Case Start="457" End="464" foreground="#ffe4c4ff" _background="#ffffffff"/>
+					<Case Start="533" End="578" foreground="#f0ffffff" _background="#ffffffff"/>
+					<Case Start="580" End="691" foreground="#f5deb3ff" _background="#ffffffff"/>
+					<Case Start="698" End="734" foreground="#d8bfd8ff" _background="#ffffffff"/>
+					<Case Start="30" End="31" foreground="#000000ff" background="#ffffffff"/>
+				</CaseColor>
+			</RawFrame>
+
+			<RawFrame number="1" time="1400">
+				<Content>
+					<Line Content="Salutations, brave lâche ! Mon projet est une application maléfique\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\bapplication magique qui ouvre les portes des marchés financiérs.\nÀ l'aide de la puissante technique de DiCaprio\b\b\b\b\b\b\b\bMonte-Carlo, je simule des trajectoires aléatoires pour les options (calls et putain\b\b\bs).\nImagine-toi chevauchant un dragon volant au-dessus des courbes de prix, scrutant les volatilités et les risques.\nLes prix d'options se révèlent tels des trésors cachés dans les profondeurs du marché. Tu attends quoi pour jouer avec les courbes !\nJe te propose donc cette application pour que tu fasses tes propres simulations et découvre les secrets enfouis dans\fles volutes des courbes financières. 🎉🎉🎉" />
+				</Content>
+				<CaseColor>
+					<Case Start="0" End="26" foreground="#ffb6c1ff" _background="#ffffffff"/>
+					<Case Start="26" End="45" foreground="#91e6f1ff" _background="#ffffffff"/>
+					<Case Start="45" End="175" foreground="#98fb98ff" _background="#ffffffff"/>
+					<Case Start="237" End="248" foreground="#d8bfd8ff" background="#09598eff"/>
+					<Case Start="250" End="287" foreground="#f0e68cff" _background="#ffffffff"/>
+					<Case Start="315" End="328" foreground="#faebd7ff" _background="#ffffffff"/>
+					<Case Start="332" End="444" foreground="#ffdeadff" _background="#ffffffff"/>
+					<Case Start="457" End="464" foreground="#ffe4c4ff" _background="#ffffffff"/>
+					<Case Start="533" End="578" foreground="#f0ffffff" _background="#ffffffff"/>
+					<Case Start="580" End="691" foreground="#f5deb3ff" _background="#ffffffff"/>
+					<Case Start="698" End="734" foreground="#d8bfd8ff" _background="#ffffffff"/>
+					<Case Start="29" End="30" foreground="#000000ff" background="#ffffffff"/>
+				</CaseColor>
+			</RawFrame>
+
+			<RawFrame number="2" time="400">
+				<Content>
+					<Line Content="Salutations, brave lâche ! Mon projet est une application maléfique\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\bapplication magique qui ouvre les portes des marchés financiérs.\nÀ l'aide de la puissante technique de DiCaprio\b\b\b\b\b\b\b\bMonte-Carlo, je simule des trajectoires aléatoires pour les options (calls et putain\b\b\bs).\nImagine-toi chevauchant un dragon volant au-dessus des courbes de prix, scrutant les volatilités et les risques.\nLes prix d'options se révèlent tels des trésors cachés dans les profondeurs du marché. Tu attends quoi pour jouer avec les courbes !\nJe te propose donc cette application pour que tu fasses tes propres simulations et découvre les secrets enfouis dans\fles volutes des courbes financières. 🎉🎉🎉" />
+				</Content>
+				<CaseColor>
+					<Case Start="0" End="26" foreground="#ffb6c1ff" _background="#ffffffff"/>
+					<Case Start="26" End="45" foreground="#91e6f1ff" _background="#ffffffff"/>
+					<Case Start="45" End="175" foreground="#98fb98ff" _background="#ffffffff"/>
+					<Case Start="237" End="248" foreground="#d8bfd8ff" background="#09598eff"/>
+					<Case Start="250" End="287" foreground="#f0e68cff" _background="#ffffffff"/>
+					<Case Start="315" End="328" foreground="#faebd7ff" _background="#ffffffff"/>
+					<Case Start="332" End="444" foreground="#ffdeadff" _background="#ffffffff"/>
+					<Case Start="457" End="464" foreground="#ffe4c4ff" _background="#ffffffff"/>
+					<Case Start="533" End="578" foreground="#f0ffffff" _background="#ffffffff"/>
+					<Case Start="580" End="691" foreground="#f5deb3ff" _background="#ffffffff"/>
+					<Case Start="698" End="734" foreground="#d8bfd8ff" _background="#ffffffff"/>
+					<Case Start="28" End="29" foreground="#000000ff" background="#ffffffff"/>
+				</CaseColor>
+			</RawFrame>
+
+			<RawFrame number="3" time="400">
+				<Content>
+					<Line Content="Salutations, brave lâche ! Mon projet est une application maléfique\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\bapplication magique qui ouvre les portes des marchés financiérs.\nÀ l'aide de la puissante technique de DiCaprio\b\b\b\b\b\b\b\bMonte-Carlo, je simule des trajectoires aléatoires pour les options (calls et putain\b\b\bs).\nImagine-toi chevauchant un dragon volant au-dessus des courbes de prix, scrutant les volatilités et les risques.\nLes prix d'options se révèlent tels des trésors cachés dans les profondeurs du marché. Tu attends quoi pour jouer avec les courbes !\nJe te propose donc cette application pour que tu fasses tes propres simulations et découvre les secrets enfouis dans\fles volutes des courbes financières. 🎉🎉🎉" />
+				</Content>
+				<CaseColor>
+					<Case Start="0" End="26" foreground="#ffb6c1ff" _background="#ffffffff"/>
+					<Case Start="26" End="45" foreground="#91e6f1ff" _background="#ffffffff"/>
+					<Case Start="45" End="175" foreground="#98fb98ff" _background="#ffffffff"/>
+					<Case Start="237" End="248" foreground="#d8bfd8ff" background="#09598eff"/>
+					<Case Start="250" End="287" foreground="#f0e68cff" _background="#ffffffff"/>
+					<Case Start="315" End="328" foreground="#faebd7ff" _background="#ffffffff"/>
+					<Case Start="332" End="444" foreground="#ffdeadff" _background="#ffffffff"/>
+					<Case Start="457" End="464" foreground="#ffe4c4ff" _background="#ffffffff"/>
+					<Case Start="533" End="578" foreground="#f0ffffff" _background="#ffffffff"/>
+					<Case Start="580" End="691" foreground="#f5deb3ff" _background="#ffffffff"/>
+					<Case Start="698" End="734" foreground="#d8bfd8ff" _background="#ffffffff"/>
+					<Case Start="27" End="28" foreground="#000000ff" background="#ffffffff"/>
+				</CaseColor>
+			</RawFrame>
+
+			<RawFrame number="4" time="400">
+				<Content>
+					<Line Content="Salutations, brave lâche ! Mon projet est une application maléfique\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\bapplication magique qui ouvre les portes des marchés financiérs.\nÀ l'aide de la puissante technique de DiCaprio\b\b\b\b\b\b\b\bMonte-Carlo, je simule des trajectoires aléatoires pour les options (calls et putain\b\b\bs).\nImagine-toi chevauchant un dragon volant au-dessus des courbes de prix, scrutant les volatilités et les risques.\nLes prix d'options se révèlent tels des trésors cachés dans les profondeurs du marché. Tu attends quoi pour jouer avec les courbes !\nJe te propose donc cette application pour que tu fasses tes propres simulations et découvre les secrets enfouis dans\fles volutes des courbes financières. 🎉🎉🎉" />
+				</Content>
+				<CaseColor>
+					<Case Start="26" End="27" foreground="#000000ff" background="#ffffffff"/>
+					<Case Start="0" End="26" foreground="#ffb6c1ff" _background="#ffffffff"/>
+					<Case Start="26" End="45" foreground="#91e6f1ff" _background="#ffffffff"/>
+					<Case Start="45" End="175" foreground="#98fb98ff" _background="#ffffffff"/>
+					<Case Start="237" End="248" foreground="#d8bfd8ff" background="#09598eff"/>
+					<Case Start="250" End="287" foreground="#f0e68cff" _background="#ffffffff"/>
+					<Case Start="315" End="328" foreground="#faebd7ff" _background="#ffffffff"/>
+					<Case Start="332" End="444" foreground="#ffdeadff" _background="#ffffffff"/>
+					<Case Start="457" End="464" foreground="#ffe4c4ff" _background="#ffffffff"/>
+					<Case Start="533" End="578" foreground="#f0ffffff" _background="#ffffffff"/>
+					<Case Start="580" End="691" foreground="#f5deb3ff" _background="#ffffffff"/>
+					<Case Start="698" End="734" foreground="#d8bfd8ff" _background="#ffffffff"/>
+				</CaseColor>
+			</RawFrame>
+
+			<RawFrame number="5" time="400">
+				<Content>
+					<Line Content="Salutations, brave lâche ! Mon projet est une application maléfique\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\bapplication magique qui ouvre les portes des marchés financiérs.\nÀ l'aide de la puissante technique de DiCaprio\b\b\b\b\b\b\b\bMonte-Carlo, je simule des trajectoires aléatoires pour les options (calls et putain\b\b\bs).\nImagine-toi chevauchant un dragon volant au-dessus des courbes de prix, scrutant les volatilités et les risques.\nLes prix d'options se révèlent tels des trésors cachés dans les profondeurs du marché. Tu attends quoi pour jouer avec les courbes !\nJe te propose donc cette application pour que tu fasses tes propres simulations et découvre les secrets enfouis dans\fles volutes des courbes financières. 🎉🎉🎉" />
+				</Content>
+				<CaseColor>
+					<Case Start="0" End="26" foreground="#ffb6c1ff" _background="#ffffffff"/>
+					<Case Start="26" End="45" foreground="#91e6f1ff" _background="#ffffffff"/>
+					<Case Start="45" End="175" foreground="#98fb98ff" _background="#ffffffff"/>
+					<Case Start="237" End="248" foreground="#d8bfd8ff" background="#09598eff"/>
+					<Case Start="250" End="287" foreground="#f0e68cff" _background="#ffffffff"/>
+					<Case Start="315" End="328" foreground="#faebd7ff" _background="#ffffffff"/>
+					<Case Start="332" End="444" foreground="#ffdeadff" _background="#ffffffff"/>
+					<Case Start="457" End="464" foreground="#ffe4c4ff" _background="#ffffffff"/>
+					<Case Start="533" End="578" foreground="#f0ffffff" _background="#ffffffff"/>
+					<Case Start="580" End="691" foreground="#f5deb3ff" _background="#ffffffff"/>
+					<Case Start="698" End="734" foreground="#d8bfd8ff" _background="#ffffffff"/>
+					<Case Start="25" End="26" foreground="#000000ff" background="#ffffffff"/>
+				</CaseColor>
+			</RawFrame>
+
+			<FrameAdd onLastFrame="false" number="6" time="700">
+				<OldContent>
+					<CaseColor>
+						<Case Start="13" End="26" foreground="#000000ff" background="#ffffffff"/>
+					</CaseColor>
+				</OldContent>
+			</FrameAdd>
+			
+			<FrameAdd onLastFrame="true" number="7" time="1000">
+				<OldContent>
+					<Erase Start="13" End="27" doColor="false"/>
+					<CaseColor>
+						<Caseee Start="23" End="36" foreground="#000000ff" background="#ffffffff"/>
+					</CaseColor>
+				</OldContent>
+			</FrameAdd>
+
+			<FrameAdd onLastFrame="true" number="8" time="1100">
+				<OldContent>
+					<Add position="13">brave aventurier ! </Add>
+					<CaseColor>
+						<Case Start="13" End="31" foreground="#ffb6c1ff" background_="#ffffffff"/>
+					</CaseColor>
+				</OldContent>
+			</FrameAdd>
+		</Animation>
+	</trText> 
+</trObject>

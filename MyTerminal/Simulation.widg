@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<trObject type="trWidget" name="Simulation">
+	<Properties>
+		<Property name="Activate" type="bool">true</Property>
+		<Property name="Protected" type="bool">false</Property>
+		<Property name="ToChange" type="bool">true</Property>
+	</Properties>
+
+	<trActor>
+		<APPLY_Implementation Code="" /> # a enlever
+	</trActor>
+
+	<trPawn>
+		<Position x="0" y="-10" />
+		<RelativePositionType RpType="MiddleCenter" />
+	</trPawn>
+
+	<trWidget>
+		<Size width="137" height="8" />
+		<Color foreground="#f2f7ffff" _background="#110100" />
+		<Content>
+			<Line Content=" ________       ___      _____ ______       ___  ___      ___           ________      __________   ___      ________      ________       "/>
+			<Line Content="|\   ____\     |\  \    |\   _ \  _   \    |\  \|\  \    |\  \         |\   __  \    |\____   __\ |\  \    |\   __  \    |\   ___  \     "/>
+			<Line Content="\ \  \___|_    \ \  \   \ \  \\\__\ \  \   \ \  \\\  \   \ \  \        \ \  \|\  \   \|___ \  \_| \ \  \   \ \  \|\  \   \ \  \\ \  \    "/>
+			<Line Content=" \ \_____  \    \ \  \   \ \  \\|__| \  \   \ \  \\\  \   \ \  \        \ \   __  \       \ \  \   \ \  \   \ \  \\\  \   \ \  \\ \  \   "/>
+			<Line Content="  \|____|\  \    \ \  \   \ \  \    \ \  \   \ \  \\\  \   \ \  \____    \ \  \ \  \       \ \  \   \ \  \   \ \  \\\  \   \ \  \\ \  \  "/>
+			<Line Content="    ____\_\  \    \ \__\   \ \__\    \ \__\   \ \_______\   \ \_______\   \ \__\ \__\       \ \__\   \ \__\   \ \_______\   \ \__\\ \__\ "/>
+			<Line Content="   |\_________\    \|__|    \|__|     \|__|    \|_______|    \|_______|    \|__|\|__|        \|__|    \|__|    \|_______|    \|__| \|__| "/>
+			<Line Content="   \|_________|                                                                                                                          "/>
+
+		</Content>
+		<CaseColor>
+			
+		</CaseColor>
+	</trWidget>
+</trObject>
