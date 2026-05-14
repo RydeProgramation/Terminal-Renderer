@@ -6,490 +6,7 @@
     <title>Terminal-Renderer</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            background: #000;
-            font-family: 'IBM Plex Mono', 'Courier New', monospace;
-            color: #fff;
-            overflow-x: hidden;
-        }
-
-        #ascii-canvas {
-            position: fixed;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            display: block;
-            z-index: 0;
-        }
-
-        #scanlines {
-            position: fixed;
-            inset: 0;
-            z-index: 1;
-            pointer-events: none;
-            background: repeating-linear-gradient(
-                to bottom,
-                transparent 0px,
-                transparent 2px,
-                rgba(0,0,0,0.10) 2px,
-                rgba(0,0,0,0.10) 4px
-            );
-        }
-
-        #vignette {
-            position: fixed;
-            inset: 0;
-            z-index: 2;
-            pointer-events: none;
-            background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.45) 100%);
-        }
-
-        /* ---- NAV ---- */
-        #nav {
-            position: fixed;
-            top: 0; left: 0; right: 0;
-            z-index: 100;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 16px 36px;
-            background: rgba(0,0,0,0.35);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            border-bottom: 0.5px solid rgba(255,255,255,0.07);
-        }
-
-        #nav-logo {
-            font-size: 13px;
-            font-weight: 700;
-            letter-spacing: 0.22em;
-            color: rgba(255,255,255,0.8);
-            text-transform: uppercase;
-        }
-
-        #nav-right { display: flex; align-items: center; gap: 10px; }
-
-        .nav-badge {
-            font-size: 10px;
-            letter-spacing: 0.12em;
-            color: rgba(255,255,255,0.35);
-            border: 0.5px solid rgba(255,255,255,0.15);
-            padding: 4px 10px;
-            border-radius: 1px;
-        }
-
-        #nav-links { display: flex; gap: 28px; margin-left: 22px; }
-
-        .nav-link {
-            font-size: 11px;
-            letter-spacing: 0.18em;
-            color: rgba(255,255,255,0.32);
-            text-transform: uppercase;
-            cursor: pointer;
-            text-decoration: none;
-            transition: color 0.2s;
-        }
-        .nav-link:hover { color: rgba(255,255,255,0.85); }
-
-        /* ---- HERO ---- */
-        #hero {
-            position: relative;
-            z-index: 10;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-        }
-
-        #hero-card {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 22px;
-            padding: 52px 64px;
-            background: rgba(0,0,0,0.22);
-            backdrop-filter: blur(6px);
-            -webkit-backdrop-filter: blur(6px);
-            border: 0.5px solid rgba(255,255,255,0.09);
-            border-radius: 2px;
-            opacity: 0;
-            animation: fadeUp 1.2s ease 0.3s forwards;
-            position: relative;
-        }
-
-        #hero-card::before {
-            content: '■ ■ ■';
-            position: absolute;
-            top: -28px;
-            font-size: 8px;
-            letter-spacing: 7px;
-            color: rgba(255,255,255,0.12);
-        }
-
-        #hero-eyebrow {
-            font-size: 11px;
-            letter-spacing: 0.35em;
-            color: rgba(255,255,255,0.3);
-            text-transform: uppercase;
-        }
-
-        /* ---- TYPEWRITER TITLE ---- */
-        #hero-title {
-            font-size: clamp(44px, 7vw, 90px);
-            font-weight: 700;
-            letter-spacing: -2px;
-            line-height: 1;
-            color: #fff;
-            min-height: 1.2em;
-        }
-
-        #title-cursor {
-            display: inline-block;
-            width: 3px;
-            background: rgba(255,255,255,0.7);
-            margin-left: 3px;
-            animation: blink 0.7s step-end infinite;
-            vertical-align: baseline;
-            height: 0.85em;
-            position: relative;
-            top: 0.05em;
-        }
-
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50%       { opacity: 0; }
-        }
-
-        #title-renderer {
-            position: relative;
-            display: inline;
-        }
-
-        /* Shimmer sur "Renderer" après écriture */
-        #title-renderer.shimmer {
-            background: linear-gradient(
-                92deg,
-                rgba(255,255,255,0.95) 0%,
-                rgba(210,225,255,0.85) 30%,
-                rgba(255,240,250,0.9) 55%,
-                rgba(220,230,255,0.85) 75%,
-                rgba(255,255,255,0.95) 100%
-            );
-            background-size: 200% auto;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: shimmerMove 4s linear infinite;
-        }
-
-        @keyframes shimmerMove {
-            0%   { background-position: 200% center; }
-            100% { background-position: -200% center; }
-        }
-
-        #hero-meta {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .meta-pill {
-            font-size: 10px;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            padding: 5px 12px;
-            border: 0.5px solid rgba(255,255,255,0.15);
-            color: rgba(255,255,255,0.4);
-            border-radius: 1px;
-        }
-
-        .meta-pill.active {
-            border-color: rgba(120,200,140,0.4);
-            color: rgba(120,200,140,0.8);
-        }
-
-        #hero-sub {
-            font-size: 11px;
-            letter-spacing: 0.12em;
-            color: rgba(255,255,255,0.3);
-            text-transform: uppercase;
-            max-width: 420px;
-            line-height: 2.2;
-        }
-
-        #hero-cta {
-            display: flex;
-            gap: 14px;
-            margin-top: 6px;
-        }
-
-        .btn {
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 11px;
-            letter-spacing: 0.22em;
-            text-transform: uppercase;
-            padding: 13px 30px;
-            cursor: pointer;
-            text-decoration: none;
-            border-radius: 1px;
-            transition: all 0.22s;
-        }
-
-        .btn-primary { background:#fff; color:#000; border:1px solid #fff; font-weight:700; }
-        .btn-primary:hover { background:transparent; color:#fff; }
-        .btn-ghost { background:transparent; color:rgba(255,255,255,0.4); border:0.5px solid rgba(255,255,255,0.16); }
-        .btn-ghost:hover { color:#fff; border-color:rgba(255,255,255,0.45); }
-
-        /* ---- SCROLL HINT (plus grand) ---- */
-        #scroll-hint {
-            position: absolute;
-            bottom: 40px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 14px;
-            opacity: 0;
-            animation: fadeUp 1s ease 2.5s forwards;
-        }
-
-        #scroll-hint span {
-            font-size: 10px;
-            letter-spacing: 0.4em;
-            color: rgba(255,255,255,0.25);
-            text-transform: uppercase;
-        }
-
-        .scroll-bar {
-            width: 1.5px;
-            height: 64px;
-            background: rgba(255,255,255,0.1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .scroll-bar::after {
-            content: '';
-            position: absolute;
-            top: -100%; left: 0;
-            width: 100%; height: 50%;
-            background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.7), transparent);
-            animation: scrollDown 2s ease infinite;
-        }
-
-        @keyframes scrollDown {
-            0%   { top: -60%; }
-            100% { top: 110%; }
-        }
-
-        /* ---- SECTIONS ---- */
-        .section {
-            position: relative;
-            z-index: 10;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            padding: 130px 44px;
-        }
-
-        .section-inner { max-width: 980px; margin: 0 auto; width: 100%; }
-
-        .section-card {
-            background: rgba(0,0,0,0.28);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            border: 0.5px solid rgba(255,255,255,0.07);
-            border-radius: 2px;
-            padding: 60px;
-        }
-
-        .section-num {
-            font-size: 11px;
-            letter-spacing: 0.32em;
-            color: rgba(255,255,255,0.2);
-            text-transform: uppercase;
-            margin-bottom: 28px;
-        }
-
-        .section-title {
-            font-size: clamp(30px, 4vw, 54px);
-            font-weight: 700;
-            letter-spacing: -1px;
-            line-height: 1.1;
-            margin-bottom: 36px;
-            color: #fff;
-        }
-
-        .section-rule { width: 28px; height: 0.5px; background: rgba(255,255,255,0.18); margin-bottom: 36px; }
-
-        .section-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 52px; }
-
-        .section-text { font-size: 13px; line-height: 2.1; color: rgba(255,255,255,0.42); }
-        .section-text p + p { margin-top: 18px; }
-
-        .retro-quote {
-            font-size: 12px;
-            line-height: 2;
-            color: rgba(255,255,255,0.5);
-            border-left: 1px solid rgba(255,255,255,0.2);
-            padding-left: 18px;
-            margin-top: 22px;
-            font-style: italic;
-        }
-
-        .features { display: flex; flex-direction: column; gap: 13px; }
-
-        .feature {
-            padding: 18px 22px;
-            border: 0.5px solid rgba(255,255,255,0.06);
-            border-left: 1px solid rgba(255,255,255,0.25);
-            background: rgba(255,255,255,0.015);
-        }
-
-        .feature h4 {
-            font-size: 10px;
-            letter-spacing: 0.22em;
-            text-transform: uppercase;
-            color: rgba(255,255,255,0.55);
-            margin-bottom: 9px;
-        }
-
-        .feature p { font-size: 12px; line-height: 1.9; color: rgba(255,255,255,0.28); }
-
-        /* ---- STATS ---- */
-        .stats-row {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
-            margin-bottom: 44px;
-        }
-
-        .stat-box { padding: 20px; border: 0.5px solid rgba(255,255,255,0.07); background: rgba(255,255,255,0.018); text-align: center; }
-        .stat-value { font-size: 26px; font-weight: 700; color: #fff; letter-spacing: -1px; }
-        .stat-label { font-size: 10px; letter-spacing: 0.2em; color: rgba(255,255,255,0.25); text-transform: uppercase; margin-top: 7px; }
-
-        /* ---- MODULE GRID + 3D TILT ---- */
-        .module-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            margin-top: 8px;
-        }
-
-        .module-item {
-            padding: 16px 20px;
-            border: 0.5px solid rgba(255,255,255,0.07);
-            background: rgba(255,255,255,0.02);
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            position: relative;
-            overflow: hidden;
-            cursor: default;
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
-            transform-style: preserve-3d;
-            transform: perspective(600px) rotateX(0deg) rotateY(0deg) translateZ(0px);
-            will-change: transform;
-        }
-
-        /* Couche de brillance (shine) */
-        .module-item::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(
-                circle at var(--mx, 50%) var(--my, 50%),
-                rgba(255,255,255,0.12) 0%,
-                transparent 65%
-            );
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            pointer-events: none;
-        }
-
-        .module-item:hover::after { opacity: 1; }
-
-        .module-item:hover {
-            border-color: rgba(255,255,255,0.18);
-            box-shadow: 0 12px 40px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3);
-        }
-
-        .module-name { font-size: 12px; font-weight: 700; letter-spacing: 0.1em; color: rgba(255,255,255,0.7); }
-        .module-desc { font-size: 10px; color: rgba(255,255,255,0.28); line-height: 1.7; }
-        .module-status { font-size: 10px; letter-spacing: 0.08em; margin-top: 2px; }
-        .status-ok  { color: rgba(120,200,140,0.8); }
-        .status-wip { color: rgba(200,170,80,0.8); }
-        .status-bad { color: rgba(200,80,80,0.8); }
-
-        /* ---- RENDER SYSTEMS ---- */
-        .render-systems { display: flex; flex-direction: column; gap: 12px; }
-
-        .render-system {
-            padding: 20px 24px;
-            border: 0.5px solid rgba(255,255,255,0.06);
-            background: rgba(255,255,255,0.015);
-            display: flex;
-            flex-direction: column;
-            gap: 9px;
-        }
-
-        .render-system-header { display: flex; justify-content: space-between; align-items: center; }
-
-        .render-system h4 {
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
-            color: rgba(255,255,255,0.6);
-        }
-
-        .render-tag { font-size: 9px; letter-spacing: 0.12em; padding: 3px 10px; border-radius: 1px; }
-        .tag-best { border: 0.5px solid rgba(120,200,140,0.35); color: rgba(120,200,140,0.8); }
-        .tag-mid  { border: 0.5px solid rgba(200,170,80,0.35);  color: rgba(200,170,80,0.8); }
-        .tag-slow { border: 0.5px solid rgba(200,80,80,0.35);   color: rgba(200,80,80,0.8); }
-
-        .render-system p { font-size: 12px; line-height: 1.9; color: rgba(255,255,255,0.28); }
-
-        /* ---- BOTTOM BAR ---- */
-        #bottom-bar {
-            position: fixed;
-            bottom: 0; left: 0; right: 0;
-            z-index: 100;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 36px;
-            background: rgba(0,0,0,0.35);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            border-top: 0.5px solid rgba(255,255,255,0.07);
-        }
-
-        .bottom-left { font-size: 10px; letter-spacing: 0.15em; color: rgba(255,255,255,0.18); text-transform: uppercase; }
-        .bottom-links { display: flex; gap: 28px; }
-        .bottom-link { font-size: 10px; letter-spacing: 0.14em; color: rgba(255,255,255,0.2); text-transform: uppercase; cursor: pointer; text-decoration: none; transition: color 0.2s; }
-        .bottom-link:hover { color: rgba(255,255,255,0.6); }
-
-        /* ---- ANIMS ---- */
-        @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(14px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
-
-        @media (max-width: 720px) {
-            .section-grid    { grid-template-columns: 1fr; gap: 28px; }
-            .module-grid     { grid-template-columns: repeat(2,1fr); }
-            .stats-row       { grid-template-columns: repeat(2,1fr); }
-            #hero-card       { padding: 36px 24px; }
-            .section-card    { padding: 32px 22px; }
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -497,19 +14,23 @@
 <div id="scanlines"></div>
 <div id="vignette"></div>
 
+<!-- NAV -->
 <nav id="nav">
     <div id="nav-logo">Terminal-Renderer</div>
     <div id="nav-right">
         <span class="nav-badge">v0.4.1</span>
-        <span class="nav-badge active" style="border-color:rgba(120,200,140,0.4);color:rgba(120,200,140,0.8)">C++17 / C++20</span>
+        <span class="nav-badge green">C++17 / C++20</span>
         <div id="nav-links">
+            <a class="nav-link" href="#about">Présentation</a>
             <a class="nav-link" href="#modules">Modules</a>
-            <a class="nav-link" href="#engine">Engine</a>
+            <a class="nav-link" href="#widg">Langage .widg</a>
+            <a class="nav-link" href="#engine">Moteur</a>
             <a class="nav-link" href="#roadmap">Roadmap</a>
         </div>
     </div>
 </nav>
 
+<!-- HERO -->
 <section id="hero">
     <div id="hero-card">
         <div id="hero-eyebrow">Open-source terminal rendering engine</div>
@@ -520,11 +41,12 @@
             <span class="meta-pill active">🟢 En développement</span>
             <span class="meta-pill">C++17+</span>
             <span class="meta-pill">v0.4.1</span>
+            <span class="meta-pill">11 Modules</span>
         </div>
         <p id="hero-sub">Un moteur modulaire de rendu et d'interface terminal — widgets dynamiques, animations fluides, langage .widg</p>
         <div id="hero-cta">
             <a href="#modules" class="btn btn-primary">Explorer →</a>
-            <a href="https://github.com" class="btn btn-ghost">GitHub ↗</a>
+            <a href="https://github.com/RydeProgramation/Terminal-Renderer" class="btn btn-ghost">GitHub ↗</a>
         </div>
     </div>
     <div id="scroll-hint">
@@ -533,265 +55,240 @@
     </div>
 </section>
 
-<div style="position:relative;z-index:10;">
+<div class="sections-wrapper">
 
-    <section class="section" id="about">
-        <div class="section-inner">
-            <div class="section-card">
-                <p class="section-num">01 / Présentation</p>
-                <h2 class="section-title">Le terminal comme<br>canvas graphique</h2>
-                <div class="section-rule"></div>
-                <div class="stats-row">
-                    <div class="stat-box"><div class="stat-value">11</div><div class="stat-label">Modules</div></div>
-                    <div class="stat-box"><div class="stat-value">3</div><div class="stat-label">Render systems</div></div>
-                    <div class="stat-box"><div class="stat-value">0.4.1</div><div class="stat-label">Version</div></div>
-                    <div class="stat-box"><div class="stat-value">5</div><div class="stat-label">Itérations</div></div>
+<!-- 01 / PRÉSENTATION -->
+<section class="section" id="about">
+    <div class="section-inner">
+        <div class="section-card">
+            <p class="section-num">01 / Présentation</p>
+            <h2 class="section-title shimmer-text">Le terminal comme<br>canvas graphique</h2>
+            <div class="section-rule"></div>
+            <div class="stats-row">
+                <div class="stat-box"><div class="stat-value">11</div><div class="stat-label">Modules</div></div>
+                <div class="stat-box"><div class="stat-value">3</div><div class="stat-label">Render systems</div></div>
+                <div class="stat-box"><div class="stat-value">0.4.1</div><div class="stat-label">Version</div></div>
+                <div class="stat-box"><div class="stat-value">5</div><div class="stat-label">Itérations</div></div>
+            </div>
+            <div class="section-grid">
+                <div class="section-text">
+                    <p>Terminal-Renderer est une bibliothèque C++ visant à fournir une infrastructure complète de rendu et d'interaction dans le terminal — widgets textuels dynamiques, animations fluides, langage XML propriétaire, sans dépendances graphiques externes.</p>
+                    <p>Tous les objets sont hiérarchisés selon du polymorphisme partant de <code>trObject</code>, avec la recréation de weak pointers custom pour une gestion mémoire précise et sans dépendance externe.</p>
+                    <p>L'objectif de performance est constant : faire tourner le moteur même sur un grille-pain. Chaque optimisation compte.</p>
+                    <div class="retro-quote">"Quand le terminal devient ton canvas, chaque caractère compte."</div>
                 </div>
-                <div class="section-grid">
-                    <div class="section-text">
-                        <p>Terminal-Renderer est une bibliothèque C++ visant à fournir une infrastructure complète de rendu et d'interaction dans le terminal — widgets textuels dynamiques, animations fluides, langage XML propriétaire, sans dépendances graphiques externes.</p>
-                        <p>Tous les objets sont hiérarchisés selon du polymorphisme partant de <code style="color:rgba(180,200,255,0.7)">trObject</code>, avec la recréation de weak pointers custom.</p>
-                        <div class="retro-quote">"Quand le terminal devient ton canvas, chaque caractère compte."</div>
-                    </div>
-                    <div class="features">
-                        <div class="feature"><h4>Rendu multi-couches</h4><p>Rafraîchissement partiel des zones modifiées — aucun redessin complet inutile. Pipeline optimisé pour tourner même sur matériel limité.</p></div>
-                        <div class="feature"><h4>Delta Time</h4><p>Animations et transitions synchronisées indépendamment du framerate. Déplacements fluides et effets de surbrillance dynamiques.</p></div>
-                        <div class="feature"><h4>Langage .widg</h4><p>Format XML propriétaire pour décrire, charger et prévisualiser des widgets en live sans recompilation.</p></div>
-                    </div>
+                <div class="features">
+                    <div class="feature"><h4>Rendu multi-couches</h4><p>Rafraîchissement partiel des zones modifiées — aucun redessin complet inutile. Pipeline optimisé pour tourner même sur matériel limité.</p></div>
+                    <div class="feature"><h4>Delta Time</h4><p>Animations et transitions synchronisées indépendamment du framerate. Déplacements fluides et effets de surbrillance dynamiques.</p></div>
+                    <div class="feature"><h4>Langage .widg</h4><p>Format XML propriétaire pour décrire, charger et prévisualiser des widgets en live sans recompilation.</p></div>
+                    <div class="feature"><h4>Précompilateur Python</h4><p>Détecte automatiquement les classes héritant de <code>trActor</code> et insère les macros <code>REGISTER_TYPE</code> sans intervention manuelle.</p></div>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <section class="section" id="modules">
-        <div class="section-inner">
-            <div class="section-card">
-                <p class="section-num">02 / Architecture</p>
-                <h2 class="section-title">Architecture<br>modulaire</h2>
-                <div class="section-rule"></div>
-                <div class="module-grid">
-                    <div class="module-item"><div class="module-name">Core</div><div class="module-desc">Structures internes, types fondamentaux — trPair, trMulti…</div><div class="module-status status-ok">🟢 Stable</div></div>
-                    <div class="module-item"><div class="module-name">Engine</div><div class="module-desc">Cœur du moteur, logique principale, communication inter-modules</div><div class="module-status status-ok">🟢 Stable</div></div>
-                    <div class="module-item"><div class="module-name">Render</div><div class="module-desc">Pipeline de rendu, positionnement, superposition</div><div class="module-status status-ok">🟢 Fonctionnel</div></div>
-                    <div class="module-item"><div class="module-name">UI</div><div class="module-desc">Système hiérarchique des widgets, focus, masquage</div><div class="module-status status-ok">🟢 Fonctionnel</div></div>
-                    <div class="module-item"><div class="module-name">Components</div><div class="module-desc">Composants de base — boutons, textes, conteneurs</div><div class="module-status status-ok">🟢 Fonctionnel</div></div>
-                    <div class="module-item"><div class="module-name">InputModule</div><div class="module-desc">Gestion des entrées clavier, mode non-bloquant</div><div class="module-status status-ok">🟢 Stable</div></div>
-                    <div class="module-item"><div class="module-name">World</div><div class="module-desc">Contexte global, gestion de scène et logique environnementale</div><div class="module-status status-ok">🟢 Fonctionnel</div></div>
-                    <div class="module-item"><div class="module-name">LoadModule</div><div class="module-desc">Parsing des fichiers .widg (XML propriétaire)</div><div class="module-status status-wip">🟡 En cours</div></div>
-                    <div class="module-item"><div class="module-name">Tool</div><div class="module-desc">Boîte à outils mathématique et algorithmique</div><div class="module-status status-wip">🟡 En cours</div></div>
-                    <div class="module-item"><div class="module-name">AudioModule</div><div class="module-desc">Gestion des sons et notifications audio</div><div class="module-status status-wip">🟡 À développer</div></div>
-                    <div class="module-item"><div class="module-name">PrintModule</div><div class="module-desc">Impression texte et gestion couleurs ANSI</div><div class="module-status status-bad">🔴 Instable</div></div>
+<!-- 02 / MODULES -->
+<section class="section" id="modules">
+    <div class="section-inner">
+        <div class="section-card">
+            <p class="section-num">02 / Architecture</p>
+            <h2 class="section-title shimmer-text">Architecture<br>modulaire</h2>
+            <div class="section-rule"></div>
+            <div class="module-grid">
+                <div class="module-item"><div class="module-name">Core</div><div class="module-desc">Structures internes, types fondamentaux — <code>trPair</code>, <code>trMulti</code>, <code>trMap</code>…</div><div class="module-status status-ok">🟢 Stable</div></div>
+                <div class="module-item"><div class="module-name">Engine</div><div class="module-desc">Cœur du moteur, logique principale, communication inter-modules</div><div class="module-status status-ok">🟢 Stable</div></div>
+                <div class="module-item"><div class="module-name">Render</div><div class="module-desc">Pipeline de rendu, positionnement, superposition multi-couches</div><div class="module-status status-ok">🟢 Fonctionnel</div></div>
+                <div class="module-item"><div class="module-name">UI</div><div class="module-desc">Système hiérarchique des widgets, focus, masquage (<code>hide/show</code>)</div><div class="module-status status-ok">🟢 Fonctionnel</div></div>
+                <div class="module-item"><div class="module-name">Components</div><div class="module-desc">Composants de base — boutons, textes, conteneurs, barres de progression</div><div class="module-status status-ok">🟢 Fonctionnel</div></div>
+                <div class="module-item"><div class="module-name">InputModule</div><div class="module-desc">Gestion des entrées clavier, tampon multithread, mode non-bloquant</div><div class="module-status status-ok">🟢 Stable</div></div>
+                <div class="module-item"><div class="module-name">World</div><div class="module-desc">Contexte global, gestion de scène et logique environnementale</div><div class="module-status status-ok">🟢 Fonctionnel</div></div>
+                <div class="module-item"><div class="module-name">LoadModule</div><div class="module-desc">Parsing des fichiers .widg (XML propriétaire), prévisualisation live</div><div class="module-status status-wip">🟡 En cours</div></div>
+                <div class="module-item"><div class="module-name">Tool</div><div class="module-desc">Boîte à outils mathématique, algorithmique et utilitaires divers</div><div class="module-status status-wip">🟡 En cours</div></div>
+                <div class="module-item"><div class="module-name">AudioModule</div><div class="module-desc">Gestion des sons et notifications audio dans le terminal</div><div class="module-status status-wip">🟡 À développer</div></div>
+                <div class="module-item"><div class="module-name">PrintModule</div><div class="module-desc">Impression texte et gestion couleurs ANSI complète</div><div class="module-status status-bad">🔴 Instable</div></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 03 / .WIDG -->
+<section class="section" id="widg">
+    <div class="section-inner">
+        <div class="section-card">
+            <p class="section-num">03 / Langage .widg</p>
+            <h2 class="section-title shimmer-text">Format XML<br>propriétaire</h2>
+            <div class="section-rule"></div>
+            <div class="section-grid" style="margin-bottom:44px;">
+                <div class="section-text">
+                    <p>Chaque widget peut être décrit via un fichier <code>.widg</code> utilisant un XML personnalisé avec des balises avancées. Ces balises permettent de définir les propriétés, la position, le contenu et les couleurs d'un widget.</p>
+                    <p>L'un des atouts majeurs du format : la modification en direct. En appuyant sur <code>F5/F6/F8/F9/F10</code> dans l'aperçu, les changements effectués dans le fichier XML apparaissent immédiatement — sans recompiler.</p>
+                    <div class="retro-quote">Édition live · Animations · Séquences d'échappement · Couleurs ANSI par intervalle</div>
+                </div>
+                <div class="features">
+                    <div class="feature"><h4>Chargement dynamique</h4><p>Ouvrir et visualiser n'importe quel fichier .widg seul avec toutes ses animations et couleurs, en isolation complète.</p></div>
+                    <div class="feature"><h4>Débogage en temps réel</h4><p>Modifier le XML et voir les changements instantanément — idéal pour les widgets animés complexes.</p></div>
+                    <div class="feature"><h4>Animations frame-by-frame</h4><p>Chaque widget <code>trText</code> supporte des conteneurs d'animations avec frames horodatées et transitions automatiques.</p></div>
+                </div>
+            </div>
+
+            <table class="widg-table">
+                <thead>
+                    <tr>
+                        <th>Élément XML</th>
+                        <th>Attribut(s)</th>
+                        <th>Type C++</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>trObject</td><td>type</td><td>trObject*</td><td>Définit le type de l'objet à créer via <code>trObjectFactory</code></td></tr>
+                    <tr><td>trObject</td><td>name</td><td>trActor*</td><td>Nom de l'objet (s'applique si c'est un acteur/pawn)</td></tr>
+                    <tr><td>trPawn</td><td>—</td><td>trPawn*</td><td>Objet de type Pawn, utilisé pour la position et le type de position relative</td></tr>
+                    <tr><td>Position</td><td>x, y</td><td>int</td><td>Position du pawn à l'écran en colonnes / lignes</td></tr>
+                    <tr><td>RelativePositionType</td><td>RpType</td><td>enum</td><td>Ancrage relatif : TopLeft, MiddleCenter, BottomRight…</td></tr>
+                    <tr><td>trWidget</td><td>—</td><td>trWidget*</td><td>Widget pouvant contenir du texte ou des couleurs</td></tr>
+                    <tr><td>Size</td><td>height, width</td><td>int</td><td>Taille du widget en colonnes / lignes</td></tr>
+                    <tr><td>Color</td><td>foreground, background</td><td>uint8_t R,G,B</td><td>Couleur du texte et/ou du fond du widget</td></tr>
+                    <tr><td>Content</td><td>—</td><td>std::wstring</td><td>Contenu textuel du widget (peut être multi-lignes)</td></tr>
+                    <tr><td>Line</td><td>Content</td><td>std::wstring</td><td>Ligne de texte normale</td></tr>
+                    <tr><td>LineRaw</td><td>Content</td><td>std::wstring</td><td>Ligne avec séquences d'échappement (\n, \t…)</td></tr>
+                    <tr><td>CaseColor</td><td>—</td><td>unordered_map</td><td>Définition des couleurs pour des intervalles spécifiques dans le texte</td></tr>
+                    <tr><td>Case</td><td>Start, End, foreground, background</td><td>int / uint8_t</td><td>Intervalle d'un style ANSI appliqué à une partie du texte</td></tr>
+                    <tr><td>trText</td><td>—</td><td>trText*</td><td>Texte animé ou statique, supporte Animation, RawFrame et FrameAdd</td></tr>
+                    <tr><td>Animation</td><td>—</td><td>vector&lt;trPair&gt;</td><td>Conteneur de frames animées horodatées</td></tr>
+                    <tr><td>RawFrame</td><td>number, time</td><td>int</td><td>Frame brute avec durée en millisecondes</td></tr>
+                    <tr><td>FrameAdd</td><td>number, time, onLastFrame</td><td>int / bool</td><td>Ajout de frame sur le texte existant ou en fin d'animation</td></tr>
+                    <tr><td>OldContent</td><td>—</td><td>std::wstring</td><td>Texte existant avant ajout ou effacement</td></tr>
+                    <tr><td>Add</td><td>position</td><td>int</td><td>Position où insérer du texte dans OldContent</td></tr>
+                    <tr><td>Erase</td><td>Start, End</td><td>int</td><td>Supprime un intervalle de texte dans OldContent</td></tr>
+                </tbody>
+            </table>
+
+            <div class="widg-example">
+<span class="xml-cmmt">&lt;!-- Exemple minimal de fichier .widg --&gt;</span>
+<br><span class="xml-tag">&lt;trObject</span> <span class="xml-attr">type</span>=<span class="xml-val">"trPawn"</span> <span class="xml-attr">name</span>=<span class="xml-val">"MyWidget"</span><span class="xml-tag">&gt;</span>
+<br>&nbsp;&nbsp;<span class="xml-tag">&lt;Position</span> <span class="xml-attr">x</span>=<span class="xml-val">"10"</span> <span class="xml-attr">y</span>=<span class="xml-val">"5"</span><span class="xml-tag">/&gt;</span>
+<br>&nbsp;&nbsp;<span class="xml-tag">&lt;RelativePositionType</span> <span class="xml-attr">RpType</span>=<span class="xml-val">"MiddleCenter"</span><span class="xml-tag">/&gt;</span>
+<br>&nbsp;&nbsp;<span class="xml-tag">&lt;trWidget&gt;</span>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="xml-tag">&lt;Size</span> <span class="xml-attr">height</span>=<span class="xml-val">"3"</span> <span class="xml-attr">width</span>=<span class="xml-val">"20"</span><span class="xml-tag">/&gt;</span>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="xml-tag">&lt;Color</span> <span class="xml-attr">foreground</span>=<span class="xml-val">"255 255 255"</span> <span class="xml-attr">background</span>=<span class="xml-val">"0 0 0"</span><span class="xml-tag">/&gt;</span>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="xml-tag">&lt;Content&gt;</span>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="xml-tag">&lt;Line</span> <span class="xml-attr">Content</span>=<span class="xml-val">"Hello, Terminal!"</span><span class="xml-tag">/&gt;</span>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="xml-tag">&lt;/Content&gt;</span>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="xml-tag">&lt;CaseColor&gt;</span>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="xml-tag">&lt;Case</span> <span class="xml-attr">Start</span>=<span class="xml-val">"0"</span> <span class="xml-attr">End</span>=<span class="xml-val">"5"</span> <span class="xml-attr">foreground</span>=<span class="xml-val">"120 200 140"</span><span class="xml-tag">/&gt;</span>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="xml-tag">&lt;/CaseColor&gt;</span>
+<br>&nbsp;&nbsp;<span class="xml-tag">&lt;/trWidget&gt;</span>
+<br><span class="xml-tag">&lt;/trObject&gt;</span>
+            </div>
+            <div class="widg-note">
+                ⚠️ Le tableau n'est pas complet — le format .widg est encore en développement actif. Contacter l'auteur pour plus d'informations sur les balises avancées et les fonctionnalités à venir.
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 04 / SÉQUENCES -->
+<section class="section" id="sequences">
+    <div class="section-inner">
+        <div class="section-card">
+            <p class="section-num">04 / Caractères spéciaux</p>
+            <h2 class="section-title shimmer-text">Gestion des<br>séquences</h2>
+            <div class="section-rule"></div>
+            <div class="section-grid">
+                <div class="section-text">
+                    <p>Le moteur gère nativement un ensemble de séquences d'échappement et de caractères spéciaux. Chacun peut avoir des effets visuels imprévisibles selon le terminal cible — leur comportement est documenté et maîtrisé dans le pipeline de rendu.</p>
+                    <p>La gestion de ces cas est particulièrement critique dans le mode <code>RENDER_SYSTEM</code> où tout le rendu passe par un buffer complet avant affichage — les séquences sont résolues en pré-affichage.</p>
+                    <div class="retro-quote">Compatibilité Windows / Linux testée — comportements OS-dépendants identifiés et gérés.</div>
+                </div>
+                <div class="seq-grid">
+                    <div class="seq-item"><div class="seq-code">\n</div><div class="seq-desc">Saut de ligne — peut casser la mise en forme si non maîtrisé</div></div>
+                    <div class="seq-item"><div class="seq-code">\r</div><div class="seq-desc">Retour chariot — peut écraser une ligne existante selon l'OS</div></div>
+                    <div class="seq-item"><div class="seq-code">\t</div><div class="seq-desc">Tabulation horizontale — espacement variable selon le terminal</div></div>
+                    <div class="seq-item"><div class="seq-code">\b</div><div class="seq-desc">Retour arrière — effet visuel imprévisible, à surveiller</div></div>
+                    <div class="seq-item"><div class="seq-code">\v</div><div class="seq-desc">Tabulation verticale — peut désaligner le rendu</div></div>
+                    <div class="seq-item"><div class="seq-code">\f</div><div class="seq-desc">Saut de page — rarement utilisé mais géré</div></div>
+                    <div class="seq-item"><div class="seq-code">\0x</div><div class="seq-desc">Caractère vide — à surveiller dans les buffers</div></div>
+                    <div class="seq-item"><div class="seq-code">\\</div><div class="seq-desc">Barre oblique inversée — doit être correctement échappée</div></div>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <section class="section" id="engine">
-        <div class="section-inner">
-            <div class="section-card">
-                <p class="section-num">03 / Moteur de rendu</p>
-                <h2 class="section-title">Trois systèmes<br>de rendu</h2>
-                <div class="section-rule"></div>
-                <div class="section-grid">
-                    <div class="render-systems">
-                        <div class="render-system"><div class="render-system-header"><h4>Direct System</h4><span class="render-tag tag-slow">Lent</span></div><p>Chaque caractère écrit directement sur le terminal. Simple mais très lent — provoque lag et bugs visuels à grande échelle.</p></div>
-                        <div class="render-system"><div class="render-system-header"><h4>Buffer System</h4><span class="render-tag tag-mid">Moyen</span></div><p>Tout est écrit dans un ostringstream tampon avant affichage. Fluide pour peu d'actions, instable avec de nombreux changements simultanés.</p></div>
-                        <div class="render-system"><div class="render-system-header"><h4>Render System</h4><span class="render-tag tag-best">Optimal</span></div><p>Buffer complet sans toucher directement au terminal. Le plus performant — gestion complète des positions, superpositions et modifications pré-affichage.</p></div>
+<!-- 05 / MOTEUR -->
+<section class="section" id="engine">
+    <div class="section-inner">
+        <div class="section-card">
+            <p class="section-num">05 / Moteur de rendu</p>
+            <h2 class="section-title shimmer-text">Trois systèmes<br>de rendu</h2>
+            <div class="section-rule"></div>
+            <div class="section-grid">
+                <div class="render-systems">
+                    <div class="render-system">
+                        <div class="render-system-header"><h4>Direct System</h4><span class="render-tag tag-slow">Lent</span></div>
+                        <p>Chaque caractère écrit directement sur le terminal. Simple mais très lent — provoque lag et bugs visuels à grande échelle.</p>
                     </div>
-                    <div class="section-text">
-                        <p>Le moteur supporte un système de couleurs ANSI complet — foreground, background, surbrillance, transitions dynamiques — sur tous les widgets.</p>
-                        <p>Un précompilateur Python parcourt automatiquement les fichiers .h/.cpp pour détecter les classes héritant de <code style="color:rgba(180,200,255,0.7)">trActor</code> et insérer les macros <code style="color:rgba(180,200,255,0.7)">REGISTER_TYPE</code> sans intervention manuelle.</p>
-                        <p>Le système de collision entre widgets permet de récupérer les intersections et définir les réactions souhaitées.</p>
-                        <div class="retro-quote">Édition de widgets en live via F5/F6/F8/F9/F10 — sans recompilation.</div>
+                    <div class="render-system">
+                        <div class="render-system-header"><h4>Buffer System</h4><span class="render-tag tag-mid">Moyen</span></div>
+                        <p>Tout est écrit dans un <code>ostringstream</code> tampon avant affichage. Fluide pour peu d'actions, instable avec de nombreux changements simultanés.</p>
                     </div>
+                    <div class="render-system">
+                        <div class="render-system-header"><h4>Render System</h4><span class="render-tag tag-best">Optimal</span></div>
+                        <p>Buffer complet sans toucher directement au terminal. Le plus performant — gestion complète des positions, superpositions et modifications pré-affichage.</p>
+                    </div>
+                </div>
+                <div class="section-text">
+                    <p>Le moteur supporte un système de couleurs ANSI complet — foreground, background, surbrillance, transitions dynamiques — sur tous les widgets.</p>
+                    <p>Un précompilateur Python parcourt automatiquement les fichiers <code>.h/.cpp</code> pour détecter les classes héritant de <code>trActor</code> et insérer les macros <code>REGISTER_TYPE</code> sans intervention manuelle. Il évite les duplications et signale les erreurs de configuration.</p>
+                    <p>Le système de collision entre widgets permet de récupérer les intersections et de définir les réactions souhaitées — overlap, rebond, masquage prioritaire.</p>
+                    <div class="retro-quote">Édition de widgets en live via F5 / F6 / F8 / F9 / F10 — sans recompilation.</div>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <section class="section" id="roadmap">
-        <div class="section-inner">
-            <div class="section-card">
-                <p class="section-num">04 / Roadmap</p>
-                <h2 class="section-title">Prochaines<br>étapes</h2>
-                <div class="section-rule"></div>
-                <div class="section-grid">
-                    <div class="features">
-                        <div class="feature"><h4>Système souris</h4><p>Détection des positions, clics et événements hover directement dans le terminal.</p></div>
-                        <div class="feature"><h4>API Audio</h4><p>Effets sonores et notifications audio intégrés au moteur de widgets.</p></div>
-                        <div class="feature"><h4>Projets exemples</h4><p>Simulation de fractales, jeu T-Rex, mini UI complète avec widgets interactifs.</p></div>
-                        <div class="feature"><h4>Dépôt template</h4><p>Repo clé en main pour démarrer son propre projet Terminal-Renderer.</p></div>
-                    </div>
-                    <div class="section-text">
-                        <p>La vision long terme est de devenir un moteur complet de rendu console open-source, modulable et extensible — inspiré des architectures d'Unreal Engine mais conçu pour un environnement purement texte.</p>
-                        <p>L'objectif de performance reste constant : faire tourner le moteur même sur un grille-pain. Chaque optimisation compte.</p>
-                        <div class="retro-quote">by MOHAMED.B — C++17/20 — v0.4.1 🚧</div>
-                    </div>
+<!-- 06 / ROADMAP -->
+<section class="section" id="roadmap">
+    <div class="section-inner">
+        <div class="section-card">
+            <p class="section-num">06 / Roadmap</p>
+            <h2 class="section-title shimmer-text">Prochaines<br>étapes</h2>
+            <div class="section-rule"></div>
+            <div class="section-grid">
+                <div class="features">
+                    <div class="feature"><h4>Système souris</h4><p>Détection des positions, clics et événements hover directement dans le terminal.</p></div>
+                    <div class="feature"><h4>API Audio</h4><p>Effets sonores et notifications audio intégrés au moteur de widgets via AudioModule.</p></div>
+                    <div class="feature"><h4>Projets exemples</h4><p>Simulation de fractales, jeu T-Rex, mini UI complète avec widgets interactifs.</p></div>
+                    <div class="feature"><h4>Dépôt template</h4><p>Repo clé en main pour démarrer son propre projet Terminal-Renderer en quelques minutes.</p></div>
+                    <div class="feature"><h4>Documentation</h4><p>Documentation interne complète Doxygen + Markdown détaillé pour chaque module et balise .widg.</p></div>
+                    <div class="feature"><h4>Profilage mémoire</h4><p>Système de profilage mémoire et CPU intégré pour diagnostiquer les points chauds en production.</p></div>
+                </div>
+                <div class="section-text">
+                    <p>La vision long terme est de devenir un moteur complet de rendu console open-source, modulable et extensible — inspiré des architectures d'Unreal Engine mais conçu pour un environnement purement texte.</p>
+                    <p>L'objectif de performance reste constant : faire tourner le moteur même sur un grille-pain. Chaque optimisation compte, chaque allocation est mesurée.</p>
+                    <p>Le module <code>ContentReorganisation()</code> est en cours d'optimisation pour réduire les recalculs inutiles lors de mises à jour partielles du buffer.</p>
+                    <div class="retro-quote">by MOHAMED.B — C++17/20 — v0.4.1 🚧</div>
                 </div>
             </div>
         </div>
-    </section>
-</div>
+    </div>
+</section>
 
+</div><!-- /sections-wrapper -->
+
+<!-- BOTTOM BAR -->
 <div id="bottom-bar">
     <span class="bottom-left">Terminal-Renderer — v0.4.1 — MOHAMED.B</span>
     <div class="bottom-links">
-        <a class="bottom-link" href="#">GitHub</a>
+        <a class="bottom-link" href="https://github.com/RydeProgramation/Terminal-Renderer">GitHub</a>
         <a class="bottom-link" href="#">Documentation</a>
         <a class="bottom-link" href="#">Licence</a>
     </div>
 </div>
 
-<script>
-(function () {
-
-    /* ---- ASCII CANVAS ---- */
-    const canvas = document.getElementById('ascii-canvas');
-    const ctx    = canvas.getContext('2d');
-
-    const CHARS_RICH  = '░▒▓│┤╡╢╖╕╣║╗╝╜╛┐└┴┬├─┼╞╟╚╔╩╦╠═╬╧╨╤╥╙╘╒╓╫╪┘┌█▄▌▐▀αßΓπΣσµτΦΘΩδ∞φε∩≡±≥≤⌠⌡÷≈°∙·√ⁿ²';
-    const CHARS_PUNCT = '.,\';:!?/\\|[]{}()<>@#$%^&*-_=+~`"';
-    const ALL_CHARS   = CHARS_RICH + CHARS_PUNCT;
-    const MAX_COLS = 160, MAX_ROWS = 90;
-
-    let W, H, cols, rows, grid, ages, effectiveFW, effectiveFH;
-    let mouseX = -999, mouseY = -999, hasMoused = false;
-    let t = 0;
-
-    function resize() {
-        W = window.innerWidth; H = window.innerHeight;
-        canvas.width = W; canvas.height = H;
-        cols = Math.min(Math.ceil(W / 7), MAX_COLS);
-        rows = Math.min(Math.ceil(H / 13), MAX_ROWS);
-        effectiveFW = W / cols;
-        effectiveFH = H / rows;
-        grid = []; ages = [];
-        for (let r = 0; r < rows; r++) {
-            grid[r] = []; ages[r] = [];
-            for (let c = 0; c < cols; c++) {
-                grid[r][c] = ALL_CHARS[Math.floor(Math.random() * ALL_CHARS.length)];
-                ages[r][c]  = Math.random() * 60;
-            }
-        }
-    }
-
-    window.addEventListener('mousemove', e => { mouseX = e.clientX; mouseY = e.clientY; hasMoused = true; });
-    window.addEventListener('mouseleave', () => { hasMoused = false; });
-
-    function noise(x, y, t) {
-        return Math.sin(x * 0.13 + t * 0.7) * Math.cos(y * 0.11 - t * 0.5)
-             + Math.sin((x + y) * 0.08 + t * 0.3)
-             + Math.sin(x * 0.05 - t * 0.2) * Math.cos(y * 0.17 + t * 0.4);
-    }
-
-    function draw() {
-        t += 0.016;
-        ctx.clearRect(0, 0, W, H);
-        const fontSize = Math.max(7, Math.floor(effectiveFH * 0.82));
-        ctx.font = `${fontSize}px 'IBM Plex Mono','Courier New',monospace`;
-        ctx.textBaseline = 'top';
-        const mc = mouseX / effectiveFW, mr = mouseY / effectiveFH;
-
-        for (let r = 0; r < rows; r++) {
-            for (let c = 0; c < cols; c++) {
-                const n = noise(c, r, t);
-                const intensity = (n + 2) / 4;
-                const distCenter = Math.hypot(c - cols/2, r - rows/2);
-                const centerPull = Math.max(0, 1 - distCenter / (Math.min(cols,rows)*0.42));
-                let mousePull = 0;
-                if (hasMoused) {
-                    const dm = Math.hypot(c - mc, r - mr);
-                    mousePull = Math.max(0, 1 - dm / 10);
-                }
-                ages[r][c] += 0.35 + n*0.25 + mousePull*1.8 + centerPull*0.4;
-                const thresh = 18 + Math.sin(c*0.2 + r*0.15 + t) * 8;
-                if (ages[r][c] > thresh) { ages[r][c] = 0; grid[r][c] = ALL_CHARS[Math.floor(Math.random() * ALL_CHARS.length)]; }
-
-                const alpha = Math.max(0.025, Math.min(0.6, intensity*0.27 + mousePull*0.14 + centerPull*0.20));
-
-                if (intensity > 0.80 || mousePull > 0.65) {
-                    ctx.fillStyle = `rgba(255,252,240,${Math.min(alpha*1.8, 0.9)})`;
-                } else if (intensity > 0.62) {
-                    ctx.fillStyle = `rgba(230,235,255,${alpha*1.25})`;
-                } else {
-                    const wR = Math.floor(140 + Math.sin(c*0.18 + t*1.1)*40);
-                    const wG = Math.floor(175 + Math.sin(r*0.14 - t*0.9)*30);
-                    const wB = Math.floor(195 + Math.sin(c*0.09 + r*0.12 + t)*25);
-                    ctx.fillStyle = `rgba(${wR},${wG},${wB},${alpha})`;
-                }
-                ctx.fillText(grid[r][c], c * effectiveFW, r * effectiveFH);
-            }
-        }
-        requestAnimationFrame(draw);
-    }
-
-    resize();
-    window.addEventListener('resize', resize);
-    requestAnimationFrame(draw);
-
-    /* ---- TYPEWRITER ---- */
-    const elTerminal  = document.getElementById('title-terminal');
-    const elRenderer  = document.getElementById('title-renderer');
-    const elCursor    = document.getElementById('title-cursor');
-    const fullText    = 'Terminal-Renderer';
-    const splitAt     = 'Terminal-'.length;
-    let   idx         = 0;
-    const speed       = 80; // ms par caractère
-
-    function typeNext() {
-        if (idx <= splitAt) {
-            elTerminal.textContent = fullText.slice(0, idx);
-        } else {
-            elTerminal.textContent = fullText.slice(0, splitAt);
-            elRenderer.textContent = fullText.slice(splitAt, idx);
-        }
-        idx++;
-        if (idx <= fullText.length) {
-            setTimeout(typeNext, speed);
-        } else {
-            // Terminé — activer le shimmer sur "Renderer" et cacher le curseur
-            setTimeout(() => {
-                elRenderer.classList.add('shimmer');
-                elCursor.style.display = 'none';
-            }, 400);
-        }
-    }
-
-    // Démarrer après l'animation fadeUp de la card
-    setTimeout(typeNext, 900);
-
-    /* ---- 3D TILT SUR LES MODULE CARDS ---- */
-    const MAX_TILT = 14; // degrés max
-    const PERSPECTIVE = 600;
-
-    document.querySelectorAll('.module-item').forEach(card => {
-        card.addEventListener('mousemove', e => {
-            const rect  = card.getBoundingClientRect();
-            const cx    = rect.left + rect.width  / 2;
-            const cy    = rect.top  + rect.height / 2;
-            const dx    = (e.clientX - cx) / (rect.width  / 2); // -1 → +1
-            const dy    = (e.clientY - cy) / (rect.height / 2); // -1 → +1
-
-            const rotY  =  dx * MAX_TILT;
-            const rotX  = -dy * MAX_TILT;
-
-            card.style.transform = `perspective(${PERSPECTIVE}px) rotateX(${rotX}deg) rotateY(${rotY}deg) translateZ(10px)`;
-            card.style.transition = 'transform 0.08s ease, border-color 0.3s ease, box-shadow 0.3s ease';
-
-            // Shine — position relative en %
-            const mx = ((e.clientX - rect.left) / rect.width  * 100).toFixed(1) + '%';
-            const my = ((e.clientY - rect.top)  / rect.height * 100).toFixed(1) + '%';
-            card.style.setProperty('--mx', mx);
-            card.style.setProperty('--my', my);
-        });
-
-        card.addEventListener('mouseleave', () => {
-            card.style.transform = `perspective(${PERSPECTIVE}px) rotateX(0deg) rotateY(0deg) translateZ(0px)`;
-            card.style.transition = 'transform 0.5s ease, border-color 0.3s ease, box-shadow 0.3s ease';
-        });
-    });
-
-})();
-</script>
+<script src="script.js"></script>
 </body>
 </html>
