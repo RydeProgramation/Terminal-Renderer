@@ -4,7 +4,7 @@
 
 > **Auteur :** MOHAMED.B
 
-> **Langage :** C++17+ / C++20  
+> **Langage :** C++20 / C++23  
 > **Version :** 0.4.1 (Prototype avancé)  
 > **Statut :** En développement 🚧  
 > **Objectif :** Créer un moteur modulaire pour interfaces terminal, avec rendu, widgets et langage de définition `.widg`.
