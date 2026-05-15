@@ -38,12 +38,12 @@ body {
 .shimmer-text {
     background: linear-gradient(
         92deg,
-        rgba(255, 255, 255, 0.95)  0%,
+        rgba(217, 240, 234, 0.95)  0%,
         rgba(210, 225, 255, 0.90) 22%,
-        rgba(255, 215, 255, 0.90) 40%,
+        rgba(255, 212, 255, 0.9) 40%,
         rgba(200, 240, 255, 0.90) 58%,
         rgba(255, 225, 200, 0.90) 76%,
-        rgba(255, 255, 255, 0.95) 100%
+        rgba(217, 240, 234, 0.95) 100%
     );
     background-size: 200% auto;
     -webkit-background-clip: text;

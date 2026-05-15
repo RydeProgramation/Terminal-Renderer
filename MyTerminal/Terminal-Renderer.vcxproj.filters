@@ -16,6 +16,9 @@
     <Filter Include="Tool">
       <UniqueIdentifier>{1c56a03f-0fcd-4c4d-b2d1-e05320f402c6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Exemple T-REX GAME">
+      <UniqueIdentifier>{dbc32e61-ef12-4ca7-859f-257eb42c4604}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Image Include="MyTerminal\icon.ico">
@@ -42,6 +45,9 @@
     </ClInclude>
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Trexgame.hpp">
+      <Filter>Exemple T-REX GAME</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

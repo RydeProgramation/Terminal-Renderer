@@ -157,6 +157,7 @@
     <ClInclude Include="Header.h" />
     <ClInclude Include="MyUI.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="Trexgame.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Pre_Build.py" />
