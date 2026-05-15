@@ -142,6 +142,15 @@ body {
     line-height: 1; color: #fff; min-height: 1.2em;
 }
 
+#title-renderer {
+    cursor: default;
+    display: inline;
+    transition: filter 0.35s ease;
+}
+#title-renderer:hover {
+    filter: brightness(1.35) drop-shadow(0 0 18px rgba(200, 215, 255, 0.55)) drop-shadow(0 0 40px rgba(220, 190, 255, 0.30));
+}
+
 #title-cursor {
     display: inline-block; width: 3px;
     background: rgba(255, 255, 255, 0.7); margin-left: 3px;
@@ -402,9 +411,26 @@ code {
 .render-system p { font-size: 14px; line-height: 1.9; color: rgba(255,255,255,0.28); }
 
 /* ══ .WIDG TABLE ══ */
+.widg-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-top: 8px;
+    /* fade on right edge hints at horizontal scroll on mobile */
+    mask-image: linear-gradient(to right, black 88%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, black 88%, transparent 100%);
+    border-radius: 1px;
+}
+@media (min-width: 900px) {
+    .widg-table-wrap {
+        mask-image: none;
+        -webkit-mask-image: none;
+    }
+}
+
 .widg-table {
-    width: 100%; border-collapse: collapse;
-    margin-top: 8px; font-size: 14px;
+    width: 100%; min-width: 540px;
+    border-collapse: collapse; font-size: 14px;
 }
 .widg-table th {
     font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
