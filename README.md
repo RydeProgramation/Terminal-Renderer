@@ -1,6 +1,6 @@
-# [LE SITE INTERNET](https://rydeprogramation.github.io/Terminal-Renderer/) <---- CLIQUE !!!
+# [LE SITE INTERNET](https://rydeoff.github.io/Terminal-Renderer/) <---- CLIQUE !!!
 
-# 🧱 [Terminal-Renderer](https://rydeprogramation.github.io/Terminal-Renderer/) — Projet C++ de Rendu et Interface Terminal
+# 🧱 [Terminal-Renderer](https://rydeoff.github.io/Terminal-Renderer/) — Projet C++ de Rendu et Interface Terminal
 
 > **Auteur :** MOHAMED.B
 
