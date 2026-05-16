@@ -19,7 +19,7 @@
     <div id="nav-logo">Terminal-Renderer</div>
     <div id="nav-right">
         <span class="nav-badge">v0.4.1</span>
-        <span class="nav-badge green">C++20 / C++23</span>
+        <span class="nav-badge green">C++17 / C++20</span>
         <div id="nav-links">
             <a class="nav-link" href="#about">Présentation</a>
             <a class="nav-link" href="#modules">Modules</a>
@@ -39,7 +39,7 @@
         </h1>
         <div id="hero-meta">
             <span class="meta-pill active">🟢 En développement</span>
-            <span class="meta-pill">C++23</span>
+            <span class="meta-pill">C++17+</span>
             <span class="meta-pill">v0.4.1</span>
             <span class="meta-pill">11 Modules</span>
         </div>
@@ -168,19 +168,30 @@
             </div><!-- /widg-table-wrap -->
 
             <div class="widg-example">
-<span class="xml-cmmt">&lt;!-- Exemple minimal de fichier .widg --&gt;</span>
-<br><span class="xml-tag">&lt;trObject</span> <span class="xml-attr">type</span>=<span class="xml-val">"trPawn"</span> <span class="xml-attr">name</span>=<span class="xml-val">"MyWidget"</span><span class="xml-tag">&gt;</span>
-<br>&nbsp;&nbsp;<span class="xml-tag">&lt;Position</span> <span class="xml-attr">x</span>=<span class="xml-val">"10"</span> <span class="xml-attr">y</span>=<span class="xml-val">"5"</span><span class="xml-tag">/&gt;</span>
-<br>&nbsp;&nbsp;<span class="xml-tag">&lt;RelativePositionType</span> <span class="xml-attr">RpType</span>=<span class="xml-val">"MiddleCenter"</span><span class="xml-tag">/&gt;</span>
+<span class="xml-cmmt">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
+<br><span class="xml-tag">&lt;trObject</span> <span class="xml-attr">type</span>=<span class="xml-val">"trWidget"</span> <span class="xml-attr">name</span>=<span class="xml-val">"Hello1"</span><span class="xml-tag">&gt;</span>
+<br>&nbsp;&nbsp;<span class="xml-tag">&lt;Properties&gt;</span>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="xml-tag">&lt;Property</span> <span class="xml-attr">name</span>=<span class="xml-val">"Activate"</span>  <span class="xml-attr">type</span>=<span class="xml-val">"bool"</span><span class="xml-tag">&gt;</span>true<span class="xml-tag">&lt;/Property&gt;</span>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="xml-tag">&lt;Property</span> <span class="xml-attr">name</span>=<span class="xml-val">"Protected"</span> <span class="xml-attr">type</span>=<span class="xml-val">"bool"</span><span class="xml-tag">&gt;</span>false<span class="xml-tag">&lt;/Property&gt;</span>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="xml-tag">&lt;Property</span> <span class="xml-attr">name</span>=<span class="xml-val">"ToChange"</span>  <span class="xml-attr">type</span>=<span class="xml-val">"bool"</span><span class="xml-tag">&gt;</span>true<span class="xml-tag">&lt;/Property&gt;</span>
+<br>&nbsp;&nbsp;<span class="xml-tag">&lt;/Properties&gt;</span>
+<br>&nbsp;&nbsp;<span class="xml-tag">&lt;trActor&gt;</span>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="xml-tag">&lt;APPLY_Implementation</span> <span class="xml-attr">Code</span>=<span class="xml-val">""</span> <span class="xml-tag">/&gt;</span>
+<br>&nbsp;&nbsp;<span class="xml-tag">&lt;/trActor&gt;</span>
+<br>&nbsp;&nbsp;<span class="xml-tag">&lt;trPawn&gt;</span>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="xml-tag">&lt;Position</span> <span class="xml-attr">x</span>=<span class="xml-val">"100"</span> <span class="xml-attr">y</span>=<span class="xml-val">"-1"</span> <span class="xml-tag">/&gt;</span>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="xml-tag">&lt;RelativePositionType</span> <span class="xml-attr">RpType</span>=<span class="xml-val">"MiddleCenter"</span> <span class="xml-tag">/&gt;</span>
+<br>&nbsp;&nbsp;<span class="xml-tag">&lt;/trPawn&gt;</span>
 <br>&nbsp;&nbsp;<span class="xml-tag">&lt;trWidget&gt;</span>
-<br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="xml-tag">&lt;Size</span> <span class="xml-attr">height</span>=<span class="xml-val">"3"</span> <span class="xml-attr">width</span>=<span class="xml-val">"20"</span><span class="xml-tag">/&gt;</span>
-<br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="xml-tag">&lt;Color</span> <span class="xml-attr">foreground</span>=<span class="xml-val">"255 255 255"</span> <span class="xml-attr">background</span>=<span class="xml-val">"0 0 0"</span><span class="xml-tag">/&gt;</span>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="xml-tag">&lt;Size</span> <span class="xml-attr">width</span>=<span class="xml-val">"22"</span> <span class="xml-attr">height</span>=<span class="xml-val">"5"</span> <span class="xml-tag">/&gt;</span>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="xml-tag">&lt;Content&gt;</span>
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="xml-tag">&lt;Line</span> <span class="xml-attr">Content</span>=<span class="xml-val">"Hello, Terminal!"</span><span class="xml-tag">/&gt;</span>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="xml-tag">&lt;Line</span> <span class="xml-attr">Content</span>=<span class="xml-val">" _   _      _ _"</span> <span class="xml-tag">/&gt;</span>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="xml-tag">&lt;Line</span> <span class="xml-attr">Content</span>=<span class="xml-val">"| | | | ___| | | ___"</span> <span class="xml-tag">/&gt;</span>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="xml-tag">&lt;Line</span> <span class="xml-attr">Content</span>=<span class="xml-val">"| |_| |/ _ \ | |/ _ \"</span> <span class="xml-tag">/&gt;</span>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="xml-tag">&lt;Line</span> <span class="xml-attr">Content</span>=<span class="xml-val">"|  _  |  __/ | | (_) |"</span> <span class="xml-tag">/&gt;</span>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="xml-tag">&lt;Line</span> <span class="xml-attr">Content</span>=<span class="xml-val">"|_| |_|\___|_|_|\___/"</span> <span class="xml-tag">/&gt;</span>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="xml-tag">&lt;/Content&gt;</span>
-<br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="xml-tag">&lt;CaseColor&gt;</span>
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="xml-tag">&lt;Case</span> <span class="xml-attr">Start</span>=<span class="xml-val">"0"</span> <span class="xml-attr">End</span>=<span class="xml-val">"5"</span> <span class="xml-attr">foreground</span>=<span class="xml-val">"120 200 140"</span><span class="xml-tag">/&gt;</span>
-<br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="xml-tag">&lt;/CaseColor&gt;</span>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="xml-tag">&lt;Color</span> <span class="xml-attr">foreground</span>=<span class="xml-val">"#9cf493ff"</span> <span class="xml-attr">background</span>=<span class="xml-val">"#052d0aff"</span> <span class="xml-tag">/&gt;</span>
 <br>&nbsp;&nbsp;<span class="xml-tag">&lt;/trWidget&gt;</span>
 <br><span class="xml-tag">&lt;/trObject&gt;</span>
             </div>
@@ -272,7 +283,7 @@
                     <p>La vision long terme est de devenir un moteur complet de rendu console open-source, modulable et extensible — inspiré des architectures d'Unreal Engine mais conçu pour un environnement purement texte.</p>
                     <p>L'objectif de performance reste constant : faire tourner le moteur même sur un grille-pain. Chaque optimisation compte, chaque allocation est mesurée.</p>
                     <p>Le module <code>ContentReorganisation()</code> est en cours d'optimisation pour réduire les recalculs inutiles lors de mises à jour partielles du buffer.</p>
-                    <div class="retro-quote">by MOHAMED.B — C++20/23 — v0.4.1 🚧</div>
+                    <div class="retro-quote">by MOHAMED.B — C++17/20 — v0.4.1 🚧</div>
                 </div>
             </div>
         </div>
@@ -286,8 +297,8 @@
     <span class="bottom-left">Terminal-Renderer — v0.4.1 — MOHAMED.B</span>
     <div class="bottom-links">
         <a class="bottom-link" href="https://github.com/RydeProgramation/Terminal-Renderer">GitHub</a>
-        <a class="bottom-link" href="doc.html">OUTIL WIDG</a>
-        <a class="bottom-link" href="about.html">À propos de moi</a>
+        <a class="bottom-link" href="documentation.html">Documentation</a>
+        <a class="bottom-link" href="apropos.html">À propos de moi</a>
     </div>
 </div>
 
