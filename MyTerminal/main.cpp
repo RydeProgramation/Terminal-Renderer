@@ -1,7 +1,7 @@
 ﻿#include "Header.h"
 
 #include "MyUI.h"
-#include "Trexgame.hpp" // EXAMPLE
+#include "TRexGame.h" // EXAMPLE
 
 #pragma comment(lib, "Terminal Engine.lib") // je crois inutile par ce queje le fait pas pour les autres dll
 

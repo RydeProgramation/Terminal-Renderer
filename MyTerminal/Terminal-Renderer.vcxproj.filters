@@ -35,6 +35,9 @@
     <ClCompile Include="MyUI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="TRexGame.cpp">
+      <Filter>Exemple T-REX GAME</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header.h">
@@ -46,7 +49,7 @@
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Trexgame.hpp">
+    <ClInclude Include="TRexGame.h">
       <Filter>Exemple T-REX GAME</Filter>
     </ClInclude>
   </ItemGroup>

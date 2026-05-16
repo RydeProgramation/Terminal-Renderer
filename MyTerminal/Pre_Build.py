@@ -172,7 +172,7 @@ for cls in missing:
 
     types = extract_ctor_params(header, cls)
     if not types:
-        print(f"ERROR : Pas de vrai constructeur trouvee pour {cls}, inserer manuellement.")
+        print(f"Il n'y a aucun argument pour {cls}, inserer manuellement le REGISTER TYPE.")
         continue  # on N'APPELLE PAS insert_after_includes
 
     # repere le .cpp associe

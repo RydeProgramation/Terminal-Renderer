@@ -152,12 +152,13 @@
     <ClCompile Include="Header.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MyUI.cpp" />
+    <ClCompile Include="TRexGame.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header.h" />
     <ClInclude Include="MyUI.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="Trexgame.hpp" />
+    <ClInclude Include="TRexGame.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Pre_Build.py" />
