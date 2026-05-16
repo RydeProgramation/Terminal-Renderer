@@ -79,6 +79,7 @@ if (canvas) {
 
 /* ══════════════════════════════════════
    TYPEWRITER — Hero (index.html)
+   FIX: cursor disparaît un character avant la fin
 ══════════════════════════════════════ */
 const elTerminal = document.getElementById('title-terminal');
 const elRenderer = document.getElementById('title-renderer');
@@ -90,9 +91,11 @@ if (elTerminal && elRenderer) {
     function typeNext() {
         if (idx <= splitAt) elTerminal.textContent = fullText.slice(0, idx);
         else { elTerminal.textContent = fullText.slice(0, splitAt); elRenderer.textContent = fullText.slice(splitAt, idx); }
+        // Cacher le curseur un character avant la fin
+        if (idx === fullText.length - 1 && elCursor) elCursor.style.display = 'none';
         idx++;
         if (idx <= fullText.length) setTimeout(typeNext, 80);
-        else setTimeout(() => { elRenderer.classList.add('shimmer-text'); if (elCursor) elCursor.style.display = 'none'; }, 400);
+        else setTimeout(() => { elRenderer.classList.add('shimmer-text'); }, 400);
     }
     setTimeout(typeNext, 900);
 }
@@ -128,16 +131,13 @@ applyTilt('.render-system');
 ══════════════════════════════════════ */
 const T = {
     fr: {
-        // NAV
         'nav.home': 'Accueil', 'nav.modules': 'Modules', 'nav.widg': 'Langage .widg',
         'nav.engine': 'Moteur', 'nav.roadmap': 'Roadmap',
         'nav.doc': 'Documentation', 'nav.about': 'À propos',
-        // HERO index
         'hero.eyebrow': 'Open-source terminal rendering engine',
         'hero.sub': 'Un moteur modulaire de rendu et d\'interface terminal — widgets dynamiques, animations fluides, langage .widg',
         'hero.btn.explore': 'Explorer →', 'hero.btn.github': 'GitHub ↗',
         'hero.pill.dev': '🟢 En développement',
-        // S01
         's01.num': '01 / Présentation', 's01.title': 'Le terminal comme<br>canvas graphique',
         's01.stat.modules': 'Modules', 's01.stat.render': 'Render systems',
         's01.stat.version': 'Version', 's01.stat.iter': 'Itérations',
@@ -149,7 +149,6 @@ const T = {
         's01.f2.title': 'Delta Time', 's01.f2.desc': 'Animations et transitions synchronisées indépendamment du framerate. Déplacements fluides et effets de surbrillance dynamiques.',
         's01.f3.title': 'Langage .widg', 's01.f3.desc': 'Format XML propriétaire pour décrire, charger et prévisualiser des widgets en live sans recompilation.',
         's01.f4.title': 'Précompilateur Python', 's01.f4.desc': 'Détecte automatiquement les classes héritant de <code>trActor</code> et insère les macros <code>REGISTER_TYPE</code> sans intervention manuelle.',
-        // S02
         's02.num': '02 / Architecture', 's02.title': 'Architecture<br>modulaire',
         'mod.core.desc': 'Structures internes, types fondamentaux — <code>trPair</code>, <code>trMulti</code>, <code>trMap</code>…',
         'mod.engine.desc': 'Cœur du moteur, logique principale, communication inter-modules',
@@ -164,7 +163,6 @@ const T = {
         'mod.print.desc': 'Impression texte et gestion couleurs ANSI complète',
         'status.stable': '🟢 Stable', 'status.func': '🟢 Fonctionnel',
         'status.wip': '🟡 En cours', 'status.todo': '🟡 À développer', 'status.unstable': '🔴 Instable',
-        // S03
         's03.num': '03 / Langage .widg', 's03.title': 'Format XML<br>propriétaire',
         's03.p1': 'Chaque widget peut être décrit via un fichier <code>.widg</code> utilisant un XML personnalisé avec des balises avancées. Ces balises permettent de définir les propriétés, la position, le contenu et les couleurs d\'un widget.',
         's03.p2': 'L\'un des atouts majeurs du format : la modification en direct. En appuyant sur <code>F5/F6/F8/F9/F10</code> dans l\'aperçu, les changements effectués dans le fichier XML apparaissent immédiatement — sans recompiler.',
@@ -177,7 +175,6 @@ const T = {
         's03.cta.btn': 'Ouvrir l\'outil →',
         's03.th.elem': 'Élément XML', 's03.th.attr': 'Attribut(s)', 's03.th.type': 'Type C++', 's03.th.desc': 'Description',
         's03.note': '⚠️ Le tableau n\'est pas complet — le format .widg est encore en développement actif. Contacter l\'auteur pour plus d\'informations.',
-        // S04
         's04.num': '04 / Caractères spéciaux', 's04.title': 'Gestion des<br>séquences',
         's04.p1': 'Le moteur gère nativement un ensemble de séquences d\'échappement et de caractères spéciaux. Chacun peut avoir des effets visuels imprévisibles selon le terminal cible — leur comportement est documenté et maîtrisé dans le pipeline de rendu.',
         's04.p2': 'La gestion de ces cas est particulièrement critique dans le mode <code>RENDER_SYSTEM</code> où tout le rendu passe par un buffer complet avant affichage — les séquences sont résolues en pré-affichage.',
@@ -190,7 +187,6 @@ const T = {
         'seq.f.desc': 'Saut de page — rarement utilisé mais géré',
         'seq.0.desc': 'Caractère vide — à surveiller dans les buffers',
         'seq.bs.desc': 'Barre oblique inversée — doit être correctement échappée',
-        // S05
         's05.num': '05 / Moteur de rendu', 's05.title': 'Trois systèmes<br>de rendu',
         'render.direct': 'Direct System', 'render.direct.tag': 'Lent',
         'render.direct.desc': 'Chaque caractère écrit directement sur le terminal. Simple mais très lent — provoque lag et bugs visuels à grande échelle.',
@@ -202,7 +198,6 @@ const T = {
         's05.p2': 'Un précompilateur Python parcourt automatiquement les fichiers <code>.h/.cpp</code> pour détecter les classes héritant de <code>trActor</code> et insérer les macros <code>REGISTER_TYPE</code> sans intervention manuelle.',
         's05.p3': 'Le système de collision entre widgets permet de récupérer les intersections et de définir les réactions souhaitées — overlap, rebond, masquage prioritaire.',
         's05.quote': 'Édition de widgets en live via F5 / F6 / F8 / F9 / F10 — sans recompilation.',
-        // S06
         's06.num': '06 / Roadmap', 's06.title': 'Prochaines<br>étapes',
         'road.f1.title': 'Système souris', 'road.f1.desc': 'Détection des positions, clics et événements hover directement dans le terminal.',
         'road.f2.title': 'API Audio', 'road.f2.desc': 'Effets sonores et notifications audio intégrés au moteur de widgets via AudioModule.',
@@ -213,14 +208,11 @@ const T = {
         's06.p1': 'La vision long terme est de devenir un moteur complet de rendu console open-source, modulable et extensible — inspiré des architectures d\'Unreal Engine mais conçu pour un environnement purement texte.',
         's06.p2': 'L\'objectif de performance reste constant : faire tourner le moteur même sur un grille-pain. Chaque optimisation compte, chaque allocation est mesurée.',
         's06.p3': 'Le module <code>ContentReorganisation()</code> est en cours d\'optimisation pour réduire les recalculs inutiles lors de mises à jour partielles du buffer.',
-        // BOTTOM
         'bottom.doc': 'Documentation', 'bottom.about': 'À propos de moi',
-        // DOC PAGE
         'doc.hero.eyebrow': 'Outils & Référence',
         'doc.hero.sub': 'Importe, visualise, édite et crée tes fichiers .widg directement dans le navigateur',
         'doc.s01.num': '01 / Prévisualisation', 'doc.s01.title': 'Importer &amp;<br>Éditer un .widg',
         'doc.s02.num': '02 / Créateur', 'doc.s02.title': 'Créer un .widg<br>de zéro',
-        // ABOUT PAGE
         'about.eyebrow': 'À propos de moi', 'about.sub': 'Développeur C++ · Créateur de Terminal-Renderer',
         'about.bio1': 'Passionné par les systèmes bas-niveau, le rendu terminal et l\'architecture logicielle. Terminal-Renderer est un projet personnel né de la conviction que le terminal peut être bien plus qu\'un simple outil texte.',
         'about.bio2': 'Toute l\'infrastructure du moteur est conçue sans dépendances graphiques externes — polymorphisme, gestion mémoire custom, pipeline de rendu optimisé.',
@@ -231,7 +223,6 @@ const T = {
         'about.github': 'GitHub — RydeProgramation ↗', 'about.contact': 'Contacter',
         'about.scroll': 'Scroll',
     },
-
     en: {
         'nav.home': 'Home', 'nav.modules': 'Modules', 'nav.widg': '.widg Language',
         'nav.engine': 'Engine', 'nav.roadmap': 'Roadmap',
@@ -278,8 +269,8 @@ const T = {
         's03.th.elem': 'XML Element', 's03.th.attr': 'Attribute(s)', 's03.th.type': 'C++ Type', 's03.th.desc': 'Description',
         's03.note': '⚠️ The table is not complete — the .widg format is still in active development. Contact the author for more information.',
         's04.num': '04 / Special Characters', 's04.title': 'Sequence<br>Handling',
-        's04.p1': 'The engine natively handles a set of escape sequences and special characters. Each can have unpredictable visual effects depending on the target terminal — their behavior is documented and controlled in the render pipeline.',
-        's04.p2': 'Handling these cases is especially critical in <code>RENDER_SYSTEM</code> mode where all rendering passes through a complete buffer before display — sequences are resolved pre-display.',
+        's04.p1': 'The engine natively handles a set of escape sequences and special characters. Each can have unpredictable visual effects depending on the target terminal.',
+        's04.p2': 'Handling these cases is especially critical in <code>RENDER_SYSTEM</code> mode where all rendering passes through a complete buffer before display.',
         's04.quote': 'Windows / Linux compatibility tested — OS-dependent behaviors identified and handled.',
         'seq.n.desc': 'Line break — can break formatting if uncontrolled',
         'seq.r.desc': 'Carriage return — may overwrite an existing line depending on OS',
@@ -297,7 +288,7 @@ const T = {
         'render.system': 'Render System', 'render.system.tag': 'Optimal',
         'render.system.desc': 'Complete buffer without touching the terminal directly. Most performant — full position management, layering and pre-display modifications.',
         's05.p1': 'The engine supports a full ANSI color system — foreground, background, highlights, dynamic transitions — across all widgets.',
-        's05.p2': 'A Python precompiler automatically scans <code>.h/.cpp</code> files to detect classes inheriting from <code>trActor</code> and inserts <code>REGISTER_TYPE</code> macros without manual intervention.',
+        's05.p2': 'A Python precompiler automatically scans <code>.h/.cpp</code> files to detect classes inheriting from <code>trActor</code> and inserts <code>REGISTER_TYPE</code> macros.',
         's05.p3': 'The widget collision system allows retrieving intersections and defining desired reactions — overlap, bounce, priority masking.',
         's05.quote': 'Live widget editing via F5 / F6 / F8 / F9 / F10 — no recompilation.',
         's06.num': '06 / Roadmap', 's06.title': 'Next<br>Steps',
@@ -325,7 +316,6 @@ const T = {
         'about.github': 'GitHub — RydeProgramation ↗', 'about.contact': 'Contact',
         'about.scroll': 'Scroll',
     },
-
     ar: {
         'nav.home': 'الرئيسية', 'nav.modules': 'الوحدات', 'nav.widg': 'لغة .widg',
         'nav.engine': 'المحرك', 'nav.roadmap': 'خارطة الطريق',
@@ -375,32 +365,28 @@ const T = {
         's04.p1': 'يتعامل المحرك بشكل أصلي مع مجموعة من تسلسلات الهروب والأحرف الخاصة. كل منها قد يكون له تأثيرات بصرية غير متوقعة حسب الطرفية المستهدفة.',
         's04.p2': 'التعامل مع هذه الحالات أمر بالغ الأهمية في وضع <code>RENDER_SYSTEM</code> حيث يمر كل العرض عبر مخزن مؤقت كامل قبل العرض.',
         's04.quote': 'تم اختبار التوافق مع Windows / Linux — تم تحديد السلوكيات المعتمدة على نظام التشغيل ومعالجتها.',
-        'seq.n.desc': 'سطر جديد — قد يكسر التنسيق إذا لم يُتحكم فيه',
-        'seq.r.desc': 'عودة العجلة — قد يطغى على سطر موجود حسب نظام التشغيل',
-        'seq.t.desc': 'مسافة أفقية — تباين المسافات يعتمد على الطرفية',
-        'seq.b.desc': 'مسافة خلفية — تأثير بصري غير متوقع',
-        'seq.v.desc': 'مسافة رأسية — قد تُخلّ بمحاذاة العرض',
-        'seq.f.desc': 'تغذية النماذج — نادر الاستخدام لكنه مُعالَج',
-        'seq.0.desc': 'الحرف الخالي — يستدعي المراقبة في المخازن المؤقتة',
-        'seq.bs.desc': 'الشرطة المائلة العكسية — يجب تهريبها بشكل صحيح',
+        'seq.n.desc': 'سطر جديد — قد يكسر التنسيق', 'seq.r.desc': 'عودة العجلة — قد يطغى على سطر موجود',
+        'seq.t.desc': 'مسافة أفقية — تباين المسافات', 'seq.b.desc': 'مسافة خلفية — تأثير بصري غير متوقع',
+        'seq.v.desc': 'مسافة رأسية — قد تُخلّ بالمحاذاة', 'seq.f.desc': 'تغذية النماذج — نادر لكنه مُعالَج',
+        'seq.0.desc': 'الحرف الخالي — يستدعي المراقبة', 'seq.bs.desc': 'الشرطة المائلة العكسية — يجب تهريبها',
         's05.num': '٠٥ / محرك العرض', 's05.title': 'ثلاثة أنظمة<br>للعرض',
         'render.direct': 'النظام المباشر', 'render.direct.tag': 'بطيء',
-        'render.direct.desc': 'كل حرف يُكتب مباشرة على الطرفية. بسيط لكن بطيء جدًا — يسبب تأخيرًا وأخطاء بصرية على نطاق واسع.',
+        'render.direct.desc': 'كل حرف يُكتب مباشرة على الطرفية. بسيط لكن بطيء جدًا.',
         'render.buffer': 'نظام المخزن المؤقت', 'render.buffer.tag': 'متوسط',
-        'render.buffer.desc': 'يُكتب كل شيء في مخزن <code>ostringstream</code> قبل العرض. سلس مع قليل من الإجراءات، غير مستقر مع تغييرات متزامنة كثيرة.',
+        'render.buffer.desc': 'يُكتب كل شيء في مخزن <code>ostringstream</code> قبل العرض.',
         'render.system': 'نظام العرض', 'render.system.tag': 'مثالي',
-        'render.system.desc': 'مخزن مؤقت كامل دون لمس الطرفية مباشرة. الأكثر أداءً — إدارة كاملة للمواضع والطبقات والتعديلات قبل العرض.',
-        's05.p1': 'يدعم المحرك نظام ألوان ANSI كاملًا — foreground وbackground وإضاءة وانتقالات ديناميكية — عبر جميع الواجهات.',
-        's05.p2': 'يفحص مُعالِج Python المسبق تلقائيًا ملفات <code>.h/.cpp</code> للكشف عن الفئات الوارثة من <code>trActor</code> وإدراج ماكرو <code>REGISTER_TYPE</code>.',
+        'render.system.desc': 'مخزن مؤقت كامل دون لمس الطرفية مباشرة. الأكثر أداءً.',
+        's05.p1': 'يدعم المحرك نظام ألوان ANSI كاملًا — foreground وbackground وإضاءة وانتقالات ديناميكية.',
+        's05.p2': 'يفحص مُعالِج Python المسبق تلقائيًا ملفات <code>.h/.cpp</code> للكشف عن الفئات الوارثة من <code>trActor</code>.',
         's05.p3': 'نظام التصادم بين الواجهات يتيح استرداد التقاطعات وتحديد ردود الفعل المطلوبة.',
-        's05.quote': 'تحرير الواجهات مباشرة عبر F5 / F6 / F8 / F9 / F10 — دون إعادة تصريف.',
+        's05.quote': 'تحرير الواجهات مباشرة عبر F5 / F6 / F8 / F9 / F10.',
         's06.num': '٠٦ / خارطة الطريق', 's06.title': 'الخطوات<br>القادمة',
-        'road.f1.title': 'نظام الفأرة', 'road.f1.desc': 'الكشف عن المواضع والنقرات وأحداث hover مباشرة في الطرفية.',
+        'road.f1.title': 'نظام الفأرة', 'road.f1.desc': 'الكشف عن المواضع والنقرات وأحداث hover في الطرفية.',
         'road.f2.title': 'واجهة الصوت', 'road.f2.desc': 'مؤثرات صوتية وإشعارات صوتية مدمجة في محرك الواجهات.',
         'road.f3.title': 'مشاريع نموذجية', 'road.f3.desc': 'محاكاة الكسورية، لعبة T-Rex، واجهة مصغرة كاملة.',
         'road.f4.title': 'مستودع قالب', 'road.f4.desc': 'مستودع جاهز لبدء مشروع Terminal-Renderer خلال دقائق.',
-        'road.f5.title': 'توثيق شامل', 'road.f5.desc': 'توثيق Doxygen الداخلي + Markdown مفصّل لكل وحدة ووسم .widg.',
-        'road.f6.title': 'تحليل الذاكرة', 'road.f6.desc': 'نظام مدمج لتحليل الذاكرة ووحدة المعالجة لتشخيص نقاط الضعف في الإنتاج.',
+        'road.f5.title': 'توثيق شامل', 'road.f5.desc': 'توثيق Doxygen الداخلي + Markdown مفصّل لكل وحدة.',
+        'road.f6.title': 'تحليل الذاكرة', 'road.f6.desc': 'نظام مدمج لتحليل الذاكرة ووحدة المعالجة.',
         's06.p1': 'الرؤية طويلة المدى هي أن يصبح محرك عرض وحدة طرفية مفتوح المصدر، معياريًا وقابلًا للتوسع.',
         's06.p2': 'هدف الأداء ثابت: تشغيل المحرك حتى على أضعف الأجهزة. كل تحسين يُحسب، كل تخصيص يُقاس.',
         's06.p3': 'وحدة <code>ContentReorganisation()</code> قيد التحسين لتقليل إعادة الحسابات غير الضرورية.',
@@ -410,8 +396,8 @@ const T = {
         'doc.s01.num': '٠١ / معاينة', 'doc.s01.title': 'استيراد &amp;<br>تحرير ملف .widg',
         'doc.s02.num': '٠٢ / أداة الإنشاء', 'doc.s02.title': 'إنشاء ملف .widg<br>من الصفر',
         'about.eyebrow': 'عني', 'about.sub': 'مطور C++ · منشئ Terminal-Renderer',
-        'about.bio1': 'شغوف بالأنظمة ذات المستوى المنخفض وعرض الطرفية وهندسة البرمجيات. Terminal-Renderer وُلد من قناعة بأن الطرفية يمكن أن تكون أكثر بكثير من أداة نصية بسيطة.',
-        'about.bio2': 'كل البنية التحتية للمحرك مصممة بدون تبعيات رسومية خارجية — تعددية الأشكال، إدارة الذاكرة المخصصة، خط أنابيب عرض محسّن.',
+        'about.bio1': 'شغوف بالأنظمة ذات المستوى المنخفض وعرض الطرفية وهندسة البرمجيات.',
+        'about.bio2': 'كل البنية التحتية للمحرك مصممة بدون تبعيات رسومية خارجية.',
         'about.bio3': 'مكتوب بـ C++20/C++23، مُرمَّز بـ UTF-8، يستهدف التوافق مع Windows وLinux.',
         'about.quote': '"اعمل مع القيود، لا رغمها."',
         'about.card.tech': 'المكدس التقني', 'about.card.project': 'المشروع',
@@ -430,19 +416,15 @@ window.setLang = function(lang) {
     if (!T[lang]) lang = 'fr';
     currentLang = lang;
     const t = T[lang];
-
     document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.dataset.i18n;
         if (t[key] != null) el.innerHTML = t[key];
     });
-
     document.documentElement.dir  = lang === 'ar' ? 'rtl' : 'ltr';
     document.documentElement.lang = lang;
-
     document.querySelectorAll('.lang-btn').forEach(b => {
         b.classList.toggle('active', b.dataset.lang === lang);
     });
-
     try { localStorage.setItem('tr-lang', lang); } catch(e) {}
 };
 
