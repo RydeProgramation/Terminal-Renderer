@@ -155,6 +155,32 @@
     <ClCompile Include="TRexGame.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Terminal AudioModule\trAudio.h" />
+    <ClInclude Include="..\Terminal Components\trActor.h" />
+    <ClInclude Include="..\Terminal Components\trSelector.h" />
+    <ClInclude Include="..\Terminal Components\trText.h" />
+    <ClInclude Include="..\Terminal Components\trWidget.h" />
+    <ClInclude Include="..\Terminal Core\include.h" />
+    <ClInclude Include="..\Terminal Core\trCoordinate.h" />
+    <ClInclude Include="..\Terminal Core\trData.h" />
+    <ClInclude Include="..\Terminal Core\trMap.h" />
+    <ClInclude Include="..\Terminal Core\trObject.h" />
+    <ClInclude Include="..\Terminal Core\trObjectFactory.h" />
+    <ClInclude Include="..\Terminal Core\trPair.h" />
+    <ClInclude Include="..\Terminal Core\trPawn.h" />
+    <ClInclude Include="..\Terminal Core\trRect.h" />
+    <ClInclude Include="..\Terminal Core\trSize.h" />
+    <ClInclude Include="..\Terminal Core\trUIToolsCore.h" />
+    <ClInclude Include="..\Terminal Core\trWeakPointer.h" />
+    <ClInclude Include="..\Terminal Engine\trUI.h" />
+    <ClInclude Include="..\Terminal InputModule\trBTN_Key.h" />
+    <ClInclude Include="..\Terminal InputModule\trKeyBoardManagement.h" />
+    <ClInclude Include="..\Terminal LoadModule\trLoadFile.h" />
+    <ClInclude Include="..\Terminal LoadModule\trSaveFile.h" />
+    <ClInclude Include="..\Terminal PrintModule\trPrint.h" />
+    <ClInclude Include="..\Terminal Render\trRender.h" />
+    <ClInclude Include="..\Terminal Tool\trUITools.h" />
+    <ClInclude Include="..\Terminal World\trWorld.h" />
     <ClInclude Include="Header.h" />
     <ClInclude Include="MyUI.h" />
     <ClInclude Include="resource.h" />

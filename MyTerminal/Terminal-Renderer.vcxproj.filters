@@ -19,6 +19,39 @@
     <Filter Include="Exemple T-REX GAME">
       <UniqueIdentifier>{dbc32e61-ef12-4ca7-859f-257eb42c4604}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Include/Module">
+      <UniqueIdentifier>{fab78f45-623b-48da-8ad3-5f4569daa487}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include/Module\AudioModule">
+      <UniqueIdentifier>{5476c5e7-82a7-40d0-971d-efd47fd533a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include/Module\Components">
+      <UniqueIdentifier>{b7793a2d-e47f-429e-af28-78d5831acf43}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include/Module\Core">
+      <UniqueIdentifier>{7d128561-1a76-4ec3-abd4-1a53af170c36}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include/Module\Engine">
+      <UniqueIdentifier>{b0387fc3-f12b-469f-9c76-5a33e93cccc1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include/Module\InputModule">
+      <UniqueIdentifier>{54ce735e-6664-4ab0-93e6-359ca54a11be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include/Module\LoadModule">
+      <UniqueIdentifier>{f62f98ff-2aba-4e30-b319-2a5ac0c301d5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include/Module\PrintModule">
+      <UniqueIdentifier>{8093f8fe-4d7a-40a3-b109-e83ef37a1331}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include/Module\Render">
+      <UniqueIdentifier>{0f6bfc94-08e9-49a6-a838-900d6c61fb9c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include/Module\Tool">
+      <UniqueIdentifier>{f1fda610-cdcc-4922-a001-5c5474cd0056}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include/Module\World">
+      <UniqueIdentifier>{a9964b85-bb31-4e20-b8a2-0d3e23f07547}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Image Include="MyTerminal\icon.ico">
@@ -51,6 +84,84 @@
     </ClInclude>
     <ClInclude Include="TRexGame.h">
       <Filter>Exemple T-REX GAME</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Terminal World\trWorld.h">
+      <Filter>Include/Module\World</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Terminal Tool\trUITools.h">
+      <Filter>Include/Module\Tool</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Terminal Render\trRender.h">
+      <Filter>Include/Module\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Terminal PrintModule\trPrint.h">
+      <Filter>Include/Module\PrintModule</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Terminal LoadModule\trSaveFile.h">
+      <Filter>Include/Module\LoadModule</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Terminal LoadModule\trLoadFile.h">
+      <Filter>Include/Module\LoadModule</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Terminal InputModule\trKeyBoardManagement.h">
+      <Filter>Include/Module\InputModule</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Terminal InputModule\trBTN_Key.h">
+      <Filter>Include/Module\InputModule</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Terminal Engine\trUI.h">
+      <Filter>Include/Module\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Terminal Core\include.h">
+      <Filter>Include/Module\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Terminal Components\trActor.h">
+      <Filter>Include/Module\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Terminal Core\trCoordinate.h">
+      <Filter>Include/Module\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Terminal Core\trData.h">
+      <Filter>Include/Module\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Terminal Core\trMap.h">
+      <Filter>Include/Module\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Terminal Core\trObject.h">
+      <Filter>Include/Module\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Terminal Core\trObjectFactory.h">
+      <Filter>Include/Module\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Terminal Core\trPair.h">
+      <Filter>Include/Module\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Terminal Core\trPawn.h">
+      <Filter>Include/Module\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Terminal Core\trRect.h">
+      <Filter>Include/Module\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Terminal Core\trSize.h">
+      <Filter>Include/Module\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Terminal Core\trUIToolsCore.h">
+      <Filter>Include/Module\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Terminal Core\trWeakPointer.h">
+      <Filter>Include/Module\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Terminal Components\trSelector.h">
+      <Filter>Include/Module\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Terminal Components\trText.h">
+      <Filter>Include/Module\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Terminal Components\trWidget.h">
+      <Filter>Include/Module\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Terminal AudioModule\trAudio.h">
+      <Filter>Include/Module\AudioModule</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
