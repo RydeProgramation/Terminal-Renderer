@@ -7,6 +7,85 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* ══ LOGO-LINK ══ */
+        a#nav-logo {
+            font-size: 15px; font-weight: 700;
+            letter-spacing: 0.22em; color: rgba(255,255,255,0.8);
+            text-transform: uppercase; text-decoration: none;
+            transition: color 0.2s; cursor: pointer;
+        }
+        a#nav-logo:hover { color: #fff; }
+
+        /* ══ BIG CTA TOOL BANNER ══ */
+        .tool-cta-mega {
+            margin: 44px 0 36px;
+            padding: 48px 52px;
+            background: linear-gradient(135deg, rgba(180,200,255,0.06) 0%, rgba(120,200,140,0.04) 100%);
+            border: 1px solid rgba(180,200,255,0.25);
+            border-radius: 3px;
+            display: flex; align-items: center; justify-content: space-between; gap: 40px;
+            position: relative; overflow: hidden;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        .tool-cta-mega::before {
+            content: '';
+            position: absolute; inset: 0;
+            background: radial-gradient(ellipse at 20% 50%, rgba(180,200,255,0.08) 0%, transparent 60%);
+            pointer-events: none;
+        }
+        .tool-cta-mega:hover {
+            border-color: rgba(180,200,255,0.5);
+            box-shadow: 0 0 40px rgba(180,200,255,0.1), 0 0 80px rgba(120,200,140,0.05);
+        }
+        .tool-cta-mega-left { flex: 1; }
+        .tool-cta-mega-kicker {
+            font-size: 10px; letter-spacing: 0.35em; text-transform: uppercase;
+            color: rgba(120,200,140,0.7); margin-bottom: 14px;
+        }
+        .tool-cta-mega-title {
+            font-size: clamp(18px, 2.8vw, 28px); font-weight: 700;
+            letter-spacing: -0.5px; color: #fff; margin-bottom: 12px; line-height: 1.25;
+        }
+        .tool-cta-mega-sub {
+            font-size: 13px; color: rgba(255,255,255,0.32);
+            letter-spacing: 0.08em; line-height: 1.85;
+        }
+        .tool-cta-mega-right { flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+        .btn-mega {
+            font-family: 'IBM Plex Mono', monospace; font-size: 13px;
+            letter-spacing: 0.18em; text-transform: uppercase; font-weight: 700;
+            padding: 18px 38px; text-decoration: none; border-radius: 2px;
+            background: #fff; color: #000; border: 1px solid #fff;
+            transition: all 0.25s; white-space: nowrap;
+            display: inline-block;
+        }
+        .btn-mega:hover { background: transparent; color: #fff; }
+        .btn-mega-ghost {
+            font-size: 11px; letter-spacing: 0.15em; color: rgba(255,255,255,0.25);
+            text-decoration: none; transition: color 0.2s;
+        }
+        .btn-mega-ghost:hover { color: rgba(255,255,255,0.6); }
+
+        /* ══ TITLE HOVER SHIMMER ══ */
+        .section-title { transition: filter 0.3s; }
+        .section-title:hover {
+            filter: brightness(1.25) drop-shadow(0 0 14px rgba(200,215,255,0.45));
+        }
+
+        /* ══ RENDER SYSTEM TILT CARDS ══ */
+        .render-system {
+            cursor: default;
+            transition: transform 0.5s ease, border-color 0.3s, box-shadow 0.3s;
+            transform-style: preserve-3d;
+        }
+
+        @media (max-width: 760px) {
+            .tool-cta-mega { flex-direction: column; padding: 32px 24px; }
+            .tool-cta-mega-right { width: 100%; }
+            .btn-mega { width: 100%; text-align: center; }
+        }
+    </style>
 </head>
 <body>
 
@@ -16,16 +95,24 @@
 
 <!-- NAV -->
 <nav id="nav">
-    <div id="nav-logo">Terminal-Renderer</div>
+    <a id="nav-logo" href="index.html">Terminal-Renderer</a>
     <div id="nav-right">
         <span class="nav-badge">v0.4.1</span>
-        <span class="nav-badge green">C++17 / C++20</span>
+        <span class="nav-badge green">C++20 / C++23</span>
+        <span class="nav-badge">UTF-8</span>
         <div id="nav-links">
-            <a class="nav-link" href="#about">Présentation</a>
-            <a class="nav-link" href="#modules">Modules</a>
-            <a class="nav-link" href="#widg">Langage .widg</a>
-            <a class="nav-link" href="#engine">Moteur</a>
-            <a class="nav-link" href="#roadmap">Roadmap</a>
+            <a class="nav-link" href="#about"    data-i18n="nav.home">Présentation</a>
+            <a class="nav-link" href="#modules"  data-i18n="nav.modules">Modules</a>
+            <a class="nav-link" href="#widg"     data-i18n="nav.widg">Langage .widg</a>
+            <a class="nav-link" href="#engine"   data-i18n="nav.engine">Moteur</a>
+            <a class="nav-link" href="#roadmap"  data-i18n="nav.roadmap">Roadmap</a>
+            <a class="nav-link" href="documentation.html" data-i18n="nav.doc">Documentation</a>
+            <a class="nav-link" href="about.html"         data-i18n="nav.about">À propos</a>
+        </div>
+        <div id="lang-switcher">
+            <button class="lang-btn" data-lang="fr">FR</button>
+            <button class="lang-btn" data-lang="en">EN</button>
+            <button class="lang-btn" data-lang="ar">AR</button>
         </div>
     </div>
 </nav>
@@ -33,24 +120,25 @@
 <!-- HERO -->
 <section id="hero">
     <div id="hero-card">
-        <div id="hero-eyebrow">Open-source terminal rendering engine</div>
+        <div id="hero-eyebrow" data-i18n="hero.eyebrow">Open-source terminal rendering engine</div>
         <h1 id="hero-title">
             <span id="title-terminal"></span><span id="title-renderer"></span><span id="title-cursor"></span>
         </h1>
         <div id="hero-meta">
-            <span class="meta-pill active">🟢 En développement</span>
-            <span class="meta-pill">C++17+</span>
+            <span class="meta-pill active" data-i18n="hero.pill.dev">🟢 En développement</span>
+            <span class="meta-pill">C++20/23</span>
+            <span class="meta-pill">UTF-8</span>
             <span class="meta-pill">v0.4.1</span>
             <span class="meta-pill">11 Modules</span>
         </div>
-        <p id="hero-sub">Un moteur modulaire de rendu et d'interface terminal — widgets dynamiques, animations fluides, langage .widg</p>
+        <p id="hero-sub" data-i18n="hero.sub">Un moteur modulaire de rendu et d'interface terminal — widgets dynamiques, animations fluides, langage .widg</p>
         <div id="hero-cta">
-            <a href="#modules" class="btn btn-primary">Explorer →</a>
-            <a href="https://github.com/RydeProgramation/Terminal-Renderer" class="btn btn-ghost">GitHub ↗</a>
+            <a href="#modules" class="btn btn-primary" data-i18n="hero.btn.explore">Explorer →</a>
+            <a href="https://github.com/RydeProgramation/Terminal-Renderer" class="btn btn-ghost" data-i18n="hero.btn.github">GitHub ↗</a>
         </div>
     </div>
     <div id="scroll-hint">
-        <span>Scroll</span>
+        <span data-i18n="about.scroll">Scroll</span>
         <div class="scroll-bar"></div>
     </div>
 </section>
@@ -61,27 +149,27 @@
 <section class="section" id="about">
     <div class="section-inner">
         <div class="section-card">
-            <p class="section-num">01 / Présentation</p>
-            <h2 class="section-title shimmer-text">Le terminal comme<br>canvas graphique</h2>
+            <p class="section-num" data-i18n="s01.num">01 / Présentation</p>
+            <h2 class="section-title shimmer-text" data-i18n="s01.title">Le terminal comme<br>canvas graphique</h2>
             <div class="section-rule"></div>
             <div class="stats-row">
-                <div class="stat-box"><div class="stat-value">11</div><div class="stat-label">Modules</div></div>
-                <div class="stat-box"><div class="stat-value">3</div><div class="stat-label">Render systems</div></div>
-                <div class="stat-box"><div class="stat-value">0.4.1</div><div class="stat-label">Version</div></div>
-                <div class="stat-box"><div class="stat-value">5</div><div class="stat-label">Itérations</div></div>
+                <div class="stat-box"><div class="stat-value">11</div><div class="stat-label" data-i18n="s01.stat.modules">Modules</div></div>
+                <div class="stat-box"><div class="stat-value">3</div><div class="stat-label" data-i18n="s01.stat.render">Render systems</div></div>
+                <div class="stat-box"><div class="stat-value">0.4.1</div><div class="stat-label" data-i18n="s01.stat.version">Version</div></div>
+                <div class="stat-box"><div class="stat-value">5</div><div class="stat-label" data-i18n="s01.stat.iter">Itérations</div></div>
             </div>
             <div class="section-grid">
                 <div class="section-text">
-                    <p>Terminal-Renderer est une bibliothèque C++ visant à fournir une infrastructure complète de rendu et d'interaction dans le terminal — widgets textuels dynamiques, animations fluides, langage XML propriétaire, sans dépendances graphiques externes.</p>
-                    <p>Tous les objets sont hiérarchisés selon du polymorphisme partant de <code>trObject</code>, avec la recréation de weak pointers custom pour une gestion mémoire précise et sans dépendance externe.</p>
-                    <p>L'objectif de performance est constant : faire tourner le moteur même sur un grille-pain. Chaque optimisation compte.</p>
-                    <div class="retro-quote">"Quand le terminal devient ton canvas, chaque caractère compte."</div>
+                    <p data-i18n="s01.p1">Terminal-Renderer est une bibliothèque C++ visant à fournir une infrastructure complète de rendu et d'interaction dans le terminal — widgets textuels dynamiques, animations fluides, langage XML propriétaire, sans dépendances graphiques externes.</p>
+                    <p data-i18n="s01.p2">Tous les objets sont hiérarchisés selon du polymorphisme partant de <code>trObject</code>, avec la recréation de weak pointers custom pour une gestion mémoire précise et sans dépendance externe.</p>
+                    <p data-i18n="s01.p3">L'objectif de performance est constant : faire tourner le moteur même sur un grille-pain. Chaque optimisation compte.</p>
+                    <div class="retro-quote" data-i18n="s01.quote">"Quand le terminal devient ton canvas, chaque caractère compte."</div>
                 </div>
                 <div class="features">
-                    <div class="feature"><h4>Rendu multi-couches</h4><p>Rafraîchissement partiel des zones modifiées — aucun redessin complet inutile. Pipeline optimisé pour tourner même sur matériel limité.</p></div>
-                    <div class="feature"><h4>Delta Time</h4><p>Animations et transitions synchronisées indépendamment du framerate. Déplacements fluides et effets de surbrillance dynamiques.</p></div>
-                    <div class="feature"><h4>Langage .widg</h4><p>Format XML propriétaire pour décrire, charger et prévisualiser des widgets en live sans recompilation.</p></div>
-                    <div class="feature"><h4>Précompilateur Python</h4><p>Détecte automatiquement les classes héritant de <code>trActor</code> et insère les macros <code>REGISTER_TYPE</code> sans intervention manuelle.</p></div>
+                    <div class="feature"><h4 data-i18n="s01.f1.title">Rendu multi-couches</h4><p data-i18n="s01.f1.desc">Rafraîchissement partiel des zones modifiées — aucun redessin complet inutile. Pipeline optimisé pour tourner même sur matériel limité.</p></div>
+                    <div class="feature"><h4 data-i18n="s01.f2.title">Delta Time</h4><p data-i18n="s01.f2.desc">Animations et transitions synchronisées indépendamment du framerate. Déplacements fluides et effets de surbrillance dynamiques.</p></div>
+                    <div class="feature"><h4 data-i18n="s01.f3.title">Langage .widg</h4><p data-i18n="s01.f3.desc">Format XML propriétaire pour décrire, charger et prévisualiser des widgets en live sans recompilation.</p></div>
+                    <div class="feature"><h4 data-i18n="s01.f4.title">Précompilateur Python</h4><p data-i18n="s01.f4.desc">Détecte automatiquement les classes héritant de <code>trActor</code> et insère les macros <code>REGISTER_TYPE</code> sans intervention manuelle.</p></div>
                 </div>
             </div>
         </div>
@@ -92,21 +180,21 @@
 <section class="section" id="modules">
     <div class="section-inner">
         <div class="section-card">
-            <p class="section-num">02 / Architecture</p>
-            <h2 class="section-title shimmer-text">Architecture<br>modulaire</h2>
+            <p class="section-num" data-i18n="s02.num">02 / Architecture</p>
+            <h2 class="section-title shimmer-text" data-i18n="s02.title">Architecture<br>modulaire</h2>
             <div class="section-rule"></div>
             <div class="module-grid">
-                <div class="module-item"><div class="module-name">Core</div><div class="module-desc">Structures internes, types fondamentaux — <code>trPair</code>, <code>trMulti</code>, <code>trMap</code>…</div><div class="module-status status-ok">🟢 Stable</div></div>
-                <div class="module-item"><div class="module-name">Engine</div><div class="module-desc">Cœur du moteur, logique principale, communication inter-modules</div><div class="module-status status-ok">🟢 Stable</div></div>
-                <div class="module-item"><div class="module-name">Render</div><div class="module-desc">Pipeline de rendu, positionnement, superposition multi-couches</div><div class="module-status status-ok">🟢 Fonctionnel</div></div>
-                <div class="module-item"><div class="module-name">UI</div><div class="module-desc">Système hiérarchique des widgets, focus, masquage (<code>hide/show</code>)</div><div class="module-status status-ok">🟢 Fonctionnel</div></div>
-                <div class="module-item"><div class="module-name">Components</div><div class="module-desc">Composants de base — boutons, textes, conteneurs, barres de progression</div><div class="module-status status-ok">🟢 Fonctionnel</div></div>
-                <div class="module-item"><div class="module-name">InputModule</div><div class="module-desc">Gestion des entrées clavier, tampon multithread, mode non-bloquant</div><div class="module-status status-ok">🟢 Stable</div></div>
-                <div class="module-item"><div class="module-name">World</div><div class="module-desc">Contexte global, gestion de scène et logique environnementale</div><div class="module-status status-ok">🟢 Fonctionnel</div></div>
-                <div class="module-item"><div class="module-name">LoadModule</div><div class="module-desc">Parsing des fichiers .widg (XML propriétaire), prévisualisation live</div><div class="module-status status-wip">🟡 En cours</div></div>
-                <div class="module-item"><div class="module-name">Tool</div><div class="module-desc">Boîte à outils mathématique, algorithmique et utilitaires divers</div><div class="module-status status-wip">🟡 En cours</div></div>
-                <div class="module-item"><div class="module-name">AudioModule</div><div class="module-desc">Gestion des sons et notifications audio dans le terminal</div><div class="module-status status-wip">🟡 À développer</div></div>
-                <div class="module-item"><div class="module-name">PrintModule</div><div class="module-desc">Impression texte et gestion couleurs ANSI complète</div><div class="module-status status-bad">🔴 Instable</div></div>
+                <div class="module-item"><div class="module-name">Core</div><div class="module-desc" data-i18n="mod.core.desc">Structures internes, types fondamentaux — <code>trPair</code>, <code>trMulti</code>, <code>trMap</code>…</div><div class="module-status status-ok" data-i18n="status.stable">🟢 Stable</div></div>
+                <div class="module-item"><div class="module-name">Engine</div><div class="module-desc" data-i18n="mod.engine.desc">Cœur du moteur, logique principale, communication inter-modules</div><div class="module-status status-ok" data-i18n="status.stable">🟢 Stable</div></div>
+                <div class="module-item"><div class="module-name">Render</div><div class="module-desc" data-i18n="mod.render.desc">Pipeline de rendu, positionnement, superposition multi-couches</div><div class="module-status status-ok" data-i18n="status.func">🟢 Fonctionnel</div></div>
+                <div class="module-item"><div class="module-name">UI</div><div class="module-desc" data-i18n="mod.ui.desc">Système hiérarchique des widgets, focus, masquage (<code>hide/show</code>)</div><div class="module-status status-ok" data-i18n="status.func">🟢 Fonctionnel</div></div>
+                <div class="module-item"><div class="module-name">Components</div><div class="module-desc" data-i18n="mod.comp.desc">Composants de base — boutons, textes, conteneurs, barres de progression</div><div class="module-status status-ok" data-i18n="status.func">🟢 Fonctionnel</div></div>
+                <div class="module-item"><div class="module-name">InputModule</div><div class="module-desc" data-i18n="mod.input.desc">Gestion des entrées clavier, tampon multithread, mode non-bloquant</div><div class="module-status status-ok" data-i18n="status.stable">🟢 Stable</div></div>
+                <div class="module-item"><div class="module-name">World</div><div class="module-desc" data-i18n="mod.world.desc">Contexte global, gestion de scène et logique environnementale</div><div class="module-status status-ok" data-i18n="status.func">🟢 Fonctionnel</div></div>
+                <div class="module-item"><div class="module-name">LoadModule</div><div class="module-desc" data-i18n="mod.load.desc">Parsing des fichiers .widg (XML propriétaire), prévisualisation live</div><div class="module-status status-wip" data-i18n="status.wip">🟡 En cours</div></div>
+                <div class="module-item"><div class="module-name">Tool</div><div class="module-desc" data-i18n="mod.tool.desc">Boîte à outils mathématique, algorithmique et utilitaires divers</div><div class="module-status status-wip" data-i18n="status.wip">🟡 En cours</div></div>
+                <div class="module-item"><div class="module-name">AudioModule</div><div class="module-desc" data-i18n="mod.audio.desc">Gestion des sons et notifications audio dans le terminal</div><div class="module-status status-wip" data-i18n="status.todo">🟡 À développer</div></div>
+                <div class="module-item"><div class="module-name">PrintModule</div><div class="module-desc" data-i18n="mod.print.desc">Impression texte et gestion couleurs ANSI complète</div><div class="module-status status-bad" data-i18n="status.unstable">🔴 Instable</div></div>
             </div>
         </div>
     </div>
@@ -116,30 +204,44 @@
 <section class="section" id="widg">
     <div class="section-inner">
         <div class="section-card">
-            <p class="section-num">03 / Langage .widg</p>
-            <h2 class="section-title shimmer-text">Format XML<br>propriétaire</h2>
+            <p class="section-num" data-i18n="s03.num">03 / Langage .widg</p>
+            <h2 class="section-title shimmer-text" data-i18n="s03.title">Format XML<br>propriétaire</h2>
             <div class="section-rule"></div>
             <div class="section-grid" style="margin-bottom:44px;">
                 <div class="section-text">
-                    <p>Chaque widget peut être décrit via un fichier <code>.widg</code> utilisant un XML personnalisé avec des balises avancées. Ces balises permettent de définir les propriétés, la position, le contenu et les couleurs d'un widget.</p>
-                    <p>L'un des atouts majeurs du format : la modification en direct. En appuyant sur <code>F5/F6/F8/F9/F10</code> dans l'aperçu, les changements effectués dans le fichier XML apparaissent immédiatement — sans recompiler.</p>
-                    <div class="retro-quote">Édition live · Animations · Séquences d'échappement · Couleurs ANSI par intervalle</div>
+                    <p data-i18n="s03.p1">Chaque widget peut être décrit via un fichier <code>.widg</code> utilisant un XML personnalisé avec des balises avancées. Ces balises permettent de définir les propriétés, la position, le contenu et les couleurs d'un widget.</p>
+                    <p data-i18n="s03.p2">L'un des atouts majeurs du format : la modification en direct. En appuyant sur <code>F5/F6/F8/F9/F10</code> dans l'aperçu, les changements effectués dans le fichier XML apparaissent immédiatement — sans recompiler.</p>
+                    <div class="retro-quote" data-i18n="s03.quote">Édition live · Animations · Séquences d'échappement · Couleurs ANSI par intervalle</div>
                 </div>
                 <div class="features">
-                    <div class="feature"><h4>Chargement dynamique</h4><p>Ouvrir et visualiser n'importe quel fichier .widg seul avec toutes ses animations et couleurs, en isolation complète.</p></div>
-                    <div class="feature"><h4>Débogage en temps réel</h4><p>Modifier le XML et voir les changements instantanément — idéal pour les widgets animés complexes.</p></div>
-                    <div class="feature"><h4>Animations frame-by-frame</h4><p>Chaque widget <code>trText</code> supporte des conteneurs d'animations avec frames horodatées et transitions automatiques.</p></div>
+                    <div class="feature"><h4 data-i18n="s03.f1.title">Chargement dynamique</h4><p data-i18n="s03.f1.desc">Ouvrir et visualiser n'importe quel fichier .widg seul avec toutes ses animations et couleurs, en isolation complète.</p></div>
+                    <div class="feature"><h4 data-i18n="s03.f2.title">Débogage en temps réel</h4><p data-i18n="s03.f2.desc">Modifier le XML et voir les changements instantanément — idéal pour les widgets animés complexes.</p></div>
+                    <div class="feature"><h4 data-i18n="s03.f3.title">Animations frame-by-frame</h4><p data-i18n="s03.f3.desc">Chaque widget <code>trText</code> supporte des conteneurs d'animations avec frames horodatées et transitions automatiques.</p></div>
                 </div>
             </div>
 
+            <!-- ══ BIG TOOL CTA ══ -->
+            <div class="tool-cta-mega">
+                <div class="tool-cta-mega-left">
+                    <div class="tool-cta-mega-kicker" data-i18n="s03.cta.badge">🛠 Outil interactif</div>
+                    <div class="tool-cta-mega-title" data-i18n="s03.cta.title">Prévisualisez et créez vos fichiers .widg<br>directement dans le navigateur</div>
+                    <div class="tool-cta-mega-sub" data-i18n="s03.cta.desc">Import de fichiers .widg, éditeur en direct, générateur XML — sans installation.</div>
+                </div>
+                <div class="tool-cta-mega-right">
+                    <a href="documentation.html" class="btn-mega" data-i18n="s03.cta.btn">Ouvrir l'outil →</a>
+                    <a href="documentation.html#creator" class="btn-mega-ghost">Créer un widget →</a>
+                </div>
+            </div>
+
+            <!-- ══ TABLE ══ -->
             <div class="widg-table-wrap">
             <table class="widg-table">
                 <thead>
                     <tr>
-                        <th>Élément XML</th>
-                        <th>Attribut(s)</th>
-                        <th>Type C++</th>
-                        <th>Description</th>
+                        <th data-i18n="s03.th.elem">Élément XML</th>
+                        <th data-i18n="s03.th.attr">Attribut(s)</th>
+                        <th data-i18n="s03.th.type">Type C++</th>
+                        <th data-i18n="s03.th.desc">Description</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -150,36 +252,34 @@
                     <tr><td>RelativePositionType</td><td>RpType</td><td>enum</td><td>Ancrage relatif : TopLeft, MiddleCenter, BottomRight…</td></tr>
                     <tr><td>trWidget</td><td>—</td><td>trWidget*</td><td>Widget pouvant contenir du texte ou des couleurs</td></tr>
                     <tr><td>Size</td><td>height, width</td><td>int</td><td>Taille du widget en colonnes / lignes</td></tr>
-                    <tr><td>Color</td><td>foreground, background</td><td>uint8_t R,G,B</td><td>Couleur du texte et/ou du fond du widget</td></tr>
+                    <tr><td>Color</td><td>foreground, background</td><td>uint8_t R,G,B,A</td><td>Couleur globale du texte et/ou du fond du widget (#RRGGBBAA)</td></tr>
+                    <tr><td>CaseColor</td><td>—</td><td>unordered_map</td><td>Définition de couleurs ANSI sur des <strong>intervalles</strong> de caractères — permet de colorier des portions distinctes du texte</td></tr>
+                    <tr><td>Case</td><td>Start, End, foreground, background</td><td>int / uint8_t</td><td>Intervalle [Start, End] avec couleur fg/bg indépendante. Préfixer l'attribut par <code>_</code> pour le désactiver (ex. <code>_background</code>)</td></tr>
                     <tr><td>Content</td><td>—</td><td>std::wstring</td><td>Contenu textuel du widget (peut être multi-lignes)</td></tr>
-                    <tr><td>Line</td><td>Content</td><td>std::wstring</td><td>Ligne de texte normale</td></tr>
-                    <tr><td>LineRaw</td><td>Content</td><td>std::wstring</td><td>Ligne avec séquences d'échappement (\n, \t…)</td></tr>
-                    <tr><td>CaseColor</td><td>—</td><td>unordered_map</td><td>Définition des couleurs pour des intervalles spécifiques dans le texte</td></tr>
-                    <tr><td>Case</td><td>Start, End, foreground, background</td><td>int / uint8_t</td><td>Intervalle d'un style ANSI appliqué à une partie du texte</td></tr>
+                    <tr><td>Line</td><td>Content</td><td>std::wstring</td><td>Ligne de texte normale (UTF-8)</td></tr>
+                    <tr><td>LineRaw</td><td>Content</td><td>std::wstring</td><td>Ligne avec séquences d'échappement (\n, \t, \b…)</td></tr>
                     <tr><td>trText</td><td>—</td><td>trText*</td><td>Texte animé ou statique, supporte Animation, RawFrame et FrameAdd</td></tr>
                     <tr><td>Animation</td><td>—</td><td>vector&lt;trPair&gt;</td><td>Conteneur de frames animées horodatées</td></tr>
-                    <tr><td>RawFrame</td><td>number, time</td><td>int</td><td>Frame brute avec durée en millisecondes</td></tr>
+                    <tr><td>RawFrame</td><td>number, time</td><td>int</td><td>Frame brute avec durée en millisecondes — peut contenir Content + CaseColor</td></tr>
                     <tr><td>FrameAdd</td><td>number, time, onLastFrame</td><td>int / bool</td><td>Ajout de frame sur le texte existant ou en fin d'animation</td></tr>
                     <tr><td>OldContent</td><td>—</td><td>std::wstring</td><td>Texte existant avant ajout ou effacement</td></tr>
                     <tr><td>Add</td><td>position</td><td>int</td><td>Position où insérer du texte dans OldContent</td></tr>
                     <tr><td>Erase</td><td>Start, End</td><td>int</td><td>Supprime un intervalle de texte dans OldContent</td></tr>
                 </tbody>
             </table>
-            </div><!-- /widg-table-wrap -->
+            </div>
 
-            <div class="widg-example">
+            <!-- ══ XML EXAMPLE + MINI PREVIEW ══ -->
+            <div class="widg-example-wrap">
+                <div class="widg-example">
 <span class="xml-cmmt">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
 <br><span class="xml-tag">&lt;trObject</span> <span class="xml-attr">type</span>=<span class="xml-val">"trWidget"</span> <span class="xml-attr">name</span>=<span class="xml-val">"Hello1"</span><span class="xml-tag">&gt;</span>
 <br>&nbsp;&nbsp;<span class="xml-tag">&lt;Properties&gt;</span>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="xml-tag">&lt;Property</span> <span class="xml-attr">name</span>=<span class="xml-val">"Activate"</span>  <span class="xml-attr">type</span>=<span class="xml-val">"bool"</span><span class="xml-tag">&gt;</span>true<span class="xml-tag">&lt;/Property&gt;</span>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="xml-tag">&lt;Property</span> <span class="xml-attr">name</span>=<span class="xml-val">"Protected"</span> <span class="xml-attr">type</span>=<span class="xml-val">"bool"</span><span class="xml-tag">&gt;</span>false<span class="xml-tag">&lt;/Property&gt;</span>
-<br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="xml-tag">&lt;Property</span> <span class="xml-attr">name</span>=<span class="xml-val">"ToChange"</span>  <span class="xml-attr">type</span>=<span class="xml-val">"bool"</span><span class="xml-tag">&gt;</span>true<span class="xml-tag">&lt;/Property&gt;</span>
 <br>&nbsp;&nbsp;<span class="xml-tag">&lt;/Properties&gt;</span>
-<br>&nbsp;&nbsp;<span class="xml-tag">&lt;trActor&gt;</span>
-<br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="xml-tag">&lt;APPLY_Implementation</span> <span class="xml-attr">Code</span>=<span class="xml-val">""</span> <span class="xml-tag">/&gt;</span>
-<br>&nbsp;&nbsp;<span class="xml-tag">&lt;/trActor&gt;</span>
 <br>&nbsp;&nbsp;<span class="xml-tag">&lt;trPawn&gt;</span>
-<br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="xml-tag">&lt;Position</span> <span class="xml-attr">x</span>=<span class="xml-val">"100"</span> <span class="xml-attr">y</span>=<span class="xml-val">"-1"</span> <span class="xml-tag">/&gt;</span>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="xml-tag">&lt;Position</span> <span class="xml-attr">x</span>=<span class="xml-val">"0"</span> <span class="xml-attr">y</span>=<span class="xml-val">"0"</span> <span class="xml-tag">/&gt;</span>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="xml-tag">&lt;RelativePositionType</span> <span class="xml-attr">RpType</span>=<span class="xml-val">"MiddleCenter"</span> <span class="xml-tag">/&gt;</span>
 <br>&nbsp;&nbsp;<span class="xml-tag">&lt;/trPawn&gt;</span>
 <br>&nbsp;&nbsp;<span class="xml-tag">&lt;trWidget&gt;</span>
@@ -192,10 +292,34 @@
 <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="xml-tag">&lt;Line</span> <span class="xml-attr">Content</span>=<span class="xml-val">"|_| |_|\___|_|_|\___/"</span> <span class="xml-tag">/&gt;</span>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="xml-tag">&lt;/Content&gt;</span>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="xml-tag">&lt;Color</span> <span class="xml-attr">foreground</span>=<span class="xml-val">"#9cf493ff"</span> <span class="xml-attr">background</span>=<span class="xml-val">"#052d0aff"</span> <span class="xml-tag">/&gt;</span>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="xml-cmmt">&lt;!-- CaseColor : colorie des intervalles de caractères --&gt;</span>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="xml-tag">&lt;CaseColor&gt;</span>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="xml-tag">&lt;Case</span> <span class="xml-attr">Start</span>=<span class="xml-val">"0"</span> <span class="xml-attr">End</span>=<span class="xml-val">"7"</span> <span class="xml-attr">foreground</span>=<span class="xml-val">"#ffb6c1ff"</span> <span class="xml-attr">_background</span>=<span class="xml-val">"#ffffffff"</span><span class="xml-tag">/&gt;</span>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="xml-tag">&lt;Case</span> <span class="xml-attr">Start</span>=<span class="xml-val">"7"</span> <span class="xml-attr">End</span>=<span class="xml-val">"22"</span> <span class="xml-attr">foreground</span>=<span class="xml-val">"#91e6f1ff"</span> <span class="xml-attr">background</span>=<span class="xml-val">"#09598eff"</span><span class="xml-tag">/&gt;</span>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="xml-tag">&lt;/CaseColor&gt;</span>
 <br>&nbsp;&nbsp;<span class="xml-tag">&lt;/trWidget&gt;</span>
 <br><span class="xml-tag">&lt;/trObject&gt;</span>
+                </div>
+
+                <!-- MINI PREVIEW -->
+                <div class="widg-mini-preview">
+                    <div class="widg-mini-bar">
+                        <div class="widg-mini-dot r"></div>
+                        <div class="widg-mini-dot y"></div>
+                        <div class="widg-mini-dot g"></div>
+                        <span class="widg-mini-title">Hello1.widg — aperçu</span>
+                    </div>
+                    <div class="widg-mini-content">
+ <span style="color:#ffb6c1"> _   _  </span><span style="color:#91e6f1;background:#09598e">    _ _</span>
+ <span style="color:#ffb6c1">| | | |</span><span style="color:#91e6f1;background:#09598e"> ___| | | ___</span>
+ <span style="color:#ffb6c1">| |_| |</span><span style="color:#91e6f1;background:#09598e">/ _ \ | |/ _ \</span>
+ <span style="color:#ffb6c1">|  _  |</span><span style="color:#91e6f1;background:#09598e">  __/ | | (_) |</span>
+ <span style="color:#ffb6c1">|_| |_|</span><span style="color:#91e6f1;background:#09598e">\___|_|_|\___/</span></div>
+                    <div class="widg-mini-label">Rendu terminal simulé</div>
+                </div>
             </div>
-            <div class="widg-note">
+
+            <div class="widg-note" data-i18n="s03.note">
                 ⚠️ Le tableau n'est pas complet — le format .widg est encore en développement actif. Contacter l'auteur pour plus d'informations sur les balises avancées et les fonctionnalités à venir.
             </div>
         </div>
@@ -206,24 +330,24 @@
 <section class="section" id="sequences">
     <div class="section-inner">
         <div class="section-card">
-            <p class="section-num">04 / Caractères spéciaux</p>
-            <h2 class="section-title shimmer-text">Gestion des<br>séquences</h2>
+            <p class="section-num" data-i18n="s04.num">04 / Caractères spéciaux</p>
+            <h2 class="section-title shimmer-text" data-i18n="s04.title">Gestion des<br>séquences</h2>
             <div class="section-rule"></div>
             <div class="section-grid">
                 <div class="section-text">
-                    <p>Le moteur gère nativement un ensemble de séquences d'échappement et de caractères spéciaux. Chacun peut avoir des effets visuels imprévisibles selon le terminal cible — leur comportement est documenté et maîtrisé dans le pipeline de rendu.</p>
-                    <p>La gestion de ces cas est particulièrement critique dans le mode <code>RENDER_SYSTEM</code> où tout le rendu passe par un buffer complet avant affichage — les séquences sont résolues en pré-affichage.</p>
-                    <div class="retro-quote">Compatibilité Windows / Linux testée — comportements OS-dépendants identifiés et gérés.</div>
+                    <p data-i18n="s04.p1">Le moteur gère nativement un ensemble de séquences d'échappement et de caractères spéciaux. Chacun peut avoir des effets visuels imprévisibles selon le terminal cible — leur comportement est documenté et maîtrisé dans le pipeline de rendu.</p>
+                    <p data-i18n="s04.p2">La gestion de ces cas est particulièrement critique dans le mode <code>RENDER_SYSTEM</code> où tout le rendu passe par un buffer complet avant affichage — les séquences sont résolues en pré-affichage.</p>
+                    <div class="retro-quote" data-i18n="s04.quote">Compatibilité Windows / Linux testée — comportements OS-dépendants identifiés et gérés.</div>
                 </div>
                 <div class="seq-grid">
-                    <div class="seq-item"><div class="seq-code">\n</div><div class="seq-desc">Saut de ligne — peut casser la mise en forme si non maîtrisé</div></div>
-                    <div class="seq-item"><div class="seq-code">\r</div><div class="seq-desc">Retour chariot — peut écraser une ligne existante selon l'OS</div></div>
-                    <div class="seq-item"><div class="seq-code">\t</div><div class="seq-desc">Tabulation horizontale — espacement variable selon le terminal</div></div>
-                    <div class="seq-item"><div class="seq-code">\b</div><div class="seq-desc">Retour arrière — effet visuel imprévisible, à surveiller</div></div>
-                    <div class="seq-item"><div class="seq-code">\v</div><div class="seq-desc">Tabulation verticale — peut désaligner le rendu</div></div>
-                    <div class="seq-item"><div class="seq-code">\f</div><div class="seq-desc">Saut de page — rarement utilisé mais géré</div></div>
-                    <div class="seq-item"><div class="seq-code">\0x</div><div class="seq-desc">Caractère vide — à surveiller dans les buffers</div></div>
-                    <div class="seq-item"><div class="seq-code">\\</div><div class="seq-desc">Barre oblique inversée — doit être correctement échappée</div></div>
+                    <div class="seq-item"><div class="seq-code">\n</div><div class="seq-desc" data-i18n="seq.n.desc">Saut de ligne — peut casser la mise en forme si non maîtrisé</div></div>
+                    <div class="seq-item"><div class="seq-code">\r</div><div class="seq-desc" data-i18n="seq.r.desc">Retour chariot — peut écraser une ligne existante selon l'OS</div></div>
+                    <div class="seq-item"><div class="seq-code">\t</div><div class="seq-desc" data-i18n="seq.t.desc">Tabulation horizontale — espacement variable selon le terminal</div></div>
+                    <div class="seq-item"><div class="seq-code">\b</div><div class="seq-desc" data-i18n="seq.b.desc">Retour arrière — effet visuel imprévisible, à surveiller</div></div>
+                    <div class="seq-item"><div class="seq-code">\v</div><div class="seq-desc" data-i18n="seq.v.desc">Tabulation verticale — peut désaligner le rendu</div></div>
+                    <div class="seq-item"><div class="seq-code">\f</div><div class="seq-desc" data-i18n="seq.f.desc">Saut de page — rarement utilisé mais géré</div></div>
+                    <div class="seq-item"><div class="seq-code">\0x</div><div class="seq-desc" data-i18n="seq.0.desc">Caractère vide — à surveiller dans les buffers</div></div>
+                    <div class="seq-item"><div class="seq-code">\\</div><div class="seq-desc" data-i18n="seq.bs.desc">Barre oblique inversée — doit être correctement échappée</div></div>
                 </div>
             </div>
         </div>
@@ -234,29 +358,29 @@
 <section class="section" id="engine">
     <div class="section-inner">
         <div class="section-card">
-            <p class="section-num">05 / Moteur de rendu</p>
-            <h2 class="section-title shimmer-text">Trois systèmes<br>de rendu</h2>
+            <p class="section-num" data-i18n="s05.num">05 / Moteur de rendu</p>
+            <h2 class="section-title shimmer-text" data-i18n="s05.title">Trois systèmes<br>de rendu</h2>
             <div class="section-rule"></div>
             <div class="section-grid">
                 <div class="render-systems">
                     <div class="render-system">
-                        <div class="render-system-header"><h4>Direct System</h4><span class="render-tag tag-slow">Lent</span></div>
-                        <p>Chaque caractère écrit directement sur le terminal. Simple mais très lent — provoque lag et bugs visuels à grande échelle.</p>
+                        <div class="render-system-header"><h4 data-i18n="render.direct">Direct System</h4><span class="render-tag tag-slow" data-i18n="render.direct.tag">Lent</span></div>
+                        <p data-i18n="render.direct.desc">Chaque caractère écrit directement sur le terminal. Simple mais très lent — provoque lag et bugs visuels à grande échelle.</p>
                     </div>
                     <div class="render-system">
-                        <div class="render-system-header"><h4>Buffer System</h4><span class="render-tag tag-mid">Moyen</span></div>
-                        <p>Tout est écrit dans un <code>ostringstream</code> tampon avant affichage. Fluide pour peu d'actions, instable avec de nombreux changements simultanés.</p>
+                        <div class="render-system-header"><h4 data-i18n="render.buffer">Buffer System</h4><span class="render-tag tag-mid" data-i18n="render.buffer.tag">Moyen</span></div>
+                        <p data-i18n="render.buffer.desc">Tout est écrit dans un <code>ostringstream</code> tampon avant affichage. Fluide pour peu d'actions, instable avec de nombreux changements simultanés.</p>
                     </div>
                     <div class="render-system">
-                        <div class="render-system-header"><h4>Render System</h4><span class="render-tag tag-best">Optimal</span></div>
-                        <p>Buffer complet sans toucher directement au terminal. Le plus performant — gestion complète des positions, superpositions et modifications pré-affichage.</p>
+                        <div class="render-system-header"><h4 data-i18n="render.system">Render System</h4><span class="render-tag tag-best" data-i18n="render.system.tag">Optimal</span></div>
+                        <p data-i18n="render.system.desc">Buffer complet sans toucher directement au terminal. Le plus performant — gestion complète des positions, superpositions et modifications pré-affichage.</p>
                     </div>
                 </div>
                 <div class="section-text">
-                    <p>Le moteur supporte un système de couleurs ANSI complet — foreground, background, surbrillance, transitions dynamiques — sur tous les widgets.</p>
-                    <p>Un précompilateur Python parcourt automatiquement les fichiers <code>.h/.cpp</code> pour détecter les classes héritant de <code>trActor</code> et insérer les macros <code>REGISTER_TYPE</code> sans intervention manuelle. Il évite les duplications et signale les erreurs de configuration.</p>
-                    <p>Le système de collision entre widgets permet de récupérer les intersections et de définir les réactions souhaitées — overlap, rebond, masquage prioritaire.</p>
-                    <div class="retro-quote">Édition de widgets en live via F5 / F6 / F8 / F9 / F10 — sans recompilation.</div>
+                    <p data-i18n="s05.p1">Le moteur supporte un système de couleurs ANSI complet — foreground, background, surbrillance, transitions dynamiques — sur tous les widgets.</p>
+                    <p data-i18n="s05.p2">Un précompilateur Python parcourt automatiquement les fichiers <code>.h/.cpp</code> pour détecter les classes héritant de <code>trActor</code> et insérer les macros <code>REGISTER_TYPE</code> sans intervention manuelle. Il évite les duplications et signale les erreurs de configuration.</p>
+                    <p data-i18n="s05.p3">Le système de collision entre widgets permet de récupérer les intersections et de définir les réactions souhaitées — overlap, rebond, masquage prioritaire.</p>
+                    <div class="retro-quote" data-i18n="s05.quote">Édition de widgets en live via F5 / F6 / F8 / F9 / F10 — sans recompilation.</div>
                 </div>
             </div>
         </div>
@@ -267,23 +391,23 @@
 <section class="section" id="roadmap">
     <div class="section-inner">
         <div class="section-card">
-            <p class="section-num">06 / Roadmap</p>
-            <h2 class="section-title shimmer-text">Prochaines<br>étapes</h2>
+            <p class="section-num" data-i18n="s06.num">06 / Roadmap</p>
+            <h2 class="section-title shimmer-text" data-i18n="s06.title">Prochaines<br>étapes</h2>
             <div class="section-rule"></div>
             <div class="section-grid">
                 <div class="features">
-                    <div class="feature"><h4>Système souris</h4><p>Détection des positions, clics et événements hover directement dans le terminal.</p></div>
-                    <div class="feature"><h4>API Audio</h4><p>Effets sonores et notifications audio intégrés au moteur de widgets via AudioModule.</p></div>
-                    <div class="feature"><h4>Projets exemples</h4><p>Simulation de fractales, jeu T-Rex, mini UI complète avec widgets interactifs.</p></div>
-                    <div class="feature"><h4>Dépôt template</h4><p>Repo clé en main pour démarrer son propre projet Terminal-Renderer en quelques minutes.</p></div>
-                    <div class="feature"><h4>Documentation</h4><p>Documentation interne complète Doxygen + Markdown détaillé pour chaque module et balise .widg.</p></div>
-                    <div class="feature"><h4>Profilage mémoire</h4><p>Système de profilage mémoire et CPU intégré pour diagnostiquer les points chauds en production.</p></div>
+                    <div class="feature"><h4 data-i18n="road.f1.title">Système souris</h4><p data-i18n="road.f1.desc">Détection des positions, clics et événements hover directement dans le terminal.</p></div>
+                    <div class="feature"><h4 data-i18n="road.f2.title">API Audio</h4><p data-i18n="road.f2.desc">Effets sonores et notifications audio intégrés au moteur de widgets via AudioModule.</p></div>
+                    <div class="feature"><h4 data-i18n="road.f3.title">Projets exemples</h4><p data-i18n="road.f3.desc">Simulation de fractales, jeu T-Rex, mini UI complète avec widgets interactifs.</p></div>
+                    <div class="feature"><h4 data-i18n="road.f4.title">Dépôt template</h4><p data-i18n="road.f4.desc">Repo clé en main pour démarrer son propre projet Terminal-Renderer en quelques minutes.</p></div>
+                    <div class="feature"><h4 data-i18n="road.f5.title">Documentation</h4><p data-i18n="road.f5.desc">Documentation interne complète Doxygen + Markdown détaillé pour chaque module et balise .widg.</p></div>
+                    <div class="feature"><h4 data-i18n="road.f6.title">Profilage mémoire</h4><p data-i18n="road.f6.desc">Système de profilage mémoire et CPU intégré pour diagnostiquer les points chauds en production.</p></div>
                 </div>
                 <div class="section-text">
-                    <p>La vision long terme est de devenir un moteur complet de rendu console open-source, modulable et extensible — inspiré des architectures d'Unreal Engine mais conçu pour un environnement purement texte.</p>
-                    <p>L'objectif de performance reste constant : faire tourner le moteur même sur un grille-pain. Chaque optimisation compte, chaque allocation est mesurée.</p>
-                    <p>Le module <code>ContentReorganisation()</code> est en cours d'optimisation pour réduire les recalculs inutiles lors de mises à jour partielles du buffer.</p>
-                    <div class="retro-quote">by MOHAMED.B — C++17/20 — v0.4.1 🚧</div>
+                    <p data-i18n="s06.p1">La vision long terme est de devenir un moteur complet de rendu console open-source, modulable et extensible — inspiré des architectures d'Unreal Engine mais conçu pour un environnement purement texte.</p>
+                    <p data-i18n="s06.p2">L'objectif de performance reste constant : faire tourner le moteur même sur un grille-pain. Chaque optimisation compte, chaque allocation est mesurée.</p>
+                    <p data-i18n="s06.p3">Le module <code>ContentReorganisation()</code> est en cours d'optimisation pour réduire les recalculs inutiles lors de mises à jour partielles du buffer.</p>
+                    <div class="retro-quote">by MOHAMED.B — C++20/23 — UTF-8 — v0.4.1 🚧</div>
                 </div>
             </div>
         </div>
@@ -297,8 +421,8 @@
     <span class="bottom-left">Terminal-Renderer — v0.4.1 — MOHAMED.B</span>
     <div class="bottom-links">
         <a class="bottom-link" href="https://github.com/RydeProgramation/Terminal-Renderer">GitHub</a>
-        <a class="bottom-link" href="documentation.html">Documentation</a>
-        <a class="bottom-link" href="apropos.html">À propos de moi</a>
+        <a class="bottom-link" href="documentation.html" data-i18n="bottom.doc">Documentation</a>
+        <a class="bottom-link" href="about.html" data-i18n="bottom.about">À propos de moi</a>
     </div>
 </div>
 
