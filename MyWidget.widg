@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<trObject type="trWidget" name="Hello1">
+  <Properties>
+    <Property name="Activate" type="bool">true</Property>
+    <Property name="Protected" type="bool">false</Property>
+  </Properties>
+  <trPawn>
+    <Position x="0" y="0" />
+    <RelativePositionType RpType="MiddleCenter" />
+  </trPawn>
+  <trWidget>
+    <Size width="22" height="5" />
+    <Content>
+      <Line Content=" _   _      _ _" />
+      <Line Content="| | | | ___| | | ___" />
+      <Line Content="| |_| |/ _ \ | |/ _ \" />
+      <Line Content="|  _  |  __/ | | (_) |" />
+      <Line Content="|_| |_|\___|_|_|\___/" />
+    </Content>
+    <Color foreground="#9cf493ff" background="#052d0aff" />
+    <!-- CaseColor : colorie des intervalles de caractères -->
+    <CaseColor>
+      <Case Start="0" End="7" foreground="#ffb6c1ff" _background="#ffffffff"/>
+      <Case Start="7" End="22" foreground="#91e6f1ff" background="#09598eff"/>
+    </CaseColor>
+  </trWidget>
+</trObject>

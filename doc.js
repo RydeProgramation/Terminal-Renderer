@@ -52,8 +52,6 @@ bindAlpha('cr-fg-a','cr-fg-av');    bindAlpha('cr-bg-a','cr-bg-av');
 /* ══ XML ESCAPE PROCESSING
    Mirrors C++ trLoadFile behavior:
    \b → backspace (0x08), \n → newline, \t → tab, \f \v \r aussi.
-   Les attributs "Line Content" dans le XML contiennent des séquences
-   littérales type \b que le C++ convertit à la fermeture de </trWidget>.
 ══ */
 function processXmlEscapes(s) {
     let out = '';
@@ -80,7 +78,6 @@ function parseCases(el) {
         start: parseInt(c.getAttribute('Start') || c.getAttribute('start') || '0'),
         end:   parseInt(c.getAttribute('End')   || c.getAttribute('end')   || '0'),
         fg:    c.getAttribute('foreground') || null,
-        // N'activer bg que si l'attribut exact "background" existe (sans préfixe _)
         bg:    c.getAttribute('background') || null,
     })).filter(c => c.end > c.start);
 }
@@ -115,6 +112,10 @@ function parseWidg(xmlStr) {
         rpType: relEl ? relEl.getAttribute('RpType') : 'MiddleCenter'
     };
 
+    /* ── Trouver trWidget et trText comme enfants directs de trObject ──
+       IMPORTANT : trWidget est TOUJOURS présent (polymorphisme).
+       trText hérite de trWidget, donc <trWidget> contient Size/Content/Color,
+       et <trText> contient seulement Animation. ── */
     let widgetEl = null, textEl = null;
     for (const ch of root.children) {
         if (ch.tagName === 'trWidget') widgetEl = ch;
@@ -122,7 +123,6 @@ function parseWidg(xmlStr) {
     }
 
     function extractLines(el) {
-        // Gère à la fois <Line> et <LineRaw> — les deux passent dans processXmlEscapes
         return Array.from(el.querySelectorAll(':scope > Content > Line, :scope > Content > LineRaw'))
             .map(l => processXmlEscapes(l.getAttribute('Content') || ''));
     }
@@ -142,6 +142,8 @@ function parseWidg(xmlStr) {
         };
     }
 
+    /* ── widget = toujours depuis <trWidget> (même pour un trText) ──
+       Si <trWidget> absent (ancien format cassé), tenter depuis <trText>. ── */
     let widget = widgetEl ? extractWidget(widgetEl) : (textEl ? extractWidget(textEl) : null);
     let animation = null;
 
@@ -150,15 +152,27 @@ function parseWidg(xmlStr) {
         if (animEl) {
             const frames = [];
 
-            /* ── Frame 0 = contenu de base du trText (comportement C++ :
+            /* ── Frame 0 = contenu de base (comportement C++ :
                AnimationVector.emplace_back(0, TextLoad->GetRawContent().GetDataNew()))
-               La frame de base N'EST PAS RawFrame0, c'est le contenu du widget lui-même. ── */
-            const baseLines = extractLines(textEl);
+
+               CORRECTION CRITIQUE :
+               Le contenu de base EST dans <trWidget>, PAS dans <trText>.
+               Si <trText> n'a pas de <Content>, on hérite du contenu de widget. ── */
+            const trTextLines = extractLines(textEl);
+            const trTextCases = parseCases(textEl);
+
+            const effectiveBaseLines = trTextLines.length
+                ? trTextLines
+                : (widget?.lines?.length ? widget.lines : ['']);
+            const effectiveBaseCases = trTextCases.length
+                ? trTextCases
+                : (widget?.cases?.length ? widget.cases : null);
+
             frames.push({
                 number: 0,
-                time:   0,        // affiché immédiatement
-                lines:  baseLines.length ? baseLines : [''],
-                cases:  parseCases(textEl) || null
+                time:   0,
+                lines:  effectiveBaseLines,
+                cases:  effectiveBaseCases
             });
 
             /* ── Parcourir les enfants de <Animation> dans l'ordre du document ── */
@@ -168,56 +182,76 @@ function parseWidg(xmlStr) {
                 if (child.tagName === 'RawFrame') {
                     const fLines = Array.from(child.querySelectorAll('Content > Line, Content > LineRaw'))
                         .map(l => processXmlEscapes(l.getAttribute('Content') || ''));
+                    const fCases = parseCases(child);
                     frames.push({
                         number: parseInt(child.getAttribute('number') || child.getAttribute('Number') || String(frames.length)),
                         time:   parseInt(child.getAttribute('time')   || child.getAttribute('Time')   || '200'),
                         lines:  fLines.length ? fLines : [''],
-                        cases:  parseCases(child) || null
+                        cases:  fCases.length ? fCases : null
                     });
                 }
 
                 /* ══ FrameAdd : modification différentielle du contenu ══
-                   Prend OldContent (base widget OU dernière frame si onLastFrame=true),
-                   applique des <Add position="N"> et <Erase Start="N" End="N"/> dessus. ── */
+                   onLastFrame=false → base = frame 0 (contenu de trWidget)
+                   onLastFrame=true  → base = dernière frame ajoutée
+                   On hérite TOUT le contenu de la frame source, puis on applique
+                   les opérations Add/Erase et on merge les CaseColor par-dessus. ── */
                 else if (child.tagName === 'FrameAdd') {
                     const time = parseInt(child.getAttribute('time') || child.getAttribute('Time') || '200');
-                    const rawOnLast = (child.getAttribute('onLastFrame') || child.getAttribute('OnLastFrame') ||
-                                       child.getAttribute('addLastFrame') || child.getAttribute('AddLastFrame') || 'false').toLowerCase();
+                    const rawOnLast = (
+                        child.getAttribute('onLastFrame') || child.getAttribute('OnLastFrame') ||
+                        child.getAttribute('addLastFrame') || child.getAttribute('AddLastFrame') || 'false'
+                    ).toLowerCase();
                     const useLastFrame = rawOnLast === 'true' || rawOnLast === '1';
 
-                    // Base : widget de base OU dernière frame ajoutée
-                    const srcFrame = (useLastFrame && frames.length > 1) ? frames[frames.length - 1] : frames[0];
+                    /* Source : frame de base OU dernière frame ajoutée */
+                    const srcFrame = (useLastFrame && frames.length > 1)
+                        ? frames[frames.length - 1]
+                        : frames[0];
+
+                    /* Partir du contenu de la frame source (pas du vide !) */
                     let content = srcFrame.lines.join('\n');
 
                     const oldContentEl = child.querySelector(':scope > OldContent');
                     if (oldContentEl) {
-                        // Appliquer les opérations dans l'ordre du document
                         for (const op of oldContentEl.children) {
                             if (op.tagName === 'Add') {
-                                const pos = parseInt(op.getAttribute('position') || op.getAttribute('pos') ||
-                                                      op.getAttribute('Position') || op.getAttribute('Pos') || '0');
+                                const pos = parseInt(
+                                    op.getAttribute('position') || op.getAttribute('pos') ||
+                                    op.getAttribute('Position') || op.getAttribute('Pos') || '0'
+                                );
                                 const addText = processXmlEscapes(op.textContent || '');
                                 content = content.slice(0, pos) + addText + content.slice(pos);
 
                             } else if (op.tagName === 'Erase') {
                                 const start = parseInt(op.getAttribute('Start') || op.getAttribute('start') || '0');
-                                const end   = parseInt(op.getAttribute('End')   || op.getAttribute('end')   ||
-                                                        op.getAttribute('Ending') || op.getAttribute('ending') || '0');
+                                const end   = parseInt(
+                                    op.getAttribute('End')   || op.getAttribute('end') ||
+                                    op.getAttribute('Ending') || op.getAttribute('ending') || '0'
+                                );
                                 content = content.slice(0, start) + content.slice(end);
                             }
                         }
                     }
 
+                    /* Cases : héritage de la frame source + overrides FrameAdd */
+                    const srcCases    = srcFrame.cases ? [...srcFrame.cases] : [];
+                    const directCases = parseCases(child);                          // FrameAdd > CaseColor > Case
+                    const oldCases    = oldContentEl ? parseCases(oldContentEl) : []; // OldContent > CaseColor > Case
+                    const overrides   = [...directCases, ...oldCases];
+                    const mergedCases = overrides.length
+                        ? [...srcCases, ...overrides]
+                        : (srcCases.length ? srcCases : null);
+
                     frames.push({
                         number: frames.length,
                         time:   time,
                         lines:  content.split('\n'),
-                        cases:  parseCases(child) || null
+                        cases:  mergedCases
                     });
                 }
             }
 
-            // Animation valide si au moins une frame après la frame 0
             if (frames.length > 1) animation = frames;
             else if (frames.length === 1 && animEl.children.length > 0) animation = frames;
         }
@@ -227,7 +261,12 @@ function parseWidg(xmlStr) {
     return { type, name, properties, position, widget, animation, isAnimated: !!animation };
 }
 
-/* ══ .WIDG GENERATOR ══ */
+/* ══ .WIDG GENERATOR ══
+   STRUCTURE CORRECTE (polymorphisme C++) :
+   - <trWidget> contient TOUJOURS Size, Content, Color, CaseColor
+   - <trText>   contient UNIQUEMENT Animation (si type = trText)
+   Ne jamais mettre Size/Content/Color dans <trText> !
+══ */
 function generateWidg(data) {
     const e = s => String(s||'')
         .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -250,16 +289,31 @@ function generateWidg(data) {
         caseColorBlock = `\n        <CaseColor>\n${cl}\n        </CaseColor>`;
     }
 
-    const tag = data.type === 'trText' ? 'trText' : 'trWidget';
     const pos = data.position || { x:0, y:0, rpType:'MiddleCenter' };
 
-    let animBlock = '';
-    if (data.type === 'trText' && data.animation?.length) {
-        const frs = data.animation.map((f, i) => {
-            const fl = (f.lines||['']).map(l => `                    <Line Content="${e(l)}" />`).join('\n');
-            return `            <RawFrame number="${i}" time="${f.time||200}">\n                <Content>\n${fl}\n                </Content>\n            </RawFrame>`;
-        }).join('\n');
-        animBlock = `\n        <Animation>\n${frs}\n        </Animation>`;
+    /* ── Bloc <trWidget> : TOUJOURS présent, même pour trText ── */
+    const trWidgetBlock = `    <trWidget>
+        <Size width="${w.width}" height="${w.height}" />
+        <Content>
+${lines}
+        </Content>
+        <Color foreground="${e(w.fg)}" background="${e(w.bg)}" />${caseColorBlock}
+    </trWidget>`;
+
+    /* ── Bloc <trText> : uniquement si type=trText, contient l'Animation ── */
+    let trTextBlock = '';
+    if (data.type === 'trText') {
+        let animInner = '';
+        if (data.animation && data.animation.length > 1) {
+            /* On saute frames[0] (= contenu de base déjà dans <trWidget>).
+               Les RawFrame commencent à number="0" mais correspondent à frames[1]. */
+            const frs = data.animation.slice(1).map((f, i) => {
+                const fl = (f.lines||['']).map(l => `                    <Line Content="${e(l)}" />`).join('\n');
+                return `            <RawFrame number="${i}" time="${f.time||200}">\n                <Content>\n${fl}\n                </Content>\n            </RawFrame>`;
+            }).join('\n');
+            animInner = `\n        <Animation>\n${frs}\n        </Animation>`;
+        }
+        trTextBlock = `\n    <trText>${animInner}\n    </trText>`;
     }
 
     return `<?xml version="1.0" encoding="utf-8"?>
@@ -274,13 +328,7 @@ ${props}
         <Position x="${e(String(pos.x))}" y="${e(String(pos.y))}" />
         <RelativePositionType RpType="${e(pos.rpType)}" />
     </trPawn>
-    <${tag}>
-        <Size width="${w.width}" height="${w.height}" />
-        <Content>
-${lines}
-        </Content>
-        <Color foreground="${e(w.fg)}" background="${e(w.bg)}" />${caseColorBlock}${animBlock}
-    </${tag}>
+${trWidgetBlock}${trTextBlock}
 </trObject>`;
 }
 
@@ -294,11 +342,10 @@ function download(content, filename) {
 }
 
 /* ══ GRID RENDERER
-   Simule le comportement de ContentReorganisationKeepColor() du C++ :
-   - Construit une grille width × height de caractères
-   - Gère \b (backspace → recule d'une case et efface), \n, \r, \t
-   - Applique CaseColor sur les positions RAW → positions grille
-   - Les espaces "vides" conservent bien la couleur de fond de la Case
+   Simule ContentReorganisationKeepColor() du C++ :
+   - Grille width × height de caractères
+   - Gère \b \n \r \t \f \v
+   - Applique CaseColor sur positions RAW → positions grille
 ══ */
 function renderPreview(widget, lines, targetId, cases) {
     const el = document.getElementById(targetId);
@@ -311,14 +358,9 @@ function renderPreview(widget, lines, targetId, cases) {
     const bgCSS      = toCSS(widget.bg || '#000000ff');
     const activeCases = cases || widget.cases || null;
 
-    // Jointure des lignes avec \n — le flux est ensuite traité comme dans le C++
     const rawText = rawLines.join('\n');
 
-    // ── Construire la grille de caractères ──
     const grid = Array.from({ length: H }, () => new Array(W).fill(' '));
-
-    // posMap[i] = position {row, col} dans la grille du caractère i du rawText
-    // (position où le caractère a été ÉCRIT, avant tout décalage ultérieur)
     const posMap = new Array(rawText.length).fill(null);
 
     let row = 0, col = 0;
@@ -326,33 +368,22 @@ function renderPreview(widget, lines, targetId, cases) {
         const code = rawText.charCodeAt(i);
         const ch   = rawText[i];
 
-        if (code === 0x08 /* backspace \b */) {
-            // Recule d'une position et efface la case
-            if (col > 0) {
-                col--;
-            } else if (row > 0) {
-                row--; col = W - 1;
-            }
+        if (code === 0x08) {
+            if (col > 0) { col--; } else if (row > 0) { row--; col = W - 1; }
             grid[row][col] = ' ';
-            posMap[i] = { row, col }; // position effacée
-
+            posMap[i] = { row, col };
         } else if (ch === '\n' || ch === '\f' || ch === '\v') {
             posMap[i] = { row, col };
             col = 0; row++;
-
         } else if (ch === '\r') {
             posMap[i] = { row, col };
             col = 0;
-
         } else if (ch === '\t') {
             posMap[i] = { row, col };
-            // Prochain multiple de 4
             const stop = Math.min(Math.floor(col / 4 + 1) * 4, W);
             while (col < stop) { grid[row][col] = ' '; col++; }
             if (col >= W) { col = 0; row++; }
-
         } else {
-            // Retour à la ligne automatique si dépassement de la largeur
             if (col >= W) { col = 0; row++; }
             if (row >= H) break;
             posMap[i] = { row, col };
@@ -361,15 +392,11 @@ function renderPreview(widget, lines, targetId, cases) {
         }
     }
 
-    // ── Construire la grille de couleurs ──
-    // colorGrid[r][c] = { fg: cssString|null, bg: cssString|null }
-    // Initialiser avec null partout (pas de surcharge → hérité du conteneur)
     const colorGrid = Array.from({ length: H }, () =>
         Array.from({ length: W }, () => ({ fg: null, bg: null }))
     );
 
     if (activeCases && activeCases.length) {
-        // Trier par start pour que les cases ultérieures puissent surcharger
         const sorted = [...activeCases].sort((a, b) => a.start - b.start);
 
         for (const c of sorted) {
@@ -381,17 +408,11 @@ function renderPreview(widget, lines, targetId, cases) {
                 if (!mapped) continue;
                 const { row: r, col: cl } = mapped;
                 if (r >= H || cl >= W) continue;
-                // Appliquer fg et/ou bg (bg null si attribut _background désactivé)
                 if (fgVal) colorGrid[r][cl].fg = fgVal;
                 if (bgVal) colorGrid[r][cl].bg = bgVal;
             }
 
-            // ── FIX CRITIQUE : les espaces dans l'intervalle doivent aussi
-            //    avoir la bonne couleur, même s'il n'y a pas de caractère mappé.
-            //    On balaye la grille pour les positions non mappées entre start/end.
-            //    Pour cela on cherche la plage de cellules couverte.
             if (bgVal) {
-                // Trouver min/max positions mappées pour cette case
                 let minR = H, minC = W, maxR = -1, maxC = -1;
                 for (let rawPos = c.start; rawPos < c.end; rawPos++) {
                     const m = posMap[rawPos];
@@ -399,7 +420,6 @@ function renderPreview(widget, lines, targetId, cases) {
                     if (m.row < minR || (m.row === minR && m.col < minC)) { minR = m.row; minC = m.col; }
                     if (m.row > maxR || (m.row === maxR && m.col > maxC)) { maxR = m.row; maxC = m.col; }
                 }
-                // Colorier toutes les cellules du rectangle row entre minR..maxR
                 if (maxR >= 0) {
                     for (let r = minR; r <= maxR && r < H; r++) {
                         const cStart = (r === minR) ? minC : 0;
@@ -414,7 +434,6 @@ function renderPreview(widget, lines, targetId, cases) {
         }
     }
 
-    // ── Rendu DOM ──
     el.style.backgroundColor = bgCSS;
     el.style.color = fgCSS;
     el.innerHTML = '';
@@ -426,7 +445,6 @@ function renderPreview(widget, lines, targetId, cases) {
         let s = 0;
         while (s < W) {
             const cc = colorGrid[r][s];
-            // Étendre le span tant que même fg+bg
             let end = s + 1;
             while (end < W && colorGrid[r][end].fg === cc.fg && colorGrid[r][end].bg === cc.bg) end++;
 
@@ -441,7 +459,9 @@ function renderPreview(widget, lines, targetId, cases) {
     }
 }
 
-/* ══ VIEWER / EDITOR ══ */
+/* ══════════════════════════════════════════
+   VIEWER / EDITOR
+══════════════════════════════════════════ */
 let ST = null, animTmr = null, curFrame = 0;
 
 function loadState(parsed, filename) {
@@ -480,10 +500,10 @@ function loadState(parsed, filename) {
     const ap = document.getElementById('anim-panel');
     if (ST.isAnimated && ST.animation?.length) {
         ap.classList.add('on');
-        // curFrame=0 = frame de base, libellé "Frame 0 (base)" ou "Frame 1/N"
         updateFrameInd();
+    } else {
+        ap.classList.remove('on');
     }
-    else ap.classList.remove('on');
     updatePreview();
 }
 
@@ -491,13 +511,11 @@ function updatePreview() {
     if (!ST?.widget) return;
     let lines, cases;
     if (ST.isAnimated && ST.animation?.length) {
-        /* Frame 0 = contenu de base du trText.
-           Les frames suivantes sont les RawFrame / FrameAdd.
-           On affiche toujours depuis animation[curFrame]. */
         const frame = ST.animation[curFrame];
         lines = frame ? frame.lines : ST.widget.lines;
-        cases = frame ? (frame.cases?.length ? frame.cases : (ST.widget.cases?.length ? ST.widget.cases : null))
-                      : (ST.widget.cases?.length ? ST.widget.cases : null);
+        cases = frame
+            ? (frame.cases?.length ? frame.cases : (ST.widget.cases?.length ? ST.widget.cases : null))
+            : (ST.widget.cases?.length ? ST.widget.cases : null);
     } else {
         lines = ST.widget.lines;
         cases = ST.widget.cases?.length ? ST.widget.cases : null;
@@ -524,8 +542,10 @@ function rebuildLines() {
     if (!c) return;
     c.innerHTML = '';
     (ST?.widget?.lines || []).forEach((ln, i) => {
-        c.appendChild(makeLineRow(ln, i, v => { ST.widget.lines[i] = v; updatePreview(); },
-            () => { ST.widget.lines.splice(i, 1); rebuildLines(); updatePreview(); }));
+        c.appendChild(makeLineRow(ln, i,
+            v => { ST.widget.lines[i] = v; updatePreview(); },
+            () => { ST.widget.lines.splice(i, 1); rebuildLines(); updatePreview(); }
+        ));
     });
 }
 
@@ -610,6 +630,7 @@ function handleFile(file) {
     };
     reader.readAsText(file);
 }
+
 const dz = document.getElementById('drop-zone'), fi = document.getElementById('file-input');
 if (dz && fi) {
     dz.addEventListener('dragover',  e => { e.preventDefault(); dz.classList.add('drag-over'); });
@@ -618,28 +639,22 @@ if (dz && fi) {
     dz.addEventListener('click', () => fi.click());
     fi.addEventListener('change', e => handleFile(e.target.files[0]));
 
-    /* ── Drop sur toute la fenêtre : inutile de viser le carré ── */
     document.addEventListener('dragover', e => {
         e.preventDefault();
-        if (document.getElementById('drop-zone')?.style.display !== 'none') {
-            dz.classList.add('drag-over');
-        }
+        if (document.getElementById('drop-zone')?.style.display !== 'none') dz.classList.add('drag-over');
     });
     document.addEventListener('dragleave', e => {
-        // Ne retirer la classe que si on quitte vraiment la fenêtre
         if (e.relatedTarget === null) dz.classList.remove('drag-over');
     });
     document.addEventListener('drop', e => {
-        e.preventDefault();
-        dz.classList.remove('drag-over');
-        // Seulement si la drop-zone est visible (pas encore de fichier chargé)
-        if (document.getElementById('drop-zone')?.style.display !== 'none') {
-            handleFile(e.dataTransfer.files[0]);
-        }
+        e.preventDefault(); dz.classList.remove('drag-over');
+        if (document.getElementById('drop-zone')?.style.display !== 'none') handleFile(e.dataTransfer.files[0]);
     });
 }
 
-/* ══ CREATOR ══ */
+/* ══════════════════════════════════════════
+   CREATOR
+══════════════════════════════════════════ */
 const CR = {
     name: 'MyWidget', type: 'trWidget',
     position: { x: 0, y: 0, rpType: 'MiddleCenter' },
@@ -660,7 +675,6 @@ function crStopAnim() {
 }
 
 function crUpdateFrameInd() {
-    const total = CR.animation.length || 1;
     const el = document.getElementById('cr-frame-ind');
     if (el) el.textContent = `Frame ${crCurFrame + 1} / ${Math.max(1, CR.animation.length)}`;
 }
@@ -682,52 +696,44 @@ function crRebuildCases() {
 
     CR.widget.cases.forEach((cs, i) => {
         const row = document.createElement('div');
-        row.style.cssText = 'display:grid;grid-template-columns:60px 60px 1fr 1fr auto;gap:6px;align-items:center;margin-bottom:8px;padding:10px;border:0.5px solid rgba(255,255,255,0.06);border-radius:1px;background:rgba(255,255,255,0.01);';
+        row.style.cssText = 'display:grid;grid-template-columns:70px 70px 1fr 1fr auto;gap:8px;align-items:end;margin-bottom:10px;padding:12px 14px;border:0.5px solid rgba(255,255,255,0.06);border-radius:1px;background:rgba(255,255,255,0.01);';
 
-        // Start / End
         const mkNumInp = (val, label, onChange) => {
             const w = document.createElement('div');
-            w.style.cssText = 'display:flex;flex-direction:column;gap:3px;';
+            w.style.cssText = 'display:flex;flex-direction:column;gap:4px;';
             const lbl = document.createElement('span');
-            lbl.style.cssText = 'font-size:9px;letter-spacing:0.1em;color:rgba(255,255,255,0.25);';
+            lbl.style.cssText = 'font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.25);';
             lbl.textContent = label;
             const inp = document.createElement('input');
             inp.type = 'number'; inp.className = 'size-input'; inp.value = val; inp.min = 0;
-            inp.style.cssText = 'font-size:11px;padding:4px;';
+            inp.style.cssText = 'font-size:11px;padding:5px;';
             inp.addEventListener('input', () => onChange(parseInt(inp.value)||0));
             w.appendChild(lbl); w.appendChild(inp); return w;
         };
         row.appendChild(mkNumInp(cs.start, 'START', v => { CR.widget.cases[i].start = v; crUpdatePreview(); }));
         row.appendChild(mkNumInp(cs.end,   'END',   v => { CR.widget.cases[i].end   = v; crUpdatePreview(); }));
 
-        // FG picker
-        const fgW = document.createElement('div');
-        fgW.style.cssText = 'display:flex;flex-direction:column;gap:3px;';
-        const fgLbl = document.createElement('span');
-        fgLbl.style.cssText = 'font-size:9px;letter-spacing:0.1em;color:rgba(255,255,255,0.25);';
-        fgLbl.textContent = 'FG COLOR';
+        // FG
+        const fgW = document.createElement('div'); fgW.style.cssText = 'display:flex;flex-direction:column;gap:4px;';
+        const fgLbl = document.createElement('span'); fgLbl.style.cssText = 'font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.25);'; fgLbl.textContent = 'FG';
         const fgPick = document.createElement('input'); fgPick.type = 'color';
         fgPick.value = cs.fg ? '#' + cs.fg.replace('#','').substr(0,6) : '#ffffff';
-        fgPick.style.cssText = 'width:100%;height:28px;cursor:pointer;border:0.5px solid rgba(255,255,255,0.15);border-radius:1px;background:none;';
+        fgPick.style.cssText = 'width:100%;height:30px;cursor:pointer;border:0.5px solid rgba(255,255,255,0.15);border-radius:1px;background:none;';
         fgPick.addEventListener('input', () => { CR.widget.cases[i].fg = fgPick.value + 'ff'; crUpdatePreview(); });
         fgW.appendChild(fgLbl); fgW.appendChild(fgPick); row.appendChild(fgW);
 
-        // BG picker + toggle
-        const bgW = document.createElement('div');
-        bgW.style.cssText = 'display:flex;flex-direction:column;gap:3px;';
-        const bgHead = document.createElement('div');
-        bgHead.style.cssText = 'display:flex;align-items:center;gap:5px;';
+        // BG
+        const bgW = document.createElement('div'); bgW.style.cssText = 'display:flex;flex-direction:column;gap:4px;';
+        const bgHead = document.createElement('div'); bgHead.style.cssText = 'display:flex;align-items:center;gap:5px;';
         const bgToggle = document.createElement('input'); bgToggle.type = 'checkbox';
         bgToggle.checked = !!cs.bg; bgToggle.title = 'Activer BG';
         bgToggle.style.cssText = 'cursor:pointer;accent-color:rgba(180,200,255,0.8);';
-        const bgLbl = document.createElement('span');
-        bgLbl.style.cssText = 'font-size:9px;letter-spacing:0.1em;color:rgba(255,255,255,0.25);';
-        bgLbl.textContent = 'BG COLOR';
+        const bgLbl = document.createElement('span'); bgLbl.style.cssText = 'font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.25);'; bgLbl.textContent = 'BG';
         bgHead.appendChild(bgToggle); bgHead.appendChild(bgLbl);
         const bgPick = document.createElement('input'); bgPick.type = 'color';
         bgPick.value = cs.bg ? '#' + cs.bg.replace('#','').substr(0,6) : '#000000';
         bgPick.disabled = !cs.bg;
-        bgPick.style.cssText = `width:100%;height:28px;cursor:pointer;border:0.5px solid rgba(255,255,255,0.15);border-radius:1px;background:none;opacity:${cs.bg ? 1 : 0.3};transition:opacity 0.2s;`;
+        bgPick.style.cssText = `width:100%;height:30px;cursor:pointer;border:0.5px solid rgba(255,255,255,0.15);border-radius:1px;background:none;opacity:${cs.bg ? 1 : 0.3};transition:opacity 0.2s;`;
         bgToggle.addEventListener('change', () => {
             bgPick.disabled = !bgToggle.checked;
             bgPick.style.opacity = bgToggle.checked ? '1' : '0.3';
@@ -741,6 +747,7 @@ function crRebuildCases() {
 
         // Delete
         const del = document.createElement('button'); del.className = 'line-del'; del.textContent = '✕';
+        del.style.cssText = 'align-self:flex-end;margin-bottom:2px;';
         del.addEventListener('click', () => { CR.widget.cases.splice(i, 1); crRebuildCases(); crUpdatePreview(); });
         row.appendChild(del);
 
@@ -798,6 +805,7 @@ function crSyncFromForm() {
     CR.widget.fg = toHexAA(document.getElementById('cr-fg')?.value || '#ffffff', +(document.getElementById('cr-fg-a')?.value || 255));
     CR.widget.bg = toHexAA(document.getElementById('cr-bg')?.value || '#000000', +(document.getElementById('cr-bg-a')?.value || 255));
     CR.isAnimated = CR.type === 'trText';
+
     const animWrap  = document.getElementById('cr-anim-wrap');
     const animPanel = document.getElementById('cr-anim-panel');
     if (animWrap)  animWrap.style.display  = CR.isAnimated ? 'block' : 'none';
@@ -806,7 +814,6 @@ function crSyncFromForm() {
 
 function crUpdatePreview() {
     crSyncFromForm();
-    // Choisir ce qu'on prévisualise
     let previewLines = CR.widget.lines;
     let previewCases = CR.widget.cases.length ? CR.widget.cases : null;
     if (CR.isAnimated && CR.animation.length > 0) {
@@ -821,7 +828,6 @@ function crUpdatePreview() {
     crUpdateFrameInd();
 }
 
-// Binder les inputs du créateur
 ['cr-name','cr-type','cr-rp','cr-x','cr-y','cr-w','cr-h','cr-fg','cr-fg-a','cr-bg','cr-bg-a'].forEach(id => {
     const el = document.getElementById(id); if (!el) return;
     el.addEventListener('input', crUpdatePreview);
@@ -841,7 +847,6 @@ document.getElementById('cr-add-frame')?.addEventListener('click', () => {
     crRebuildFrames(); crUpdatePreview();
 });
 
-// Contrôles animation du créateur
 document.getElementById('cr-btn-prev')?.addEventListener('click', () => {
     crStopAnim(); if (!CR.animation.length) return;
     crCurFrame = (crCurFrame - 1 + CR.animation.length) % CR.animation.length;
