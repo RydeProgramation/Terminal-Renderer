@@ -8,64 +8,51 @@
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <style>
-        /* ══ LOGO-LINK ══ */
         a#nav-logo {
-            font-size: 15px; font-weight: 700;
-            letter-spacing: 0.22em; color: rgba(255,255,255,0.8);
-            text-transform: uppercase; text-decoration: none;
-            transition: color 0.2s; cursor: pointer;
+            font-size: 15px; font-weight: 700; letter-spacing: 0.22em;
+            color: rgba(255,255,255,0.8); text-transform: uppercase;
+            text-decoration: none; transition: color 0.2s; cursor: pointer;
         }
         a#nav-logo:hover { color: #fff; }
 
-        /* ══ TITLE HOVER SHIMMER ══ */
-        .section-title {
-            transition: filter 0.3s;
-            cursor: default;
-        }
+        .section-title { transition: filter 0.3s; cursor: default; }
         .section-title:hover {
             filter: brightness(1.3) drop-shadow(0 0 16px rgba(200,215,255,0.5));
         }
 
         /* ══ DROP ZONE ══ */
         .drop-zone {
-            border: 1px dashed rgba(255,255,255,0.18);
-            border-radius: 2px;
-            padding: 60px 40px;
-            text-align: center;
-            cursor: pointer;
+            border: 1px dashed rgba(255,255,255,0.18); border-radius: 2px;
+            padding: 60px 40px; text-align: center; cursor: pointer;
             transition: border-color 0.2s, background 0.2s;
             background: rgba(255,255,255,0.01);
         }
         .drop-zone:hover, .drop-zone.drag-over {
-            border-color: rgba(180,200,255,0.45);
-            background: rgba(180,200,255,0.04);
+            border-color: rgba(180,200,255,0.45); background: rgba(180,200,255,0.04);
         }
         .drop-zone p { font-size: 14px; color: rgba(255,255,255,0.3); margin: 8px 0; letter-spacing: 0.1em; }
         .drop-zone label { color: rgba(180,200,255,0.7); cursor: pointer; text-decoration: underline; }
         .drop-zone input[type="file"] { display: none; }
         .drop-icon { font-size: 30px; margin-bottom: 14px; opacity: 0.35; }
 
-        /* ══ TWO-COL VIEWER ══ */
+        /* ══ VIEWER ══ */
         #viewer { display: none; }
         #viewer.active { display: block; }
+
+        /* min-width:0 sur les enfants = clé pour que overflow-x:auto fonctionne dans une grid */
         .viewer-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 24px;
-            margin-top: 24px;
+            grid-template-columns: minmax(0,1fr) minmax(0,1fr);
+            gap: 24px; margin-top: 24px;
         }
+        .viewer-grid > * { min-width: 0; overflow: hidden; }
 
-        /* ══ TERMINAL WINDOW ══ */
+        /* ══ TERMINAL WINDOWS ══ */
         .terminal-wrap {
-            background: rgba(0,0,0,0.55);
-            border: 0.5px solid rgba(255,255,255,0.1);
-            border-radius: 2px;
-            padding: 18px;
+            background: rgba(0,0,0,0.55); border: 0.5px solid rgba(255,255,255,0.1);
+            border-radius: 2px; padding: 18px; min-width: 0; overflow: hidden;
         }
-        .terminal-bar {
-            display: flex; align-items: center; gap: 6px;
-            margin-bottom: 14px;
-        }
+        .terminal-bar { display: flex; align-items: center; gap: 6px; margin-bottom: 14px; }
         .t-dot { width: 8px; height: 8px; border-radius: 50%; }
         .t-dot.r { background: rgba(255,90,90,0.6); }
         .t-dot.y { background: rgba(255,200,60,0.6); }
@@ -74,48 +61,35 @@
 
         .preview-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
         .preview-badge {
-            font-size: 10px; letter-spacing: 0.12em;
-            padding: 3px 10px;
-            border: 0.5px solid rgba(255,255,255,0.12);
-            color: rgba(255,255,255,0.35);
-            border-radius: 1px;
+            font-size: 10px; letter-spacing: 0.12em; padding: 3px 10px;
+            border: 0.5px solid rgba(255,255,255,0.12); color: rgba(255,255,255,0.35); border-radius: 1px;
         }
         .preview-badge.anim { border-color: rgba(120,200,140,0.4); color: rgba(120,200,140,0.85); }
 
-        /* ══ TERMINAL CONTENT — CMD line-height ══ */
+        /* ════ FIX OVERFLOW : le contenu terminal scroll en interne ════ */
         #terminal-content, #cr-terminal-content {
             font-family: 'IBM Plex Mono', 'Courier New', monospace;
-            font-size: 14px;
-            line-height: 1.22;   /* CMD-like tight spacing */
-            white-space: pre;
-            padding: 10px 14px;
-            border-radius: 2px;
-            overflow-x: auto;
-            min-height: 48px;
+            font-size: 14px; line-height: 1.22; white-space: pre;
+            padding: 10px 14px; border-radius: 2px; min-height: 48px;
+            overflow-x: auto;   /* scroll horizontal si contenu trop large */
+            max-width: 100%;    /* ne dépasse jamais la colonne parente    */
+            box-sizing: border-box;
         }
 
         /* ══ ANIMATION PANEL ══ */
         .anim-panel {
-            display: none; margin-top: 14px;
-            padding: 16px 20px;
+            display: none; margin-top: 14px; padding: 16px 20px;
             border: 0.5px solid rgba(120,200,140,0.2);
-            background: rgba(120,200,140,0.03);
-            border-radius: 2px;
+            background: rgba(120,200,140,0.03); border-radius: 2px;
         }
         .anim-panel.on { display: block; }
-        .anim-header {
-            font-size: 10px; letter-spacing: 0.2em;
-            color: rgba(120,200,140,0.7); text-transform: uppercase;
-            margin-bottom: 14px;
-        }
+        .anim-header { font-size: 10px; letter-spacing: 0.2em; color: rgba(120,200,140,0.7); text-transform: uppercase; margin-bottom: 14px; }
         .anim-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
         .anim-btn {
             font-family: 'IBM Plex Mono', monospace; font-size: 11px;
             letter-spacing: 0.1em; padding: 8px 16px;
-            background: rgba(255,255,255,0.05);
-            border: 0.5px solid rgba(255,255,255,0.14);
-            color: rgba(255,255,255,0.6); cursor: pointer;
-            border-radius: 1px; transition: all 0.2s;
+            background: rgba(255,255,255,0.05); border: 0.5px solid rgba(255,255,255,0.14);
+            color: rgba(255,255,255,0.6); cursor: pointer; border-radius: 1px; transition: all 0.2s;
         }
         .anim-btn:hover { background: rgba(255,255,255,0.12); color: #fff; }
         .anim-btn.active { border-color: rgba(120,200,140,0.5); color: rgba(120,200,140,0.9); }
@@ -123,197 +97,131 @@
 
         /* ══ EDIT PANEL ══ */
         .edit-panel {
-            background: rgba(0,0,0,0.18);
-            border: 0.5px solid rgba(255,255,255,0.07);
+            background: rgba(0,0,0,0.18); border: 0.5px solid rgba(255,255,255,0.07);
             border-radius: 2px; padding: 24px;
         }
-        .ep-title {
-            font-size: 11px; letter-spacing: 0.22em;
-            color: rgba(255,255,255,0.28); text-transform: uppercase;
-            margin-bottom: 16px;
-        }
+        .ep-title { font-size: 11px; letter-spacing: 0.22em; color: rgba(255,255,255,0.28); text-transform: uppercase; margin-bottom: 16px; }
         .ep-divider { height: 0.5px; background: rgba(255,255,255,0.07); margin: 18px 0; }
-        .ep-row {
-            display: flex; align-items: center;
-            gap: 12px; margin-bottom: 12px;
-        }
-        .ep-label {
-            font-size: 12px; letter-spacing: 0.08em;
-            color: rgba(255,255,255,0.38); min-width: 90px;
-        }
+        .ep-row { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+        .ep-label { font-size: 12px; letter-spacing: 0.08em; color: rgba(255,255,255,0.38); min-width: 90px; }
         .ep-input {
             font-family: 'IBM Plex Mono', monospace; font-size: 12px;
-            background: rgba(255,255,255,0.05);
-            border: 0.5px solid rgba(255,255,255,0.1);
-            color: #fff; padding: 7px 10px;
-            border-radius: 1px; flex: 1;
-            transition: border-color 0.2s;
+            background: rgba(255,255,255,0.05); border: 0.5px solid rgba(255,255,255,0.1);
+            color: #fff; padding: 7px 10px; border-radius: 1px; flex: 1; transition: border-color 0.2s;
         }
         .ep-input:focus { outline: none; border-color: rgba(180,200,255,0.38); }
         .ep-select {
             font-family: 'IBM Plex Mono', monospace; font-size: 12px;
-            background: rgba(10,10,10,0.9);
-            border: 0.5px solid rgba(255,255,255,0.1);
-            color: rgba(255,255,255,0.7); padding: 7px 10px;
-            border-radius: 1px; flex: 1; cursor: pointer;
+            background: rgba(10,10,10,0.9); border: 0.5px solid rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.7); padding: 7px 10px; border-radius: 1px; flex: 1; cursor: pointer;
         }
         .ep-select option { background: #0a0a0a; }
 
-        /* ══ SIZE GRID ══ */
         .size-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
-        .size-block label {
-            font-size: 11px; letter-spacing: 0.1em;
-            color: rgba(255,255,255,0.3); display: block; margin-bottom: 6px;
-        }
+        .size-block label { font-size: 11px; letter-spacing: 0.1em; color: rgba(255,255,255,0.3); display: block; margin-bottom: 6px; }
         .size-input {
             font-family: 'IBM Plex Mono', monospace; font-size: 14px;
-            background: rgba(255,255,255,0.05);
-            border: 0.5px solid rgba(255,255,255,0.1);
-            color: #fff; padding: 8px; border-radius: 1px;
-            width: 100%; text-align: center;
+            background: rgba(255,255,255,0.05); border: 0.5px solid rgba(255,255,255,0.1);
+            color: #fff; padding: 8px; border-radius: 1px; width: 100%; text-align: center;
         }
         .size-input:focus { outline: none; border-color: rgba(180,200,255,0.38); }
 
-        /* ══ COLOR PICKERS ══ */
         .color-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
-        .color-block label {
-            font-size: 11px; letter-spacing: 0.1em;
-            color: rgba(255,255,255,0.3); display: block; margin-bottom: 8px;
-        }
+        .color-block label { font-size: 11px; letter-spacing: 0.1em; color: rgba(255,255,255,0.3); display: block; margin-bottom: 8px; }
         .color-row-inner { display: flex; align-items: center; gap: 8px; }
-        input[type="color"] {
-            width: 34px; height: 30px; padding: 2px;
-            border: 0.5px solid rgba(255,255,255,0.15);
-            border-radius: 2px; cursor: pointer; background: none;
-        }
+        input[type="color"] { width: 34px; height: 30px; padding: 2px; border: 0.5px solid rgba(255,255,255,0.15); border-radius: 2px; cursor: pointer; background: none; }
         .alpha-wrap { flex: 1; display: flex; align-items: center; gap: 6px; }
         input[type="range"] { flex: 1; accent-color: rgba(180,200,255,0.8); cursor: pointer; }
         .alpha-val { font-size: 10px; color: rgba(255,255,255,0.3); min-width: 30px; }
 
-        /* ══ LINES EDITOR ══ */
         .lines-editor { margin-bottom: 12px; }
         .line-row { display: flex; align-items: center; gap: 7px; margin-bottom: 7px; }
         .line-num { font-size: 11px; color: rgba(255,255,255,0.2); min-width: 20px; text-align: right; }
         .line-input {
             font-family: 'IBM Plex Mono', monospace; font-size: 12px;
-            background: rgba(255,255,255,0.04);
-            border: 0.5px solid rgba(255,255,255,0.09);
-            color: rgba(255,255,255,0.8); padding: 6px 10px;
-            flex: 1; border-radius: 1px;
+            background: rgba(255,255,255,0.04); border: 0.5px solid rgba(255,255,255,0.09);
+            color: rgba(255,255,255,0.8); padding: 6px 10px; flex: 1; border-radius: 1px;
         }
         .line-input:focus { outline: none; border-color: rgba(180,200,255,0.28); }
-        .line-del {
-            font-size: 13px; color: rgba(200,80,80,0.4); cursor: pointer;
-            background: none; border: none; padding: 2px 6px;
-            transition: color 0.2s;
-        }
+        .line-del { font-size: 13px; color: rgba(200,80,80,0.4); cursor: pointer; background: none; border: none; padding: 2px 6px; transition: color 0.2s; }
         .line-del:hover { color: rgba(200,80,80,0.9); }
 
-        /* ══ DOC BUTTONS ══ */
         .doc-btn {
             font-family: 'IBM Plex Mono', monospace; font-size: 11px;
             letter-spacing: 0.18em; text-transform: uppercase;
-            padding: 11px 22px; cursor: pointer;
-            border-radius: 1px; transition: all 0.2s; width: 100%;
+            padding: 11px 22px; cursor: pointer; border-radius: 1px; transition: all 0.2s; width: 100%;
         }
         .doc-btn + .doc-btn { margin-top: 8px; }
         .doc-btn-primary { background: #fff; color: #000; border: 1px solid #fff; font-weight: 700; }
         .doc-btn-primary:hover { background: transparent; color: #fff; }
-        .doc-btn-ghost {
-            background: transparent; color: rgba(255,255,255,0.45);
-            border: 0.5px solid rgba(255,255,255,0.14);
-        }
+        .doc-btn-ghost { background: transparent; color: rgba(255,255,255,0.45); border: 0.5px solid rgba(255,255,255,0.14); }
         .doc-btn-ghost:hover { color: #fff; border-color: rgba(255,255,255,0.4); }
-        .doc-btn-sm {
-            width: auto; font-size: 10px; padding: 7px 14px;
-            margin-top: 10px; display: block;
-        }
+        .doc-btn-sm { width: auto; font-size: 10px; padding: 7px 14px; margin-top: 10px; display: inline-block; }
 
-        .doc-success {
-            display: none; margin-top: 10px;
-            padding: 11px 16px;
-            border: 0.5px solid rgba(120,200,140,0.3);
-            background: rgba(120,200,140,0.04);
-            color: rgba(120,200,140,0.8);
-            font-size: 12px; letter-spacing: 0.1em;
-            border-radius: 1px;
-        }
-        .doc-error {
-            display: none; margin-top: 10px;
-            padding: 11px 16px;
-            border: 0.5px solid rgba(200,80,80,0.3);
-            background: rgba(200,80,80,0.04);
-            color: rgba(200,80,80,0.8);
-            font-size: 12px;
-        }
+        .doc-success { display: none; margin-top: 10px; padding: 11px 16px; border: 0.5px solid rgba(120,200,140,0.3); background: rgba(120,200,140,0.04); color: rgba(120,200,140,0.8); font-size: 12px; letter-spacing: 0.1em; border-radius: 1px; }
+        .doc-error   { display: none; margin-top: 10px; padding: 11px 16px; border: 0.5px solid rgba(200,80,80,0.3); background: rgba(200,80,80,0.04); color: rgba(200,80,80,0.8); font-size: 12px; }
 
-        /* ══ CREATOR — 3-COL GRID ══ */
-        .creator-grid {
-            display: grid;
-            grid-template-columns: 360px 1fr 1fr;
-            gap: 24px;
-            align-items: start;
-        }
-
-        /* ══ FRAMES ══ */
         .frame-list { margin-bottom: 12px; }
-        .frame-item {
-            padding: 14px 16px;
-            border: 0.5px solid rgba(255,255,255,0.07);
-            background: rgba(255,255,255,0.015);
-            margin-bottom: 8px; border-radius: 1px;
-        }
-        .frame-item-head {
-            display: flex; justify-content: space-between;
-            align-items: center; margin-bottom: 10px;
-        }
+        .frame-item { padding: 14px 16px; border: 0.5px solid rgba(255,255,255,0.07); background: rgba(255,255,255,0.015); margin-bottom: 8px; border-radius: 1px; }
+        .frame-item-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .frame-item-title { font-size: 11px; letter-spacing: 0.15em; color: rgba(255,255,255,0.38); }
         .frame-time-wrap { display: flex; align-items: center; gap: 8px; }
         .frame-time-label { font-size: 10px; color: rgba(255,255,255,0.25); }
-        .frame-time-input {
-            font-family: 'IBM Plex Mono', monospace; font-size: 12px;
-            background: rgba(255,255,255,0.05);
-            border: 0.5px solid rgba(255,255,255,0.1);
-            color: #fff; padding: 5px 8px;
-            border-radius: 1px; width: 72px; text-align: center;
-        }
-        .frame-del {
-            font-size: 13px; color: rgba(200,80,80,0.4);
-            cursor: pointer; background: none; border: none;
-            transition: color 0.2s;
-        }
+        .frame-time-input { font-family: 'IBM Plex Mono', monospace; font-size: 12px; background: rgba(255,255,255,0.05); border: 0.5px solid rgba(255,255,255,0.1); color: #fff; padding: 5px 8px; border-radius: 1px; width: 72px; text-align: center; }
+        .frame-del { font-size: 13px; color: rgba(200,80,80,0.4); cursor: pointer; background: none; border: none; transition: color 0.2s; }
         .frame-del:hover { color: rgba(200,80,80,0.9); }
 
-        /* ══ XML PREVIEW ══ */
         #cr-xml-preview {
-            font-size: 11px; line-height: 1.85;
-            color: rgba(160,185,255,0.6);
-            overflow-x: auto; white-space: pre;
-            max-height: 600px; overflow-y: auto;
+            font-size: 11px; line-height: 1.85; color: rgba(160,185,255,0.6);
+            overflow-x: auto; white-space: pre; max-height: 75vh; overflow-y: auto;
         }
         #cr-xml-preview::-webkit-scrollbar { width: 4px; height: 4px; }
         #cr-xml-preview::-webkit-scrollbar-track { background: transparent; }
         #cr-xml-preview::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 2px; }
 
-        /* ══ CREATOR PANEL LABELS ══ */
         .creator-panel-title {
             font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase;
             color: rgba(255,255,255,0.22); margin-bottom: 14px; padding-bottom: 10px;
             border-bottom: 0.5px solid rgba(255,255,255,0.06);
         }
 
+        /* ══ CREATOR LARGE ══
+           Override section-inner max-width pour que le créateur soit quasi plein écran
+        ══ */
+        #creator .section-inner {
+            max-width: min(1700px, 96vw);
+        }
+        #creator .section-card {
+            padding: 52px 44px;
+        }
+
+        /* GRILLE 3 COLONNES — tout en minmax(0,…) pour éviter le débordement */
+        .creator-grid {
+            display: grid;
+            grid-template-columns: 390px minmax(0,1fr) minmax(0,1fr);
+            gap: 28px;
+            align-items: start;
+        }
+        .creator-grid > * { min-width: 0; }
+
+        /* Colonne gauche scrollable si très long */
+        .col-form { overflow-y: auto; max-height: 88vh; }
+        .col-form::-webkit-scrollbar { width: 4px; }
+        .col-form::-webkit-scrollbar-track { background: transparent; }
+        .col-form::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
+
         /* ══ RESPONSIVE ══ */
-        @media (max-width: 1200px) {
-            .creator-grid { grid-template-columns: 320px 1fr; }
+        @media (max-width: 1400px) {
+            .creator-grid { grid-template-columns: 350px minmax(0,1fr); }
             .creator-col-xml { grid-column: 1 / -1; }
         }
         @media (max-width: 900px) {
-            .viewer-grid, .creator-grid { grid-template-columns: 1fr; }
+            .viewer-grid  { grid-template-columns: 1fr; }
+            .creator-grid { grid-template-columns: 1fr; }
             .creator-col-xml { grid-column: auto; }
-        }
-        @media (max-width: 620px) {
-            .color-grid { grid-template-columns: 1fr; }
-            .size-grid  { grid-template-columns: 1fr 1fr; }
+            #creator .section-inner { max-width: 100%; }
+            #creator .section-card  { padding: 28px 18px; }
+            .col-form { max-height: none; overflow-y: visible; }
         }
     </style>
 </head>
@@ -323,7 +231,6 @@
 <div id="scanlines"></div>
 <div id="vignette"></div>
 
-<!-- NAV -->
 <nav id="nav">
     <a id="nav-logo" href="index.html">Terminal-Renderer</a>
     <div id="nav-right">
@@ -344,7 +251,6 @@
     </div>
 </nav>
 
-<!-- HERO -->
 <section id="hero">
     <div id="hero-card">
         <div id="hero-eyebrow" data-i18n="doc.hero.eyebrow">Outils &amp; Référence</div>
@@ -354,7 +260,7 @@
         <div id="hero-meta">
             <span class="meta-pill active">Prévisualisation .widg</span>
             <span class="meta-pill">Éditeur en direct</span>
-            <span class="meta-pill">Générateur</span>
+            <span class="meta-pill">Générateur XML</span>
             <span class="meta-pill">CaseColor</span>
         </div>
         <p id="hero-sub" data-i18n="doc.hero.sub">Importe, visualise, édite et crée tes fichiers .widg directement dans le navigateur</p>
@@ -368,7 +274,9 @@
 
 <div class="sections-wrapper">
 
-<!-- ══ SECTION 1 : PRÉVISUALISER ══ -->
+<!-- ════════════════════════════════════════
+     01 / PRÉVISUALISATION
+════════════════════════════════════════ -->
 <section class="section" id="previewer">
     <div class="section-inner">
         <div class="section-card">
@@ -376,7 +284,6 @@
             <h2 class="section-title shimmer-text" data-i18n="doc.s01.title">Importer &amp;<br>Éditer un .widg</h2>
             <div class="section-rule"></div>
 
-            <!-- Drop zone -->
             <div class="drop-zone" id="drop-zone">
                 <div class="drop-icon">⬇</div>
                 <p>Déposer un fichier <strong>.widg</strong> ici</p>
@@ -385,24 +292,20 @@
             </div>
             <div class="doc-error" id="parse-error"></div>
 
-            <!-- Viewer -->
             <div id="viewer">
                 <div class="viewer-grid">
 
-                    <!-- LEFT : Preview + animation -->
+                    <!-- GAUCHE : terminal + animation -->
                     <div>
                         <div class="terminal-wrap">
                             <div class="terminal-bar">
-                                <div class="t-dot r"></div>
-                                <div class="t-dot y"></div>
-                                <div class="t-dot g"></div>
+                                <div class="t-dot r"></div><div class="t-dot y"></div><div class="t-dot g"></div>
                                 <span class="t-title" id="preview-filename">widget.widg</span>
                             </div>
                             <div class="preview-meta" id="preview-meta"></div>
                             <div id="terminal-content"></div>
                         </div>
 
-                        <!-- Animation panel -->
                         <div class="anim-panel" id="anim-panel">
                             <div class="anim-header">🎞 Animation détectée — trText</div>
                             <div class="anim-row">
@@ -413,74 +316,59 @@
                             <div class="anim-row">
                                 <button class="anim-btn" id="btn-play">▶ Lancer</button>
                                 <button class="anim-btn" id="btn-stop">⏹ Arrêter</button>
-                                <span style="font-size:11px;color:rgba(255,255,255,0.22);" id="anim-speed-label">Vitesse auto</span>
+                                <span style="font-size:11px;color:rgba(255,255,255,0.22);">Vitesse auto</span>
                             </div>
                         </div>
                     </div>
 
-                    <!-- RIGHT : Editor -->
+                    <!-- DROITE : éditeur -->
                     <div class="edit-panel">
                         <div class="ep-title">Éditer le widget</div>
-
                         <div class="ep-row">
                             <span class="ep-label">Nom</span>
                             <input type="text" class="ep-input" id="edit-name" placeholder="MyWidget">
                         </div>
-
                         <div class="size-grid">
-                            <div class="size-block">
-                                <label>Largeur (width)</label>
-                                <input type="number" class="size-input" id="edit-width" min="1" max="300">
-                            </div>
-                            <div class="size-block">
-                                <label>Hauteur (height)</label>
-                                <input type="number" class="size-input" id="edit-height" min="1" max="200">
-                            </div>
+                            <div class="size-block"><label>Largeur (width)</label><input type="number" class="size-input" id="edit-width" min="1" max="500"></div>
+                            <div class="size-block"><label>Hauteur (height)</label><input type="number" class="size-input" id="edit-height" min="1" max="200"></div>
                         </div>
-
                         <div class="ep-divider"></div>
-                        <div class="ep-title">Couleurs</div>
-
+                        <div class="ep-title">Couleurs globales</div>
                         <div class="color-grid">
                             <div class="color-block">
                                 <label>Texte (foreground)</label>
                                 <div class="color-row-inner">
                                     <input type="color" id="edit-fg">
-                                    <div class="alpha-wrap">
-                                        <input type="range" id="edit-fg-a" min="0" max="255" value="255">
-                                        <span class="alpha-val" id="edit-fg-av">100%</span>
-                                    </div>
+                                    <div class="alpha-wrap"><input type="range" id="edit-fg-a" min="0" max="255" value="255"><span class="alpha-val" id="edit-fg-av">100%</span></div>
                                 </div>
                             </div>
                             <div class="color-block">
                                 <label>Fond (background)</label>
                                 <div class="color-row-inner">
                                     <input type="color" id="edit-bg">
-                                    <div class="alpha-wrap">
-                                        <input type="range" id="edit-bg-a" min="0" max="255" value="255">
-                                        <span class="alpha-val" id="edit-bg-av">100%</span>
-                                    </div>
+                                    <div class="alpha-wrap"><input type="range" id="edit-bg-a" min="0" max="255" value="255"><span class="alpha-val" id="edit-bg-av">100%</span></div>
                                 </div>
                             </div>
                         </div>
-
                         <div class="ep-divider"></div>
                         <div class="ep-title">Contenu (lignes)</div>
                         <div class="lines-editor" id="lines-editor"></div>
                         <button class="doc-btn doc-btn-ghost doc-btn-sm" id="btn-add-line">+ Ajouter une ligne</button>
-
                         <div class="ep-divider"></div>
                         <button class="doc-btn doc-btn-primary" id="btn-download">⬇ Télécharger .widg</button>
-                        <button class="doc-btn doc-btn-ghost" id="btn-reset">↺ Charger un autre fichier</button>
+                        <button class="doc-btn doc-btn-ghost"   id="btn-reset">↺ Charger un autre fichier</button>
                         <div class="doc-success" id="dl-success">✓ Fichier généré avec succès !</div>
                     </div>
+
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- ══ SECTION 2 : CRÉATEUR ══ -->
+<!-- ════════════════════════════════════════
+     02 / CRÉATEUR — SECTION ÉLARGIE
+════════════════════════════════════════ -->
 <section class="section" id="creator">
     <div class="section-inner">
         <div class="section-card">
@@ -488,11 +376,10 @@
             <h2 class="section-title shimmer-text" data-i18n="doc.s02.title">Créer un .widg<br>de zéro</h2>
             <div class="section-rule"></div>
 
-            <!-- 3-col grid : Form | Terminal preview | XML preview -->
             <div class="creator-grid">
 
-                <!-- COL 1 : Formulaire de construction -->
-                <div class="edit-panel" style="min-width:0;">
+                <!-- ════ COL 1 : FORMULAIRE ════ -->
+                <div class="edit-panel col-form">
                     <div class="creator-panel-title">⚙ Construction</div>
 
                     <div class="ep-title">Paramètres généraux</div>
@@ -521,7 +408,6 @@
                             <option value="BottomRight">BottomRight</option>
                         </select>
                     </div>
-
                     <div class="size-grid">
                         <div class="size-block"><label>X</label><input type="number" class="size-input" id="cr-x" value="0"></div>
                         <div class="size-block"><label>Y</label><input type="number" class="size-input" id="cr-y" value="0"></div>
@@ -532,36 +418,43 @@
                     </div>
 
                     <div class="ep-divider"></div>
-                    <div class="ep-title">Couleurs</div>
+                    <div class="ep-title">Couleurs globales</div>
                     <div class="color-grid">
                         <div class="color-block">
                             <label>Texte (fg)</label>
                             <div class="color-row-inner">
                                 <input type="color" id="cr-fg" value="#ffffff">
-                                <div class="alpha-wrap">
-                                    <input type="range" id="cr-fg-a" min="0" max="255" value="255">
-                                    <span class="alpha-val" id="cr-fg-av">100%</span>
-                                </div>
+                                <div class="alpha-wrap"><input type="range" id="cr-fg-a" min="0" max="255" value="255"><span class="alpha-val" id="cr-fg-av">100%</span></div>
                             </div>
                         </div>
                         <div class="color-block">
                             <label>Fond (bg)</label>
                             <div class="color-row-inner">
                                 <input type="color" id="cr-bg" value="#000000">
-                                <div class="alpha-wrap">
-                                    <input type="range" id="cr-bg-a" min="0" max="255" value="255">
-                                    <span class="alpha-val" id="cr-bg-av">100%</span>
-                                </div>
+                                <div class="alpha-wrap"><input type="range" id="cr-bg-a" min="0" max="255" value="255"><span class="alpha-val" id="cr-bg-av">100%</span></div>
                             </div>
                         </div>
                     </div>
 
                     <div class="ep-divider"></div>
-                    <div class="ep-title">Contenu</div>
+                    <div class="ep-title">Contenu (lignes)</div>
                     <div class="lines-editor" id="cr-lines-editor"></div>
                     <button class="doc-btn doc-btn-ghost doc-btn-sm" id="cr-add-line">+ Ajouter une ligne</button>
 
-                    <!-- Frames trText only -->
+                    <div class="ep-divider"></div>
+                    <div class="ep-title">
+                        CaseColor
+                        <span style="font-size:10px;letter-spacing:0.05em;color:rgba(255,180,100,0.55);text-transform:none;font-style:italic;margin-left:8px;">intervalles</span>
+                    </div>
+                    <div style="font-size:11px;color:rgba(255,255,255,0.22);line-height:1.85;margin-bottom:12px;">
+                        Colorie des plages [Start, End[ dans le texte brut.<br>
+                        Cocher <strong>BG</strong> pour activer l'arrière-plan sur l'intervalle.<br>
+                        Décocher = préfixe <code>_background</code> dans le XML.
+                    </div>
+                    <div id="cr-cases-editor"></div>
+                    <button class="doc-btn doc-btn-ghost doc-btn-sm" id="cr-add-case">+ Ajouter un intervalle</button>
+
+                    <!-- Frames (visible si trText) -->
                     <div id="cr-anim-wrap" style="display:none;">
                         <div class="ep-divider"></div>
                         <div class="ep-title">Frames d'animation (RawFrame)</div>
@@ -574,9 +467,10 @@
                     <div class="doc-success" id="cr-success">✓ Fichier généré avec succès !</div>
                 </div>
 
-                <!-- COL 2 : Aperçu terminal live -->
-                <div style="min-width:0;">
+                <!-- ════ COL 2 : APERÇU TERMINAL + ANIMATION ════ -->
+                <div>
                     <div class="creator-panel-title">👁 Aperçu terminal</div>
+
                     <div class="terminal-wrap">
                         <div class="terminal-bar">
                             <div class="t-dot r"></div><div class="t-dot y"></div><div class="t-dot g"></div>
@@ -584,20 +478,36 @@
                         </div>
                         <div id="cr-terminal-content"></div>
                     </div>
+
+                    <!-- Contrôles animation créateur (visible si trText + frames) -->
+                    <div class="anim-panel" id="cr-anim-panel">
+                        <div class="anim-header">🎞 Frames — navigation &amp; lecture</div>
+                        <div class="anim-row">
+                            <button class="anim-btn" id="cr-btn-prev">◀ Préc.</button>
+                            <span class="frame-indicator" id="cr-frame-ind">Frame 1 / 1</span>
+                            <button class="anim-btn" id="cr-btn-next">Suiv. ▶</button>
+                        </div>
+                        <div class="anim-row">
+                            <button class="anim-btn" id="cr-btn-play">▶ Lancer</button>
+                            <button class="anim-btn" id="cr-btn-stop">⏹ Arrêter</button>
+                        </div>
+                    </div>
+
                     <div style="margin-top:14px;padding:14px 16px;border:0.5px solid rgba(255,255,255,0.05);background:rgba(255,255,255,0.01);border-radius:2px;">
-                        <div style="font-size:10px;letter-spacing:0.18em;color:rgba(255,255,255,0.2);text-transform:uppercase;margin-bottom:10px;">Infos widget</div>
-                        <div style="font-size:11px;color:rgba(255,255,255,0.3);line-height:2;">
-                            Les couleurs globales sont définies par <code style="color:rgba(180,200,255,0.7);">Color foreground/background</code>.<br>
-                            Pour colorier des <em>intervalles</em> de caractères, utilisez <code style="color:rgba(180,200,255,0.7);">CaseColor + Case</code>.<br>
-                            Préfixe <code style="color:rgba(255,180,100,0.7);">_</code> sur un attribut = désactivé (<code style="color:rgba(255,180,100,0.7);">_background</code>).
+                        <div style="font-size:10px;letter-spacing:0.18em;color:rgba(255,255,255,0.2);text-transform:uppercase;margin-bottom:10px;">Comment fonctionne le rendu</div>
+                        <div style="font-size:11px;color:rgba(255,255,255,0.28);line-height:2;">
+                            Couleurs globales → <code style="color:rgba(180,200,255,0.7);">Color fg/bg</code><br>
+                            Intervalles → <code style="color:rgba(180,200,255,0.7);">CaseColor → Case [Start, End[</code><br>
+                            Désactiver bg → préfixe <code style="color:rgba(255,180,100,0.7);">_background</code> auto-généré<br>
+                            Index = position dans les lignes jointes par <code>\n</code>
                         </div>
                     </div>
                 </div>
 
-                <!-- COL 3 : Aperçu XML généré -->
-                <div class="creator-col-xml" style="min-width:0;">
+                <!-- ════ COL 3 : APERÇU XML ════ -->
+                <div class="creator-col-xml">
                     <div class="creator-panel-title">📄 Aperçu XML généré</div>
-                    <div class="terminal-wrap" style="height:100%;">
+                    <div class="terminal-wrap" style="min-height:320px;">
                         <div class="terminal-bar">
                             <div class="t-dot r"></div><div class="t-dot y"></div><div class="t-dot g"></div>
                             <span class="t-title">output.widg</span>
