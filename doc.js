@@ -121,12 +121,16 @@ function parseWidg(xmlStr) {
         if (ch.tagName === 'trText')   textEl   = ch;
     }
 
+    function extractLines(el) {
+        // Gère à la fois <Line> et <LineRaw> — les deux passent dans processXmlEscapes
+        return Array.from(el.querySelectorAll(':scope > Content > Line, :scope > Content > LineRaw'))
+            .map(l => processXmlEscapes(l.getAttribute('Content') || ''));
+    }
+
     function extractWidget(el) {
         const sizeEl  = el.querySelector(':scope > Size');
         const colorEl = el.querySelector(':scope > Color');
-        // Appliquer processXmlEscapes : convertit \b, \n, etc. comme le C++
-        const lines = Array.from(el.querySelectorAll(':scope > Content > Line'))
-            .map(l => processXmlEscapes(l.getAttribute('Content') || ''));
+        const lines = extractLines(el);
         const cases = parseCases(el);
         return {
             width:  sizeEl ? (parseInt(sizeEl.getAttribute('width'))  || 20) : 20,
@@ -142,19 +146,81 @@ function parseWidg(xmlStr) {
     let animation = null;
 
     if (textEl) {
-        const frames = [];
-        textEl.querySelectorAll(':scope > Animation > RawFrame').forEach(rf => {
-            const fLines = Array.from(rf.querySelectorAll('Content > Line'))
-                .map(l => processXmlEscapes(l.getAttribute('Content') || ''));
+        const animEl = textEl.querySelector(':scope > Animation');
+        if (animEl) {
+            const frames = [];
+
+            /* ── Frame 0 = contenu de base du trText (comportement C++ :
+               AnimationVector.emplace_back(0, TextLoad->GetRawContent().GetDataNew()))
+               La frame de base N'EST PAS RawFrame0, c'est le contenu du widget lui-même. ── */
+            const baseLines = extractLines(textEl);
             frames.push({
-                number: parseInt(rf.getAttribute('number') || '0'),
-                time:   parseInt(rf.getAttribute('time')   || '200'),
-                lines:  fLines.length ? fLines : [''],
-                cases:  parseCases(rf) || null
+                number: 0,
+                time:   0,        // affiché immédiatement
+                lines:  baseLines.length ? baseLines : [''],
+                cases:  parseCases(textEl) || null
             });
-        });
-        frames.sort((a, b) => a.number - b.number);
-        if (frames.length) animation = frames;
+
+            /* ── Parcourir les enfants de <Animation> dans l'ordre du document ── */
+            for (const child of animEl.children) {
+
+                /* ══ RawFrame : remplacement total du contenu ══ */
+                if (child.tagName === 'RawFrame') {
+                    const fLines = Array.from(child.querySelectorAll('Content > Line, Content > LineRaw'))
+                        .map(l => processXmlEscapes(l.getAttribute('Content') || ''));
+                    frames.push({
+                        number: parseInt(child.getAttribute('number') || child.getAttribute('Number') || String(frames.length)),
+                        time:   parseInt(child.getAttribute('time')   || child.getAttribute('Time')   || '200'),
+                        lines:  fLines.length ? fLines : [''],
+                        cases:  parseCases(child) || null
+                    });
+                }
+
+                /* ══ FrameAdd : modification différentielle du contenu ══
+                   Prend OldContent (base widget OU dernière frame si onLastFrame=true),
+                   applique des <Add position="N"> et <Erase Start="N" End="N"/> dessus. ── */
+                else if (child.tagName === 'FrameAdd') {
+                    const time = parseInt(child.getAttribute('time') || child.getAttribute('Time') || '200');
+                    const rawOnLast = (child.getAttribute('onLastFrame') || child.getAttribute('OnLastFrame') ||
+                                       child.getAttribute('addLastFrame') || child.getAttribute('AddLastFrame') || 'false').toLowerCase();
+                    const useLastFrame = rawOnLast === 'true' || rawOnLast === '1';
+
+                    // Base : widget de base OU dernière frame ajoutée
+                    const srcFrame = (useLastFrame && frames.length > 1) ? frames[frames.length - 1] : frames[0];
+                    let content = srcFrame.lines.join('\n');
+
+                    const oldContentEl = child.querySelector(':scope > OldContent');
+                    if (oldContentEl) {
+                        // Appliquer les opérations dans l'ordre du document
+                        for (const op of oldContentEl.children) {
+                            if (op.tagName === 'Add') {
+                                const pos = parseInt(op.getAttribute('position') || op.getAttribute('pos') ||
+                                                      op.getAttribute('Position') || op.getAttribute('Pos') || '0');
+                                const addText = processXmlEscapes(op.textContent || '');
+                                content = content.slice(0, pos) + addText + content.slice(pos);
+
+                            } else if (op.tagName === 'Erase') {
+                                const start = parseInt(op.getAttribute('Start') || op.getAttribute('start') || '0');
+                                const end   = parseInt(op.getAttribute('End')   || op.getAttribute('end')   ||
+                                                        op.getAttribute('Ending') || op.getAttribute('ending') || '0');
+                                content = content.slice(0, start) + content.slice(end);
+                            }
+                        }
+                    }
+
+                    frames.push({
+                        number: frames.length,
+                        time:   time,
+                        lines:  content.split('\n'),
+                        cases:  parseCases(child) || null
+                    });
+                }
+            }
+
+            // Animation valide si au moins une frame après la frame 0
+            if (frames.length > 1) animation = frames;
+            else if (frames.length === 1 && animEl.children.length > 0) animation = frames;
+        }
     }
 
     if (!widget) widget = { width:20, height:5, fg:'#ffffffff', bg:'#000000ff', lines:[''], cases:null };
@@ -412,23 +478,40 @@ function loadState(parsed, filename) {
     }
     rebuildLines();
     const ap = document.getElementById('anim-panel');
-    if (ST.isAnimated) { ap.classList.add('on'); updateFrameInd(); }
+    if (ST.isAnimated && ST.animation?.length) {
+        ap.classList.add('on');
+        // curFrame=0 = frame de base, libellé "Frame 0 (base)" ou "Frame 1/N"
+        updateFrameInd();
+    }
     else ap.classList.remove('on');
     updatePreview();
 }
 
 function updatePreview() {
     if (!ST?.widget) return;
-    const frame = (ST.isAnimated && ST.animation?.[curFrame]) ? ST.animation[curFrame] : null;
-    const lines = frame ? frame.lines : ST.widget.lines;
-    const cases = frame ? (frame.cases?.length ? frame.cases : ST.widget.cases) : ST.widget.cases;
+    let lines, cases;
+    if (ST.isAnimated && ST.animation?.length) {
+        /* Frame 0 = contenu de base du trText.
+           Les frames suivantes sont les RawFrame / FrameAdd.
+           On affiche toujours depuis animation[curFrame]. */
+        const frame = ST.animation[curFrame];
+        lines = frame ? frame.lines : ST.widget.lines;
+        cases = frame ? (frame.cases?.length ? frame.cases : (ST.widget.cases?.length ? ST.widget.cases : null))
+                      : (ST.widget.cases?.length ? ST.widget.cases : null);
+    } else {
+        lines = ST.widget.lines;
+        cases = ST.widget.cases?.length ? ST.widget.cases : null;
+    }
     renderPreview(ST.widget, lines, 'terminal-content', cases);
 }
 
 function updateFrameInd() {
     const total = ST?.animation?.length || 1;
     const el = document.getElementById('frame-ind');
-    if (el) el.textContent = `Frame ${curFrame + 1} / ${total}`;
+    if (el) {
+        const label = curFrame === 0 ? 'Base' : String(curFrame);
+        el.textContent = `Frame ${label} / ${total - 1} (${total} au total)`;
+    }
 }
 
 function stopAnim() {
@@ -534,6 +617,26 @@ if (dz && fi) {
     dz.addEventListener('drop', e => { e.preventDefault(); dz.classList.remove('drag-over'); handleFile(e.dataTransfer.files[0]); });
     dz.addEventListener('click', () => fi.click());
     fi.addEventListener('change', e => handleFile(e.target.files[0]));
+
+    /* ── Drop sur toute la fenêtre : inutile de viser le carré ── */
+    document.addEventListener('dragover', e => {
+        e.preventDefault();
+        if (document.getElementById('drop-zone')?.style.display !== 'none') {
+            dz.classList.add('drag-over');
+        }
+    });
+    document.addEventListener('dragleave', e => {
+        // Ne retirer la classe que si on quitte vraiment la fenêtre
+        if (e.relatedTarget === null) dz.classList.remove('drag-over');
+    });
+    document.addEventListener('drop', e => {
+        e.preventDefault();
+        dz.classList.remove('drag-over');
+        // Seulement si la drop-zone est visible (pas encore de fichier chargé)
+        if (document.getElementById('drop-zone')?.style.display !== 'none') {
+            handleFile(e.dataTransfer.files[0]);
+        }
+    });
 }
 
 /* ══ CREATOR ══ */

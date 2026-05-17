@@ -14,22 +14,20 @@
             text-decoration: none; transition: color 0.2s; cursor: pointer;
         }
         a#nav-logo:hover { color: #fff; }
-
         .section-title { transition: filter 0.3s; cursor: default; }
-        .section-title:hover {
-            filter: brightness(1.3) drop-shadow(0 0 16px rgba(200,215,255,0.5));
-        }
+        .section-title:hover { filter: brightness(1.3) drop-shadow(0 0 16px rgba(200,215,255,0.5)); }
+
+        /* ══ BOTH SECTIONS WIDE ══ */
+        #previewer .section-inner, #creator .section-inner { max-width: min(1800px, 97vw); }
+        #previewer .section-card, #creator .section-card   { padding: 52px 48px; }
 
         /* ══ DROP ZONE ══ */
         .drop-zone {
             border: 1px dashed rgba(255,255,255,0.18); border-radius: 2px;
             padding: 60px 40px; text-align: center; cursor: pointer;
-            transition: border-color 0.2s, background 0.2s;
-            background: rgba(255,255,255,0.01);
+            transition: border-color 0.2s, background 0.2s; background: rgba(255,255,255,0.01);
         }
-        .drop-zone:hover, .drop-zone.drag-over {
-            border-color: rgba(180,200,255,0.45); background: rgba(180,200,255,0.04);
-        }
+        .drop-zone:hover, .drop-zone.drag-over { border-color: rgba(180,200,255,0.45); background: rgba(180,200,255,0.04); }
         .drop-zone p { font-size: 14px; color: rgba(255,255,255,0.3); margin: 8px 0; letter-spacing: 0.1em; }
         .drop-zone label { color: rgba(180,200,255,0.7); cursor: pointer; text-decoration: underline; }
         .drop-zone input[type="file"] { display: none; }
@@ -37,20 +35,24 @@
 
         /* ══ VIEWER ══ */
         #viewer { display: none; }
-        #viewer.active { display: block; }
+        #viewer.active { display: flex; flex-direction: column; gap: 28px; margin-top: 24px; }
 
-        /* min-width:0 sur les enfants = clé pour que overflow-x:auto fonctionne dans une grid */
-        .viewer-grid {
-            display: grid;
-            grid-template-columns: minmax(0,1fr) minmax(0,1fr);
-            gap: 24px; margin-top: 24px;
+        /* ══ VIEWER — ÉDITEUR PLEINE LARGEUR ══ */
+        .viewer-edit-panel {
+            background: rgba(0,0,0,0.18); border: 0.5px solid rgba(255,255,255,0.07);
+            border-radius: 2px; padding: 28px 32px;
         }
-        .viewer-grid > * { min-width: 0; overflow: hidden; }
+        /* Grille interne de l'éditeur : params à gauche, contenu à droite */
+        .viewer-edit-grid {
+            display: grid;
+            grid-template-columns: minmax(300px, 420px) minmax(0,1fr);
+            gap: 32px; align-items: start;
+        }
 
         /* ══ TERMINAL WINDOWS ══ */
         .terminal-wrap {
             background: rgba(0,0,0,0.55); border: 0.5px solid rgba(255,255,255,0.1);
-            border-radius: 2px; padding: 18px; min-width: 0; overflow: hidden;
+            border-radius: 2px; padding: 18px; overflow: hidden;
         }
         .terminal-bar { display: flex; align-items: center; gap: 6px; margin-bottom: 14px; }
         .t-dot { width: 8px; height: 8px; border-radius: 50%; }
@@ -60,20 +62,14 @@
         .t-title { font-size: 10px; letter-spacing: 0.15em; color: rgba(255,255,255,0.22); margin-left: 8px; }
 
         .preview-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
-        .preview-badge {
-            font-size: 10px; letter-spacing: 0.12em; padding: 3px 10px;
-            border: 0.5px solid rgba(255,255,255,0.12); color: rgba(255,255,255,0.35); border-radius: 1px;
-        }
+        .preview-badge { font-size: 10px; letter-spacing: 0.12em; padding: 3px 10px; border: 0.5px solid rgba(255,255,255,0.12); color: rgba(255,255,255,0.35); border-radius: 1px; }
         .preview-badge.anim { border-color: rgba(120,200,140,0.4); color: rgba(120,200,140,0.85); }
 
-        /* ════ FIX OVERFLOW : le contenu terminal scroll en interne ════ */
         #terminal-content, #cr-terminal-content {
             font-family: 'IBM Plex Mono', 'Courier New', monospace;
             font-size: 14px; line-height: 1.22; white-space: pre;
             padding: 10px 14px; border-radius: 2px; min-height: 48px;
-            overflow-x: auto;   /* scroll horizontal si contenu trop large */
-            max-width: 100%;    /* ne dépasse jamais la colonne parente    */
-            box-sizing: border-box;
+            overflow-x: auto; max-width: 100%; box-sizing: border-box;
         }
 
         /* ══ ANIMATION PANEL ══ */
@@ -86,8 +82,7 @@
         .anim-header { font-size: 10px; letter-spacing: 0.2em; color: rgba(120,200,140,0.7); text-transform: uppercase; margin-bottom: 14px; }
         .anim-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
         .anim-btn {
-            font-family: 'IBM Plex Mono', monospace; font-size: 11px;
-            letter-spacing: 0.1em; padding: 8px 16px;
+            font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.1em; padding: 8px 16px;
             background: rgba(255,255,255,0.05); border: 0.5px solid rgba(255,255,255,0.14);
             color: rgba(255,255,255,0.6); cursor: pointer; border-radius: 1px; transition: all 0.2s;
         }
@@ -95,15 +90,11 @@
         .anim-btn.active { border-color: rgba(120,200,140,0.5); color: rgba(120,200,140,0.9); }
         .frame-indicator { font-size: 12px; color: rgba(255,255,255,0.28); letter-spacing: 0.1em; }
 
-        /* ══ EDIT PANEL ══ */
-        .edit-panel {
-            background: rgba(0,0,0,0.18); border: 0.5px solid rgba(255,255,255,0.07);
-            border-radius: 2px; padding: 24px;
-        }
-        .ep-title { font-size: 11px; letter-spacing: 0.22em; color: rgba(255,255,255,0.28); text-transform: uppercase; margin-bottom: 16px; }
-        .ep-divider { height: 0.5px; background: rgba(255,255,255,0.07); margin: 18px 0; }
+        /* ══ EDIT PANEL SHARED ══ */
+        .ep-title { font-size: 11px; letter-spacing: 0.22em; color: rgba(255,255,255,0.28); text-transform: uppercase; margin-bottom: 14px; }
+        .ep-divider { height: 0.5px; background: rgba(255,255,255,0.07); margin: 16px 0; }
         .ep-row { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
-        .ep-label { font-size: 12px; letter-spacing: 0.08em; color: rgba(255,255,255,0.38); min-width: 90px; }
+        .ep-label { font-size: 12px; letter-spacing: 0.08em; color: rgba(255,255,255,0.38); min-width: 80px; }
         .ep-input {
             font-family: 'IBM Plex Mono', monospace; font-size: 12px;
             background: rgba(255,255,255,0.05); border: 0.5px solid rgba(255,255,255,0.1);
@@ -146,6 +137,13 @@
         .line-del { font-size: 13px; color: rgba(200,80,80,0.4); cursor: pointer; background: none; border: none; padding: 2px 6px; transition: color 0.2s; }
         .line-del:hover { color: rgba(200,80,80,0.9); }
 
+        /* Frame context badge shown in editor */
+        .frame-ctx-badge {
+            display: inline-block; font-size: 10px; letter-spacing: 0.14em; padding: 3px 10px;
+            border: 0.5px solid rgba(120,200,140,0.35); color: rgba(120,200,140,0.8);
+            border-radius: 1px; margin-bottom: 10px;
+        }
+
         .doc-btn {
             font-family: 'IBM Plex Mono', monospace; font-size: 11px;
             letter-spacing: 0.18em; text-transform: uppercase;
@@ -157,10 +155,13 @@
         .doc-btn-ghost { background: transparent; color: rgba(255,255,255,0.45); border: 0.5px solid rgba(255,255,255,0.14); }
         .doc-btn-ghost:hover { color: #fff; border-color: rgba(255,255,255,0.4); }
         .doc-btn-sm { width: auto; font-size: 10px; padding: 7px 14px; margin-top: 10px; display: inline-block; }
+        .doc-btn-warn { background: transparent; color: rgba(255,180,80,0.7); border: 0.5px solid rgba(255,180,80,0.25); }
+        .doc-btn-warn:hover { color: rgba(255,180,80,1); border-color: rgba(255,180,80,0.6); }
 
         .doc-success { display: none; margin-top: 10px; padding: 11px 16px; border: 0.5px solid rgba(120,200,140,0.3); background: rgba(120,200,140,0.04); color: rgba(120,200,140,0.8); font-size: 12px; letter-spacing: 0.1em; border-radius: 1px; }
         .doc-error   { display: none; margin-top: 10px; padding: 11px 16px; border: 0.5px solid rgba(200,80,80,0.3); background: rgba(200,80,80,0.04); color: rgba(200,80,80,0.8); font-size: 12px; }
 
+        /* ══ FRAME LIST (creator) ══ */
         .frame-list { margin-bottom: 12px; }
         .frame-item { padding: 14px 16px; border: 0.5px solid rgba(255,255,255,0.07); background: rgba(255,255,255,0.015); margin-bottom: 8px; border-radius: 1px; }
         .frame-item-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
@@ -171,9 +172,10 @@
         .frame-del { font-size: 13px; color: rgba(200,80,80,0.4); cursor: pointer; background: none; border: none; transition: color 0.2s; }
         .frame-del:hover { color: rgba(200,80,80,0.9); }
 
+        /* ══ XML PREVIEW ══ */
         #cr-xml-preview {
             font-size: 11px; line-height: 1.85; color: rgba(160,185,255,0.6);
-            overflow-x: auto; white-space: pre; max-height: 75vh; overflow-y: auto;
+            overflow-x: auto; white-space: pre; max-height: 70vh; overflow-y: auto;
         }
         #cr-xml-preview::-webkit-scrollbar { width: 4px; height: 4px; }
         #cr-xml-preview::-webkit-scrollbar-track { background: transparent; }
@@ -185,43 +187,39 @@
             border-bottom: 0.5px solid rgba(255,255,255,0.06);
         }
 
-        /* ══ CREATOR LARGE ══
-           Override section-inner max-width pour que le créateur soit quasi plein écran
-        ══ */
-        #creator .section-inner {
-            max-width: min(1700px, 96vw);
+        /* ══ CREATOR : form full-width, puis preview|XML en dessous ══ */
+        .creator-form-panel {
+            background: rgba(0,0,0,0.18); border: 0.5px solid rgba(255,255,255,0.07);
+            border-radius: 2px; padding: 28px 32px;
         }
-        #creator .section-card {
-            padding: 52px 44px;
-        }
-
-        /* GRILLE 3 COLONNES — tout en minmax(0,…) pour éviter le débordement */
-        .creator-grid {
+        /* Grille 2-colonnes à l'intérieur du formulaire */
+        .cr-form-grid {
             display: grid;
-            grid-template-columns: 390px minmax(0,1fr) minmax(0,1fr);
-            gap: 28px;
-            align-items: start;
+            grid-template-columns: minmax(300px,420px) minmax(0,1fr);
+            gap: 32px; align-items: start;
         }
-        .creator-grid > * { min-width: 0; }
+        /* Colonne droite du form scrollable si elle déborde */
+        .cr-form-right { overflow-y: auto; max-height: 70vh; padding-right: 6px; }
+        .cr-form-right::-webkit-scrollbar { width: 4px; }
+        .cr-form-right::-webkit-scrollbar-track { background: transparent; }
+        .cr-form-right::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
 
-        /* Colonne gauche scrollable si très long */
-        .col-form { overflow-y: auto; max-height: 88vh; }
-        .col-form::-webkit-scrollbar { width: 4px; }
-        .col-form::-webkit-scrollbar-track { background: transparent; }
-        .col-form::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
+        /* Grille bas : terminal | XML */
+        .cr-bottom-grid {
+            display: grid;
+            grid-template-columns: minmax(0,1fr) minmax(0,1fr);
+            gap: 28px; align-items: start;
+        }
 
         /* ══ RESPONSIVE ══ */
-        @media (max-width: 1400px) {
-            .creator-grid { grid-template-columns: 350px minmax(0,1fr); }
-            .creator-col-xml { grid-column: 1 / -1; }
+        @media (max-width: 1100px) {
+            .viewer-edit-grid, .cr-form-grid { grid-template-columns: 1fr; }
+            .cr-bottom-grid { grid-template-columns: 1fr; }
+            .cr-form-right  { max-height: none; overflow-y: visible; }
         }
         @media (max-width: 900px) {
-            .viewer-grid  { grid-template-columns: 1fr; }
-            .creator-grid { grid-template-columns: 1fr; }
-            .creator-col-xml { grid-column: auto; }
-            #creator .section-inner { max-width: 100%; }
-            #creator .section-card  { padding: 28px 18px; }
-            .col-form { max-height: none; overflow-y: visible; }
+            #previewer .section-inner, #creator .section-inner { max-width: 100%; }
+            #previewer .section-card,  #creator .section-card  { padding: 28px 18px; }
         }
     </style>
 </head>
@@ -467,54 +465,58 @@
                     <div class="doc-success" id="cr-success">✓ Fichier généré avec succès !</div>
                 </div>
 
-                <!-- ════ COL 2 : APERÇU TERMINAL + ANIMATION ════ -->
-                <div>
-                    <div class="creator-panel-title">👁 Aperçu terminal</div>
+                <!-- ════ COL 2 : APERÇU TERMINAL + XML EMPILÉS ════ -->
+                <div class="col-preview-xml">
 
-                    <div class="terminal-wrap">
-                        <div class="terminal-bar">
-                            <div class="t-dot r"></div><div class="t-dot y"></div><div class="t-dot g"></div>
-                            <span class="t-title" id="cr-preview-name">MyWidget</span>
+                    <!-- ── Aperçu terminal ── -->
+                    <div>
+                        <div class="creator-panel-title">👁 Aperçu terminal</div>
+                        <div class="terminal-wrap">
+                            <div class="terminal-bar">
+                                <div class="t-dot r"></div><div class="t-dot y"></div><div class="t-dot g"></div>
+                                <span class="t-title" id="cr-preview-name">MyWidget</span>
+                            </div>
+                            <div id="cr-terminal-content"></div>
                         </div>
-                        <div id="cr-terminal-content"></div>
+
+                        <!-- Contrôles animation créateur (visible si trText + frames) -->
+                        <div class="anim-panel" id="cr-anim-panel">
+                            <div class="anim-header">🎞 Frames — navigation &amp; lecture</div>
+                            <div class="anim-row">
+                                <button class="anim-btn" id="cr-btn-prev">◀ Préc.</button>
+                                <span class="frame-indicator" id="cr-frame-ind">Frame 1 / 1</span>
+                                <button class="anim-btn" id="cr-btn-next">Suiv. ▶</button>
+                            </div>
+                            <div class="anim-row">
+                                <button class="anim-btn" id="cr-btn-play">▶ Lancer</button>
+                                <button class="anim-btn" id="cr-btn-stop">⏹ Arrêter</button>
+                            </div>
+                        </div>
+
+                        <div style="margin-top:14px;padding:14px 16px;border:0.5px solid rgba(255,255,255,0.05);background:rgba(255,255,255,0.01);border-radius:2px;">
+                            <div style="font-size:10px;letter-spacing:0.18em;color:rgba(255,255,255,0.2);text-transform:uppercase;margin-bottom:10px;">Comment fonctionne le rendu</div>
+                            <div style="font-size:11px;color:rgba(255,255,255,0.28);line-height:2;">
+                                Couleurs globales → <code style="color:rgba(180,200,255,0.7);">Color fg/bg</code><br>
+                                Intervalles → <code style="color:rgba(180,200,255,0.7);">CaseColor → Case [Start, End[</code><br>
+                                Désactiver bg → préfixe <code style="color:rgba(255,180,100,0.7);">_background</code> auto-généré<br>
+                                Index = position dans les lignes jointes par <code>\n</code>
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- Contrôles animation créateur (visible si trText + frames) -->
-                    <div class="anim-panel" id="cr-anim-panel">
-                        <div class="anim-header">🎞 Frames — navigation &amp; lecture</div>
-                        <div class="anim-row">
-                            <button class="anim-btn" id="cr-btn-prev">◀ Préc.</button>
-                            <span class="frame-indicator" id="cr-frame-ind">Frame 1 / 1</span>
-                            <button class="anim-btn" id="cr-btn-next">Suiv. ▶</button>
-                        </div>
-                        <div class="anim-row">
-                            <button class="anim-btn" id="cr-btn-play">▶ Lancer</button>
-                            <button class="anim-btn" id="cr-btn-stop">⏹ Arrêter</button>
+                    <!-- ── Aperçu XML généré ── -->
+                    <div>
+                        <div class="creator-panel-title">📄 Aperçu XML généré</div>
+                        <div class="terminal-wrap" style="min-height:280px;">
+                            <div class="terminal-bar">
+                                <div class="t-dot r"></div><div class="t-dot y"></div><div class="t-dot g"></div>
+                                <span class="t-title">output.widg</span>
+                            </div>
+                            <pre id="cr-xml-preview"></pre>
                         </div>
                     </div>
 
-                    <div style="margin-top:14px;padding:14px 16px;border:0.5px solid rgba(255,255,255,0.05);background:rgba(255,255,255,0.01);border-radius:2px;">
-                        <div style="font-size:10px;letter-spacing:0.18em;color:rgba(255,255,255,0.2);text-transform:uppercase;margin-bottom:10px;">Comment fonctionne le rendu</div>
-                        <div style="font-size:11px;color:rgba(255,255,255,0.28);line-height:2;">
-                            Couleurs globales → <code style="color:rgba(180,200,255,0.7);">Color fg/bg</code><br>
-                            Intervalles → <code style="color:rgba(180,200,255,0.7);">CaseColor → Case [Start, End[</code><br>
-                            Désactiver bg → préfixe <code style="color:rgba(255,180,100,0.7);">_background</code> auto-généré<br>
-                            Index = position dans les lignes jointes par <code>\n</code>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ════ COL 3 : APERÇU XML ════ -->
-                <div class="creator-col-xml">
-                    <div class="creator-panel-title">📄 Aperçu XML généré</div>
-                    <div class="terminal-wrap" style="min-height:320px;">
-                        <div class="terminal-bar">
-                            <div class="t-dot r"></div><div class="t-dot y"></div><div class="t-dot g"></div>
-                            <span class="t-title">output.widg</span>
-                        </div>
-                        <pre id="cr-xml-preview"></pre>
-                    </div>
-                </div>
+                </div><!-- /col-preview-xml -->
 
             </div><!-- /creator-grid -->
         </div>
