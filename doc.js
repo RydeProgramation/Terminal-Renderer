@@ -64,7 +64,7 @@ function processXmlEscapes(s) {
                 case 'f':  out += '\f'; i++; break;
                 case 'v':  out += '\v'; i++; break;
                 case 'r':  out += '\r'; i++; break;
-                case '\\': out += '\\'; i++; break;
+                // case '\\': out += '\\'; i++; break; je crois qu'il faut laisser comme c'est !
                 default:   out += s[i];
             }
         } else { out += s[i]; }
@@ -261,7 +261,7 @@ function parseWidg(xmlStr) {
     return { type, name, properties, position, widget, animation, isAnimated: !!animation };
 }
 
-/* ══ .WIDG GENERATOR ══
+/* ══ .WIDG GENERATOR ══ A REVOIR !!!!!!!!!!!!!!!!!!!!!!!!!!!
    STRUCTURE CORRECTE (polymorphisme C++) :
    - <trWidget> contient TOUJOURS Size, Content, Color, CaseColor
    - <trText>   contient UNIQUEMENT Animation (si type = trText)
@@ -341,7 +341,7 @@ function download(content, filename) {
     document.body.removeChild(a); URL.revokeObjectURL(url);
 }
 
-/* ══ GRID RENDERER
+/* ══ GRID RENDERER ET ÇA IL FAUT QUE CE SOIT EXACTEMENT LE MEME QUE SUR CPP
    Simule ContentReorganisationKeepColor() du C++ :
    - Grille width × height de caractères
    - Gère \b \n \r \t \f \v
@@ -574,6 +574,8 @@ function makeLineRow(text, idx, onChange, onDel) {
         updatePreview();
     });
 });
+
+// ces boutons ont un problèmes et ne réagissent absolument pas comme il le faut !
 
 document.getElementById('btn-add-line')?.addEventListener('click', () => {
     if (!ST?.widget) return; ST.widget.lines.push(''); rebuildLines(); updatePreview();
