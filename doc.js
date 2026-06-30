@@ -1,5 +1,5 @@
 /* ══════════════════════════════════════════════
-   doc.js — Terminal-Renderer Documentation Tool
+   doc.js — Terminal-Renderer Outil WIDG Tool
 ══════════════════════════════════════════════ */
 
 /* ══ TYPEWRITER ══ */
@@ -7,7 +7,7 @@
     const elMain   = document.getElementById('title-main');
     const elCursor = document.getElementById('title-cursor');
     if (!elMain) return;
-    const word = 'Documentation';
+    const word = 'Outil WIDG';
     let i = 0;
     function type() {
         elMain.textContent = word.slice(0, i++);

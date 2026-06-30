@@ -106,7 +106,7 @@
             <a class="nav-link" href="#widg"     data-i18n="nav.widg">Langage .widg</a>
             <a class="nav-link" href="#engine"   data-i18n="nav.engine">Moteur</a>
             <a class="nav-link" href="#roadmap"  data-i18n="nav.roadmap">Roadmap</a>
-            <a class="nav-link" href="documentation.html" data-i18n="nav.doc">Documentation</a>
+            <a class="nav-link" href="Outil WIDG.html" data-i18n="nav.doc">Outil WIDG</a>
             <a class="nav-link" href="about.html"         data-i18n="nav.about">À propos</a>
         </div>
         <div id="lang-switcher">
@@ -131,13 +131,13 @@
             <span class="meta-pill">v0.4.1</span>
             <span class="meta-pill">11 Modules</span>
         </div>
-        <p id="hero-sub" data-i18n="hero.sub">Un moteur modulaire de rendu et d'interface terminal — widgets dynamiques, animations fluides, langage .widg</p>
+        <p id="hero-sub" data-i18n="hero.sub">Un moteur modulaire de rendu et d'interface terminal - widgets dynamiques, animations fluides, langage .widg</p>
         <div id="hero-cta">
             <a href="#modules" class="btn btn-primary" data-i18n="hero.btn.explore">Explorer →</a>
             <a href="https://github.com/RydeProgramation/Terminal-Renderer" class="btn btn-ghost" data-i18n="hero.btn.github">GitHub ↗</a>
         </div>
     </div>
-    <div id="scroll-hint">
+    <div id="scroll-hint"> <!-- Faut serieusement changer et l'agrandir il est trop transparent !! -->
         <span data-i18n="about.scroll">Scroll</span>
         <div class="scroll-bar"></div>
     </div>
@@ -163,7 +163,7 @@
                     <p data-i18n="s01.p1">Terminal-Renderer est une bibliothèque C++ visant à fournir une infrastructure complète de rendu et d'interaction dans le terminal — widgets textuels dynamiques, animations fluides, langage XML propriétaire, sans dépendances graphiques externes.</p>
                     <p data-i18n="s01.p2">Tous les objets sont hiérarchisés selon du polymorphisme partant de <code>trObject</code>, avec la recréation de weak pointers custom pour une gestion mémoire précise et sans dépendance externe.</p>
                     <p data-i18n="s01.p3">L'objectif de performance est constant : faire tourner le moteur même sur un grille-pain. Chaque optimisation compte.</p>
-                    <div class="retro-quote" data-i18n="s01.quote">"Quand le terminal devient ton canvas, chaque caractère compte."</div>
+                    <div class="retro-quote" data-i18n="s01.quote">"From scratch... and it'll never change !"</div>
                 </div>
                 <div class="features">
                     <div class="feature"><h4 data-i18n="s01.f1.title">Rendu multi-couches</h4><p data-i18n="s01.f1.desc">Rafraîchissement partiel des zones modifiées — aucun redessin complet inutile. Pipeline optimisé pour tourner même sur matériel limité.</p></div>
@@ -188,13 +188,13 @@
                 <div class="module-item"><div class="module-name">Engine</div><div class="module-desc" data-i18n="mod.engine.desc">Cœur du moteur, logique principale, communication inter-modules</div><div class="module-status status-ok" data-i18n="status.stable">🟢 Stable</div></div>
                 <div class="module-item"><div class="module-name">Render</div><div class="module-desc" data-i18n="mod.render.desc">Pipeline de rendu, positionnement, superposition multi-couches</div><div class="module-status status-ok" data-i18n="status.func">🟢 Fonctionnel</div></div>
                 <div class="module-item"><div class="module-name">UI</div><div class="module-desc" data-i18n="mod.ui.desc">Système hiérarchique des widgets, focus, masquage (<code>hide/show</code>)</div><div class="module-status status-ok" data-i18n="status.func">🟢 Fonctionnel</div></div>
-                <div class="module-item"><div class="module-name">Components</div><div class="module-desc" data-i18n="mod.comp.desc">Composants de base — boutons, textes, conteneurs, barres de progression</div><div class="module-status status-ok" data-i18n="status.func">🟢 Fonctionnel</div></div>
-                <div class="module-item"><div class="module-name">InputModule</div><div class="module-desc" data-i18n="mod.input.desc">Gestion des entrées clavier, tampon multithread, mode non-bloquant</div><div class="module-status status-ok" data-i18n="status.stable">🟢 Stable</div></div>
+                <div class="module-item"><div class="module-name">Components</div><div class="module-desc" data-i18n="mod.comp.desc">Composants de base — boutons, textes, conteneurs, ...</div><div class="module-status status-ok" data-i18n="status.func">🟢 Fonctionnel</div></div>
+                <div class="module-item"><div class="module-name">InputModule</div><div class="module-desc" data-i18n="mod.input.desc">Gestion des entrées clavier, tampon multithread, mode bloquant !!! (type cheval de trois)</div><div class="module-status status-ok" data-i18n="status.stable">🟢 Stable</div></div>
                 <div class="module-item"><div class="module-name">World</div><div class="module-desc" data-i18n="mod.world.desc">Contexte global, gestion de scène et logique environnementale</div><div class="module-status status-ok" data-i18n="status.func">🟢 Fonctionnel</div></div>
                 <div class="module-item"><div class="module-name">LoadModule</div><div class="module-desc" data-i18n="mod.load.desc">Parsing des fichiers .widg (XML propriétaire), prévisualisation live</div><div class="module-status status-wip" data-i18n="status.wip">🟡 En cours</div></div>
                 <div class="module-item"><div class="module-name">Tool</div><div class="module-desc" data-i18n="mod.tool.desc">Boîte à outils mathématique, algorithmique et utilitaires divers</div><div class="module-status status-wip" data-i18n="status.wip">🟡 En cours</div></div>
                 <div class="module-item"><div class="module-name">AudioModule</div><div class="module-desc" data-i18n="mod.audio.desc">Gestion des sons et notifications audio dans le terminal</div><div class="module-status status-wip" data-i18n="status.todo">🟡 À développer</div></div>
-                <div class="module-item"><div class="module-name">PrintModule</div><div class="module-desc" data-i18n="mod.print.desc">Impression texte et gestion couleurs ANSI complète</div><div class="module-status status-bad" data-i18n="status.unstable">🔴 Instable</div></div>
+                <div class="module-item"><div class="module-name">PrintModule</div><div class="module-desc" data-i18n="mod.print.desc">Impression texte et gestion couleurs ANSI complète</div><div class="module-status status-bad" data-i18n="status.unstable">🔴 Instable/à supprimer</div></div>
             </div>
         </div>
     </div>
@@ -211,7 +211,6 @@
                 <div class="section-text">
                     <p data-i18n="s03.p1">Chaque widget peut être décrit via un fichier <code>.widg</code> utilisant un XML personnalisé avec des balises avancées. Ces balises permettent de définir les propriétés, la position, le contenu et les couleurs d'un widget.</p>
                     <p data-i18n="s03.p2">L'un des atouts majeurs du format : la modification en direct. En appuyant sur <code>F5/F6/F8/F9/F10</code> dans l'aperçu, les changements effectués dans le fichier XML apparaissent immédiatement — sans recompiler.</p>
-                    <div class="retro-quote" data-i18n="s03.quote">Édition live · Animations · Séquences d'échappement · Couleurs ANSI par intervalle</div>
                 </div>
                 <div class="features">
                     <div class="feature"><h4 data-i18n="s03.f1.title">Chargement dynamique</h4><p data-i18n="s03.f1.desc">Ouvrir et visualiser n'importe quel fichier .widg seul avec toutes ses animations et couleurs, en isolation complète.</p></div>
@@ -228,8 +227,8 @@
                     <div class="tool-cta-mega-sub" data-i18n="s03.cta.desc">Import de fichiers .widg, éditeur en direct, générateur XML — sans installation.</div>
                 </div>
                 <div class="tool-cta-mega-right">
-                    <a href="documentation.html" class="btn-mega" data-i18n="s03.cta.btn">Ouvrir l'outil →</a>
-                    <a href="documentation.html#creator" class="btn-mega-ghost">Créer un widget →</a>
+                    <a href="Outil WIDG.html" class="btn-mega" data-i18n="s03.cta.btn">Ouvrir l'outil →</a>
+                    <a href="Outil WIDG.html#creator" class="btn-mega-ghost">Créer un widget →</a>
                 </div>
             </div>
 
@@ -319,7 +318,7 @@
             </div>
 
             <div class="widg-note" data-i18n="s03.note">
-                ⚠️ Le tableau n'est pas complet — le format .widg est encore en développement actif. Contacter l'auteur pour plus d'informations sur les balises avancées et les fonctionnalités à venir.
+                ⚠️ Le tableau n'est pas complet — le format .widg est encore en développement actif. Contacter moi pour plus d'informations sur les balises avancées et les fonctionnalités à venir.
             </div>
         </div>
     </div>
@@ -336,7 +335,6 @@
                 <div class="section-text">
                     <p data-i18n="s04.p1">Le moteur gère nativement un ensemble de séquences d'échappement et de caractères spéciaux. Chacun peut avoir des effets visuels imprévisibles selon le terminal cible — leur comportement est documenté et maîtrisé dans le pipeline de rendu.</p>
                     <p data-i18n="s04.p2">La gestion de ces cas est particulièrement critique dans le mode <code>RENDER_SYSTEM</code> où tout le rendu passe par un buffer complet avant affichage — les séquences sont résolues en pré-affichage.</p>
-                    <div class="retro-quote" data-i18n="s04.quote">Compatibilité Windows / Linux testée — comportements OS-dépendants identifiés et gérés.</div>
                 </div>
                 <div class="seq-grid">
                     <div class="seq-item"><div class="seq-code">\n</div><div class="seq-desc" data-i18n="seq.n.desc">Saut de ligne — peut casser la mise en forme si non maîtrisé</div></div>
@@ -420,7 +418,7 @@
     <span class="bottom-left">Terminal-Renderer — v0.4.1 — MOHAMED.B</span>
     <div class="bottom-links">
         <a class="bottom-link" href="https://github.com/RydeProgramation/Terminal-Renderer">GitHub</a>
-        <a class="bottom-link" href="documentation.html" data-i18n="bottom.doc">Documentation</a>
+        <a class="bottom-link" href="Outil WIDG.html" data-i18n="bottom.doc">Outil WIDG</a>
         <a class="bottom-link" href="about.html" data-i18n="bottom.about">À propos de moi</a>
     </div>
 </div>

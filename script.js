@@ -128,105 +128,13 @@ applyTilt('.render-system');
 
 /* ══════════════════════════════════════
    i18n — TRANSLATIONS
+   (FR = texte natif déjà présent dans le HTML, pas besoin de l'objet T)
 ══════════════════════════════════════ */
 const T = {
-    fr: {
-        'nav.home': 'Accueil', 'nav.modules': 'Modules', 'nav.widg': 'Langage .widg',
-        'nav.engine': 'Moteur', 'nav.roadmap': 'Roadmap',
-        'nav.doc': 'Documentation', 'nav.about': 'À propos',
-        'hero.eyebrow': 'Open-source terminal rendering engine',
-        'hero.sub': 'Un moteur modulaire de rendu et d\'interface terminal — widgets dynamiques, animations fluides, langage .widg',
-        'hero.btn.explore': 'Explorer →', 'hero.btn.github': 'GitHub ↗',
-        'hero.pill.dev': '🟢 En développement',
-        's01.num': '01 / Présentation', 's01.title': 'Le terminal comme<br>canvas graphique',
-        's01.stat.modules': 'Modules', 's01.stat.render': 'Render systems',
-        's01.stat.version': 'Version', 's01.stat.iter': 'Itérations',
-        's01.p1': 'Terminal-Renderer est une bibliothèque C++ visant à fournir une infrastructure complète de rendu et d\'interaction dans le terminal — widgets textuels dynamiques, animations fluides, langage XML propriétaire, sans dépendances graphiques externes.',
-        's01.p2': 'Tous les objets sont hiérarchisés selon du polymorphisme partant de <code>trObject</code>, avec la recréation de weak pointers custom pour une gestion mémoire précise et sans dépendance externe.',
-        's01.p3': 'L\'objectif de performance est constant : faire tourner le moteur même sur un grille-pain. Chaque optimisation compte.',
-        's01.quote': '"Quand le terminal devient ton canvas, chaque caractère compte."',
-        's01.f1.title': 'Rendu multi-couches', 's01.f1.desc': 'Rafraîchissement partiel des zones modifiées — aucun redessin complet inutile. Pipeline optimisé pour tourner même sur matériel limité.',
-        's01.f2.title': 'Delta Time', 's01.f2.desc': 'Animations et transitions synchronisées indépendamment du framerate. Déplacements fluides et effets de surbrillance dynamiques.',
-        's01.f3.title': 'Langage .widg', 's01.f3.desc': 'Format XML propriétaire pour décrire, charger et prévisualiser des widgets en live sans recompilation.',
-        's01.f4.title': 'Précompilateur Python', 's01.f4.desc': 'Détecte automatiquement les classes héritant de <code>trActor</code> et insère les macros <code>REGISTER_TYPE</code> sans intervention manuelle.',
-        's02.num': '02 / Architecture', 's02.title': 'Architecture<br>modulaire',
-        'mod.core.desc': 'Structures internes, types fondamentaux — <code>trPair</code>, <code>trMulti</code>, <code>trMap</code>…',
-        'mod.engine.desc': 'Cœur du moteur, logique principale, communication inter-modules',
-        'mod.render.desc': 'Pipeline de rendu, positionnement, superposition multi-couches',
-        'mod.ui.desc': 'Système hiérarchique des widgets, focus, masquage (<code>hide/show</code>)',
-        'mod.comp.desc': 'Composants de base — boutons, textes, conteneurs, barres de progression',
-        'mod.input.desc': 'Gestion des entrées clavier, tampon multithread, mode non-bloquant',
-        'mod.world.desc': 'Contexte global, gestion de scène et logique environnementale',
-        'mod.load.desc': 'Parsing des fichiers .widg (XML propriétaire), prévisualisation live',
-        'mod.tool.desc': 'Boîte à outils mathématique, algorithmique et utilitaires divers',
-        'mod.audio.desc': 'Gestion des sons et notifications audio dans le terminal',
-        'mod.print.desc': 'Impression texte et gestion couleurs ANSI complète',
-        'status.stable': '🟢 Stable', 'status.func': '🟢 Fonctionnel',
-        'status.wip': '🟡 En cours', 'status.todo': '🟡 À développer', 'status.unstable': '🔴 Instable',
-        's03.num': '03 / Langage .widg', 's03.title': 'Format XML<br>propriétaire',
-        's03.p1': 'Chaque widget peut être décrit via un fichier <code>.widg</code> utilisant un XML personnalisé avec des balises avancées. Ces balises permettent de définir les propriétés, la position, le contenu et les couleurs d\'un widget.',
-        's03.p2': 'L\'un des atouts majeurs du format : la modification en direct. En appuyant sur <code>F5/F6/F8/F9/F10</code> dans l\'aperçu, les changements effectués dans le fichier XML apparaissent immédiatement — sans recompiler.',
-        's03.quote': 'Édition live · Animations · Séquences d\'échappement · Couleurs ANSI par intervalle',
-        's03.f1.title': 'Chargement dynamique', 's03.f1.desc': 'Ouvrir et visualiser n\'importe quel fichier .widg seul avec toutes ses animations et couleurs, en isolation complète.',
-        's03.f2.title': 'Débogage en temps réel', 's03.f2.desc': 'Modifier le XML et voir les changements instantanément — idéal pour les widgets animés complexes.',
-        's03.f3.title': 'Animations frame-by-frame', 's03.f3.desc': 'Chaque widget <code>trText</code> supporte des conteneurs d\'animations avec frames horodatées et transitions automatiques.',
-        's03.cta.badge': '🛠 Outil interactif', 's03.cta.title': 'Prévisualisez et créez vos fichiers .widg directement dans le navigateur',
-        's03.cta.desc': 'Import de fichiers .widg, éditeur en direct, générateur XML — sans installation.',
-        's03.cta.btn': 'Ouvrir l\'outil →',
-        's03.th.elem': 'Élément XML', 's03.th.attr': 'Attribut(s)', 's03.th.type': 'Type C++', 's03.th.desc': 'Description',
-        's03.note': '⚠️ Le tableau n\'est pas complet — le format .widg est encore en développement actif. Contacter l\'auteur pour plus d\'informations.',
-        's04.num': '04 / Caractères spéciaux', 's04.title': 'Gestion des<br>séquences',
-        's04.p1': 'Le moteur gère nativement un ensemble de séquences d\'échappement et de caractères spéciaux. Chacun peut avoir des effets visuels imprévisibles selon le terminal cible — leur comportement est documenté et maîtrisé dans le pipeline de rendu.',
-        's04.p2': 'La gestion de ces cas est particulièrement critique dans le mode <code>RENDER_SYSTEM</code> où tout le rendu passe par un buffer complet avant affichage — les séquences sont résolues en pré-affichage.',
-        's04.quote': 'Compatibilité Windows / Linux testée — comportements OS-dépendants identifiés et gérés.',
-        'seq.n.desc': 'Saut de ligne — peut casser la mise en forme si non maîtrisé',
-        'seq.r.desc': 'Retour chariot — peut écraser une ligne existante selon l\'OS',
-        'seq.t.desc': 'Tabulation horizontale — espacement variable selon le terminal',
-        'seq.b.desc': 'Retour arrière — effet visuel imprévisible, à surveiller',
-        'seq.v.desc': 'Tabulation verticale — peut désaligner le rendu',
-        'seq.f.desc': 'Saut de page — rarement utilisé mais géré',
-        'seq.0.desc': 'Caractère vide — à surveiller dans les buffers',
-        'seq.bs.desc': 'Barre oblique inversée — doit être correctement échappée',
-        's05.num': '05 / Moteur de rendu', 's05.title': 'Trois systèmes<br>de rendu',
-        'render.direct': 'Direct System', 'render.direct.tag': 'Lent',
-        'render.direct.desc': 'Chaque caractère écrit directement sur le terminal. Simple mais très lent — provoque lag et bugs visuels à grande échelle.',
-        'render.buffer': 'Buffer System', 'render.buffer.tag': 'Moyen',
-        'render.buffer.desc': 'Tout est écrit dans un <code>ostringstream</code> tampon avant affichage. Fluide pour peu d\'actions, instable avec de nombreux changements simultanés.',
-        'render.system': 'Render System', 'render.system.tag': 'Optimal',
-        'render.system.desc': 'Buffer complet sans toucher directement au terminal. Le plus performant — gestion complète des positions, superpositions et modifications pré-affichage.',
-        's05.p1': 'Le moteur supporte un système de couleurs ANSI complet — foreground, background, surbrillance, transitions dynamiques — sur tous les widgets.',
-        's05.p2': 'Un précompilateur Python parcourt automatiquement les fichiers <code>.h/.cpp</code> pour détecter les classes héritant de <code>trActor</code> et insérer les macros <code>REGISTER_TYPE</code> sans intervention manuelle.',
-        's05.p3': 'Le système de collision entre widgets permet de récupérer les intersections et de définir les réactions souhaitées — overlap, rebond, masquage prioritaire.',
-        's05.quote': 'Édition de widgets en live via F5 / F6 / F8 / F9 / F10 — sans recompilation.',
-        's06.num': '06 / Roadmap', 's06.title': 'Prochaines<br>étapes',
-        'road.f1.title': 'Système souris', 'road.f1.desc': 'Détection des positions, clics et événements hover directement dans le terminal.',
-        'road.f2.title': 'API Audio', 'road.f2.desc': 'Effets sonores et notifications audio intégrés au moteur de widgets via AudioModule.',
-        'road.f3.title': 'Projets exemples', 'road.f3.desc': 'Simulation de fractales, jeu T-Rex, mini UI complète avec widgets interactifs.',
-        'road.f4.title': 'Dépôt template', 'road.f4.desc': 'Repo clé en main pour démarrer son propre projet Terminal-Renderer en quelques minutes.',
-        'road.f5.title': 'Documentation complète', 'road.f5.desc': 'Documentation interne Doxygen + Markdown détaillé pour chaque module et balise .widg.',
-        'road.f6.title': 'Profilage mémoire', 'road.f6.desc': 'Système de profilage mémoire et CPU intégré pour diagnostiquer les points chauds en production.',
-        's06.p1': 'La vision long terme est de devenir un moteur complet de rendu console open-source, modulable et extensible — inspiré des architectures d\'Unreal Engine mais conçu pour un environnement purement texte.',
-        's06.p2': 'L\'objectif de performance reste constant : faire tourner le moteur même sur un grille-pain. Chaque optimisation compte, chaque allocation est mesurée.',
-        's06.p3': 'Le module <code>ContentReorganisation()</code> est en cours d\'optimisation pour réduire les recalculs inutiles lors de mises à jour partielles du buffer.',
-        'bottom.doc': 'Documentation', 'bottom.about': 'À propos de moi',
-        'doc.hero.eyebrow': 'Outils & Référence',
-        'doc.hero.sub': 'Importe, visualise, édite et crée tes fichiers .widg directement dans le navigateur',
-        'doc.s01.num': '01 / Prévisualisation', 'doc.s01.title': 'Importer &amp;<br>Éditer un .widg',
-        'doc.s02.num': '02 / Créateur', 'doc.s02.title': 'Créer un .widg<br>de zéro',
-        'about.eyebrow': 'À propos de moi', 'about.sub': 'Développeur C++ · Créateur de Terminal-Renderer',
-        'about.bio1': 'Passionné par les systèmes bas-niveau, le rendu terminal et l\'architecture logicielle. Terminal-Renderer est un projet personnel né de la conviction que le terminal peut être bien plus qu\'un simple outil texte.',
-        'about.bio2': 'Toute l\'infrastructure du moteur est conçue sans dépendances graphiques externes — polymorphisme, gestion mémoire custom, pipeline de rendu optimisé.',
-        'about.bio3': 'Le projet est écrit en C++20/C++23, encodé en UTF-8, et vise la compatibilité Windows & Linux.',
-        'about.quote': '"Faire avec les contraintes, pas malgré elles."',
-        'about.card.tech': 'Stack technique', 'about.card.project': 'Le projet',
-        'about.card.timeline': 'Chronologie',
-        'about.github': 'GitHub — RydeProgramation ↗', 'about.contact': 'Contacter',
-        'about.scroll': 'Scroll',
-    },
     en: {
         'nav.home': 'Home', 'nav.modules': 'Modules', 'nav.widg': '.widg Language',
         'nav.engine': 'Engine', 'nav.roadmap': 'Roadmap',
-        'nav.doc': 'Documentation', 'nav.about': 'About',
+        'nav.doc': 'Outil WIDG', 'nav.about': 'About',
         'hero.eyebrow': 'Open-source terminal rendering engine',
         'hero.sub': 'A modular terminal rendering & UI engine — dynamic widgets, smooth animations, .widg language',
         'hero.btn.explore': 'Explore →', 'hero.btn.github': 'GitHub ↗',
@@ -301,7 +209,7 @@ const T = {
         's06.p1': 'The long-term vision is to become a complete open-source console rendering engine, modular and extensible — inspired by Unreal Engine architectures but designed for a purely text environment.',
         's06.p2': 'The performance goal remains constant: run the engine even on a toaster. Every optimization counts, every allocation is measured.',
         's06.p3': 'The <code>ContentReorganisation()</code> module is being optimized to reduce unnecessary recalculations during partial buffer updates.',
-        'bottom.doc': 'Documentation', 'bottom.about': 'About me',
+        'bottom.doc': 'Outil WIDG', 'bottom.about': 'About me',
         'doc.hero.eyebrow': 'Tools & Reference',
         'doc.hero.sub': 'Import, visualize, edit and create .widg files directly in the browser',
         'doc.s01.num': '01 / Preview', 'doc.s01.title': 'Import &amp;<br>Edit a .widg',
@@ -409,17 +317,36 @@ const T = {
 
 /* ══════════════════════════════════════
    i18n ENGINE
+   FR = HTML d'origine (sauvegardé avant toute traduction).
+   On ne touche jamais T pour le FR : il suffit d'écrire
+   le texte français directement dans les fichiers .html.
 ══════════════════════════════════════ */
 let currentLang = 'fr';
+const originalHTML = new Map(); // élément -> innerHTML français d'origine
+
+function captureOriginals() {
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        if (!originalHTML.has(el)) originalHTML.set(el, el.innerHTML);
+    });
+}
 
 window.setLang = function(lang) {
-    if (!T[lang]) lang = 'fr';
+    if (lang !== 'fr' && !T[lang]) lang = 'fr';
     currentLang = lang;
-    const t = T[lang];
-    document.querySelectorAll('[data-i18n]').forEach(el => {
-        const key = el.dataset.i18n;
-        if (t[key] != null) el.innerHTML = t[key];
-    });
+
+    if (lang === 'fr') {
+        // Restaure le HTML français tel qu'écrit dans la page
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            if (originalHTML.has(el)) el.innerHTML = originalHTML.get(el);
+        });
+    } else {
+        const t = T[lang];
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.dataset.i18n;
+            if (t[key] != null) el.innerHTML = t[key];
+        });
+    }
+
     document.documentElement.dir  = lang === 'ar' ? 'rtl' : 'ltr';
     document.documentElement.lang = lang;
     document.querySelectorAll('.lang-btn').forEach(b => {
@@ -429,6 +356,8 @@ window.setLang = function(lang) {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
+    captureOriginals(); // toujours capturer le FR AVANT la première traduction
+
     document.querySelectorAll('.lang-btn').forEach(b => {
         b.addEventListener('click', () => window.setLang(b.dataset.lang));
     });
